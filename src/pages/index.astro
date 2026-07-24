@@ -1,0 +1,44 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { homeSchema } from '../data/demos';
+import Opener from '../components/sections/Opener.astro';
+import ProofBar from '../components/sections/ProofBar.astro';
+import WaysIn from '../components/sections/WaysIn.astro';
+import LiveTools from '../components/sections/LiveTools.astro';
+import Ask from '../components/sections/Ask.astro';
+import Cta from '../components/sections/Cta.astro';
+
+const origin = new URL(Astro.site!).origin;
+---
+<MarketingLayout
+  title="AppliedIQ Solutions"
+  description="Custom supply-chain software built by an operator who's run the floor end to end — live operational tools you can use right now. Yours to own, not slideware."
+  brains={['top-right', 'mid-left', 'bottom-center']}
+  schema={homeSchema(origin)}
+>
+  {/* Focused-router home. Cut again 2026-07-13: it had grown back to nine
+      sections and 12,696px on mobile — fifteen screens.
+
+      Moat is GONE: it listed three tools that LiveTools then listed again on the
+      same page, one of them with a big screenshot each. Its one load-bearing
+      idea — "where I go deepest: supply chain" — moved into LiveTools' header,
+      so the page now states the moat and immediately proves it.
+      Hub is GONE: nine cards re-printing SiteHeader/SiteFooter, above a footer
+      with the same links, above a mobile tab bar that is fixed to the screen.
+      Zero unique destinations.
+      CurrentFocus is GONE: it was the fourth Main Street entry point on one
+      scroll (AnnounceBar, the Opener portal card, and the footer remain).
+
+      The flagship demo is NOT a section here — it has its own page, reached from
+      a portal card in the Opener. It is a hosted Python service, so it is also
+      not in demos.ts: proofStats says "open any one in your browser", which is
+      true of the seven and false of it.
+
+      Indices read /01–/03. Copy lives in src/data/home.ts. */}
+  <Opener />
+  <ProofBar />
+  <WaysIn />
+  <LiveTools />
+  <Ask />
+  <Cta />
+</MarketingLayout>

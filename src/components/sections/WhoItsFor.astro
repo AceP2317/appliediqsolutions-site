@@ -1,0 +1,17 @@
+---
+import Section from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import { whoItsFor } from '../../data/home';
+---
+<Section id="who" tone="surface">
+  <SectionHead index="/ 07" eyebrow="Who I help" title="Who I build for — and the problem they’re carrying." />
+
+  <div class="mt-12 grid gap-4 md:grid-cols-3">
+    {whoItsFor.map((p) => (
+      <div class="panel flex flex-col gap-3 p-6">
+        <h3 class="font-display text-lg font-semibold text-ink">{p.title}</h3>
+        <p class="text-sm leading-relaxed text-ink-muted">{p.body}</p>
+      </div>
+    ))}
+  </div>
+</Section>

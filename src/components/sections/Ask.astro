@@ -1,0 +1,21 @@
+---
+// Ask — the "put a real question to the tooling, live" home section. A chat
+// island (client:only) fronting the Cloudflare Worker /api/ask, which streams a
+// reply from the Anthropic API in Ian's locked v0.3 voice. Sits right after the
+// live tools: you've seen them, now ask.
+import Section from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import IslandSkeleton from '../IslandSkeleton.astro';
+import AskTooling from '../AskTooling.jsx';
+---
+<Section id="ask">
+  <SectionHead
+    index="/ 03"
+    eyebrow="Ask"
+    title="Put a real question to the tooling."
+    lede="You’ve seen the tools — now ask them anything. A live assistant in Ian’s voice: what he builds, how he works, and whether your problem is the kind he solves. It qualifies; Ian closes."
+  />
+  <AskTooling client:only="react">
+    <IslandSkeleton slot="fallback" variant="chat" />
+  </AskTooling>
+</Section>

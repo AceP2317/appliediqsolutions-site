@@ -1,0 +1,350 @@
+/* ============================================================================
+   Review Autopilot demo — scoped skin system (ported from the Main Street repo)
+   One dashboard, five business "skins". Everything here is scoped under
+   [data-demo="review-autopilot"] (the island's root div) so the light demo
+   palette can never leak into the dark site — and vice versa.
+
+   Two-level scheme:
+   - Plain CSS custom properties keep their ORIGINAL names (--surface, --accent,
+     --r-md, …) but only exist inside the wrapper. The site only uses --color-*
+     namespaced vars, so nothing collides — and the scoping makes future
+     collisions impossible.
+   - Tailwind utility tokens are registered under an `ra-` prefix in the
+     @theme inline block at the bottom (bg-ra-surface, rounded-ra-md, …).
+     `inline` is load-bearing: utilities resolve var() at the element, so the
+     [data-vertical] skin overrides keep re-theming live.
+
+   NOTE: this file must stay @import-ed from global.css (the site's single
+   Tailwind root). Imported anywhere else, the @theme/@utility blocks compile
+   in a separate CSS root and the ra- utilities silently never generate.
+   ============================================================================ */
+
+/* Wrapper defaults (was :root + body in the source app). The DEFAULT skin is
+   AUTO (industrial · graphite + teal · sharp). */
+[data-demo="review-autopilot"] {
+  /* Pin the scheme so browsers with OS-level dark mode (and Chrome's auto-dark
+   * "invert light pages" feature) don't algorithmically re-tint these carefully
+   * tuned light palettes. Scoped to the island — the site around it stays dark. */
+  color-scheme: light;
+
+  /* Base text/font (was body{} in the app — the site's body sets dark ink). */
+  color: var(--text);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+
+  /* Font bridge — the app loaded these via next/font; here they map onto the
+   * site's self-hosted Fontsource faces (imported by the demo's route). */
+  --font-geist-sans: var(--font-sans); /* Inter Variable */
+  --font-geist-mono: var(--font-mono); /* IBM Plex Mono */
+  --font-oswald: "Oswald Variable", var(--font-sans);
+  --font-fraunces: "Fraunces Variable", Georgia, serif;
+  --font-cormorant: "Cormorant Garamond", Georgia, serif;
+  --font-poppins: "Poppins", var(--font-sans);
+  --font-rubik: "Rubik Variable", var(--font-sans);
+
+  /* --- shared across every vertical --- */
+  --accent-fg: #ffffff;
+
+  /* platform hues (kept distinct from urgency, which uses amber) */
+  --google: #2f6fd0;
+  --yelp: #c8412f;
+  --facebook: #3f5fbf;
+
+  /* urgency = amber, so red no longer means both "Yelp" and "urgent" */
+  --urgent: #b45309;
+  --urgent-soft: #fdf3e3;
+  --urgent-ring: #eccb92;
+
+  /* --- default skin = AUTO (industrial · graphite + teal · sharp) --- */
+  --surface: #eceef0;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e3e6e9;
+  --border: #d6dade;
+  --border-strong: #c2c8ce;
+  --text: #14181c;
+  --text-muted: #5a636b;
+  --text-faint: #8b939b;
+  --accent: #146a68;
+  --accent-soft: #e3f0ef;
+  --accent-ring: #8fc7c4;
+  --vertical-heading: var(--font-oswald);
+  --tracking-heading: -0.01em;
+  --r-md: 0.3rem;
+  --r-lg: 0.4rem;
+  --r-xl: 0.5rem;
+  --shadow-1: 0 1px 2px rgba(20, 24, 28, 0.05), 0 1px 3px rgba(20, 24, 28, 0.06);
+  --shadow-2: 0 6px 20px rgba(20, 24, 28, 0.09), 0 2px 6px rgba(20, 24, 28, 0.05);
+
+  /* --- structural "blueprint" tokens ---
+   * IMPORTANT: skin-derived values (bg / border / shadow / radius / edge colors)
+   * are deliberately NOT aliased here. A `var(--border)` written at the wrapper
+   * would resolve once against the auto skin and freeze — it would stop tracking
+   * [data-vertical]. Instead ms-card resolves those at the element via var()
+   * fallbacks, and the [data-card] blocks (which sit on the wrapper, alongside
+   * data-vertical) set explicit per-vertical values that DO track the skin.
+   * Only skin-independent literals/font-vars live here. --- */
+  --card-border-width: 1px;
+  --card-edge-width: 0px; /* left accent stripe width (utility only) */
+  --card-pad: 1rem;
+  --list-gap: 0.75rem;
+  --tag-border-width: 0px;
+  --meta-font: var(--font-geist-sans);
+  --font-body: var(--font-geist-sans); /* editorial serif per-vertical (restaurant) */
+  --label-transform: uppercase;
+  --label-tracking: 0.08em;
+  --label-font: var(--font-geist-sans);
+  --label-weight: 600;
+  --label-caps: normal;
+}
+
+/* Light scrollbars inside the island — the site's base * rule paints dark. */
+[data-demo="review-autopilot"] * {
+  scrollbar-color: var(--border-strong) transparent;
+}
+[data-demo="review-autopilot"] *::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-color: var(--surface);
+}
+
+/* RESTAURANT — editorial · warm cream + terracotta · soft serif */
+[data-demo="review-autopilot"][data-vertical="restaurant"] {
+  --surface: #f6efe6;
+  --surface-raised: #fffdf9;
+  --surface-sunken: #efe6d9;
+  --border: #e6dccd;
+  --border-strong: #d8cbb6;
+  --text: #2a211a;
+  --text-muted: #726556;
+  --text-faint: #a39685;
+  --accent: #b5523a;
+  --accent-soft: #f7e8e3;
+  --accent-ring: #e0a998;
+  --vertical-heading: var(--font-fraunces);
+  --tracking-heading: 0;
+  --r-md: 0.5rem;
+  --r-lg: 0.75rem;
+  --r-xl: 1rem;
+  --shadow-1: 0 1px 2px rgba(60, 40, 28, 0.05), 0 1px 3px rgba(60, 40, 28, 0.06);
+  --shadow-2: 0 8px 24px rgba(60, 40, 28, 0.1), 0 2px 6px rgba(60, 40, 28, 0.05);
+  /* Editorial: review copy + author + dek set in the serif (scoped to content,
+   * not UI — verified legible at body size in Chrome). */
+  --font-body: var(--font-fraunces);
+}
+
+/* SALON & SPA — luxe · warm ivory/blush + plum · elegant serif · airy */
+[data-demo="review-autopilot"][data-vertical="salon"] {
+  --surface: #f4eef2;
+  --surface-raised: #fffdff;
+  --surface-sunken: #ece3ec;
+  --border: #e7dbe6;
+  --border-strong: #d7c6d6;
+  --text: #241d28;
+  --text-muted: #6d6270;
+  --text-faint: #a094a2;
+  --accent: #7c4dbb;
+  --accent-soft: #efe7f8;
+  --accent-ring: #c3a9e4;
+  --vertical-heading: var(--font-cormorant);
+  --tracking-heading: 0.02em;
+  --r-md: 0.75rem;
+  --r-lg: 1.1rem;
+  --r-xl: 1.5rem;
+  --shadow-1: 0 1px 3px rgba(40, 28, 50, 0.05), 0 2px 8px rgba(40, 28, 50, 0.05);
+  --shadow-2: 0 10px 30px rgba(40, 28, 50, 0.1), 0 3px 10px rgba(40, 28, 50, 0.05);
+}
+
+/* DENTAL — clinical · cool blue-white + clinical blue · geometric · crisp */
+[data-demo="review-autopilot"][data-vertical="dental"] {
+  --surface: #eef3f7;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e4ebf1;
+  --border: #d8e1e9;
+  --border-strong: #c4d1dc;
+  --text: #16202a;
+  --text-muted: #566672;
+  --text-faint: #8798a4;
+  --accent: #1a73b7;
+  --accent-soft: #e4eff8;
+  --accent-ring: #9dc4e6;
+  --vertical-heading: var(--font-poppins);
+  --tracking-heading: -0.005em;
+  --r-md: 0.5rem;
+  --r-lg: 0.85rem;
+  --r-xl: 1.1rem;
+  --shadow-1: 0 1px 2px rgba(16, 40, 64, 0.05), 0 1px 3px rgba(16, 40, 64, 0.06);
+  --shadow-2: 0 6px 20px rgba(16, 40, 64, 0.09), 0 2px 6px rgba(16, 40, 64, 0.05);
+}
+
+/* HOME / HVAC — dependable · cool slate + safety green · sturdy · squared */
+[data-demo="review-autopilot"][data-vertical="home"] {
+  --surface: #e9edf0;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e0e5e9;
+  --border: #d3dade;
+  --border-strong: #bfc8cd;
+  --text: #171d21;
+  --text-muted: #576068;
+  --text-faint: #889199;
+  --accent: #2e7d4f;
+  --accent-soft: #e3f1e9;
+  --accent-ring: #a3d1b6;
+  --vertical-heading: var(--font-rubik);
+  --tracking-heading: 0;
+  --r-md: 0.3rem;
+  --r-lg: 0.4rem;
+  --r-xl: 0.5rem;
+  --shadow-1: 0 1px 2px rgba(20, 28, 24, 0.06), 0 1px 3px rgba(20, 28, 24, 0.07);
+  --shadow-2: 0 6px 18px rgba(20, 28, 24, 0.1), 0 2px 6px rgba(20, 28, 24, 0.06);
+}
+
+/* ================================================================== *
+ * BLUEPRINT layer — structural identity per vertical, driven by
+ * data-card / data-density / data-label on the Dashboard wrapper
+ * (the same element as data-demo, so these compound selectors win
+ * over the wrapper defaults by specificity).
+ * ================================================================== */
+
+/* density — inner padding + gap between cards */
+[data-demo="review-autopilot"][data-density="compact"] { --card-pad: 0.85rem; --list-gap: 0.5rem; }
+[data-demo="review-autopilot"][data-density="regular"] { --card-pad: 1rem;    --list-gap: 0.75rem; }
+[data-demo="review-autopilot"][data-density="airy"]    { --card-pad: 1.5rem;  --list-gap: 1.25rem; }
+
+/* card chrome — placed AFTER density so editorial's --list-gap:0 wins */
+[data-demo="review-autopilot"][data-card="panel"] {        /* auto — sharp bordered instrument panel */
+  --card-radius: var(--r-md);
+  --card-border-color: var(--border-strong);
+  --tag-radius: 3px; --tag-bg: transparent; --tag-border-width: 1px;
+  --meta-font: var(--font-geist-mono);
+}
+[data-demo="review-autopilot"][data-card="clean"] {        /* dental — crisp cool card, soft accent pills */
+  --card-radius: var(--r-lg);
+  --tag-radius: 9999px; --tag-bg: var(--accent-soft); --tag-border-width: 0px;
+}
+[data-demo="review-autopilot"][data-card="floating"] {     /* salon — borderless card floating on tint */
+  --card-border-width: 0px; --card-shadow: var(--shadow-2); --card-radius: var(--r-xl);
+  --tag-radius: 9999px; --tag-bg: transparent; --tag-border-width: 1px;
+}
+[data-demo="review-autopilot"][data-card="utility"] {      /* home — squared panel with a left accent stripe */
+  --card-radius: var(--r-md);
+  --card-border-color: var(--border-strong);
+  --card-edge-width: 3px; --card-edge-color: var(--accent);
+  --tag-radius: 3px; --tag-bg: var(--surface-sunken); --tag-border-width: 0px;
+}
+[data-demo="review-autopilot"][data-card="editorial"] {    /* restaurant — divider-separated editorial rows */
+  --card-border-width: 0px; --card-shadow: none; --card-radius: 0px; --list-gap: 0px;
+  --tag-radius: 0px; --tag-bg: transparent; --tag-border-width: 0px;
+}
+/* Hairline rules BETWEEN editorial rows only (no trailing rule). */
+[data-demo="review-autopilot"][data-card="editorial"] .ms-reviews > * + * { border-top: 1px solid var(--border); }
+/* Keep editorial rows flat — no hover drop-shadow that would break the list illusion. */
+[data-demo="review-autopilot"][data-card="editorial"] .ms-card:hover { box-shadow: none; }
+
+/* label typography system (upper = wrapper default) */
+[data-demo="review-autopilot"][data-label="mono"] { --label-transform: uppercase; --label-tracking: 0.16em; --label-font: var(--font-geist-mono); }
+[data-demo="review-autopilot"][data-label="caps"] { --label-transform: none; --label-caps: small-caps; --label-tracking: 0.1em; }
+[data-demo="review-autopilot"][data-label="bold"] { --label-transform: uppercase; --label-tracking: 0.02em; --label-weight: 700; }
+
+/* urgent review — set on the card element itself (a descendant), so it
+ * overrides the inherited card chrome regardless of which [data-card] is active. */
+[data-demo="review-autopilot"] [data-urgent] {
+  --card-bg: var(--urgent-soft);
+  --card-border-color: var(--urgent-ring);
+  --card-edge-color: var(--urgent-ring);
+}
+
+/* accent metric tile (Auto-handled) — tinted fill via the same token pattern */
+[data-demo="review-autopilot"] [data-accent] {
+  --card-bg: var(--accent-soft);
+  --card-border-color: var(--accent-ring);
+  --card-edge-color: var(--accent-ring);
+}
+
+/* Map tokens to Tailwind utilities under the ra- namespace. `inline` keeps
+ * utilities pointing at the live CSS variables, so bg-ra-accent / text-ra-fg /
+ * rounded-ra-xl / shadow-ra-card / font-ra-heading all follow the per-vertical
+ * override automatically — no component edits needed to re-skin.
+ * (The source app registered these unprefixed; here they'd collide with the
+ * site's own --color-surface/--color-line/--color-accent and — worse — remap
+ * rounded-md/lg/xl site-wide. The ra- prefix is the firewall.) */
+@theme inline {
+  --color-ra-surface: var(--surface);
+  --color-ra-raised: var(--surface-raised);
+  --color-ra-sunken: var(--surface-sunken);
+  --color-ra-line: var(--border);
+  --color-ra-line-strong: var(--border-strong);
+  --color-ra-fg: var(--text);
+  --color-ra-muted: var(--text-muted);
+  --color-ra-faint: var(--text-faint);
+
+  --color-ra-accent: var(--accent);
+  --color-ra-accent-fg: var(--accent-fg);
+  --color-ra-accent-soft: var(--accent-soft);
+  --color-ra-accent-ring: var(--accent-ring);
+
+  --color-ra-google: var(--google);
+  --color-ra-yelp: var(--yelp);
+  --color-ra-facebook: var(--facebook);
+
+  --color-ra-urgent: var(--urgent);
+  --color-ra-urgent-soft: var(--urgent-soft);
+  --color-ra-urgent-ring: var(--urgent-ring);
+
+  /* Corner radius per vertical (rounded-full is left untouched → stays circular
+   * for pills, the Autopilot knob, platform dots, and the sentiment bar). */
+  --radius-ra-md: var(--r-md);
+  --radius-ra-lg: var(--r-lg);
+  --radius-ra-xl: var(--r-xl);
+
+  /* Depth per vertical (card = resting, lift = hover). */
+  --shadow-ra-card: var(--shadow-1);
+  --shadow-ra-lift: var(--shadow-2);
+
+  /* Display face per vertical → enables the `font-ra-heading` utility. */
+  --font-ra-heading: var(--vertical-heading);
+
+  --animate-ra-rise: ms-rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Blueprint recipes — one class each; all variance lives in the tokens above,
+ * so a card / label / tag re-skins per vertical with no per-callsite churn. */
+@utility ms-card {
+  /* Fallbacks resolve at the element, so an unset token tracks the live
+   * [data-vertical] skin instead of a frozen wrapper value. */
+  background: var(--card-bg, var(--surface-raised));
+  border: var(--card-border-width) solid var(--card-border-color, var(--border));
+  border-left-width: max(var(--card-edge-width), var(--card-border-width));
+  border-left-color: var(--card-edge-color, var(--card-border-color, var(--border)));
+  border-radius: var(--card-radius, var(--r-xl));
+  box-shadow: var(--card-shadow, var(--shadow-1));
+  padding: var(--card-pad);
+}
+
+@utility ms-label {
+  text-transform: var(--label-transform);
+  letter-spacing: var(--label-tracking);
+  font-family: var(--label-font);
+  font-weight: var(--label-weight);
+  font-variant-caps: var(--label-caps);
+}
+
+@utility ms-tag {
+  border-radius: var(--tag-radius, var(--r-md));
+  background: var(--tag-bg, var(--surface-sunken));
+  border: var(--tag-border-width) solid var(--border);
+}
+
+@keyframes ms-rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Respect users who ask for less motion: neutralize the entrance/sweep animations
+ * and any transitions rather than flashing them. Scoped — the source app's version
+ * was a bare * rule that would have fought the site's own reduced-motion gating. */
+@media (prefers-reduced-motion: reduce) {
+  [data-demo="review-autopilot"] :is(*, *::before, *::after) {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

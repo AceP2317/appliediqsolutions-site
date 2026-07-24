@@ -1,0 +1,23 @@
+---
+/**
+ * Faq — native <details> accordion. Zero JS, keyboard-accessible, content in
+ * the DOM for SEO. Answers accept inline HTML so a source can ship as a link.
+ */
+import { ChevronDown } from '@lucide/astro';
+
+interface Props {
+  items: { q: string; a: string }[];
+}
+const { items } = Astro.props;
+---
+<div class="border-t border-line">
+  {items.map((item) => (
+    <details class="faq">
+      <summary>
+        <span class="font-display text-base font-medium text-ink sm:text-lg">{item.q}</span>
+        <ChevronDown class="faq-chevron" size={20} aria-hidden="true" />
+      </summary>
+      <p class="max-w-2xl pb-5 pr-6 leading-relaxed text-ink-muted" set:html={item.a} />
+    </details>
+  ))}
+</div>

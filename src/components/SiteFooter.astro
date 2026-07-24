@@ -1,0 +1,57 @@
+---
+import Wordmark from './Wordmark.astro';
+import SocialIcon from './SocialIcon.astro';
+import { socialLinks } from '../data/links';
+import { buildInfo } from '../data/buildinfo';
+const year = 2026;
+// The serial plate — quiet proof this is a living system that ships
+// continuously. Hash omitted gracefully if git was unavailable at build time.
+const plate = [
+  buildInfo.commit ? `BUILD ${buildInfo.commit}` : 'BUILD',
+  buildInfo.builtAtLabel,
+  'main → Cloudflare edge',
+].join(' · ');
+---
+<footer class="mt-24 border-t border-line">
+  {/* brain-clear: the bottom-center brain bleeds into the footer on every page. */}
+  <div class="brain-clear mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-col gap-2">
+      <Wordmark />
+      <p class="max-w-sm text-sm text-ink-faint">
+        Supply-chain domain mastery, directing AI to deliver operational software — implementations, integrations, and the one-off tools the big systems leave out.
+      </p>
+      <div class="flex gap-4">
+        {socialLinks.map((s) => (
+          <a
+            href={s.href}
+            aria-label={s.name}
+            target="_blank"
+            rel="noopener"
+            class="text-ink-faint transition-colors hover:text-ink"
+          >
+            <SocialIcon path={s.iconPath} size={18} />
+          </a>
+        ))}
+      </div>
+    </div>
+    <div class="flex flex-col gap-2 sm:items-end">
+      <nav class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-ink-muted sm:justify-end" aria-label="Footer">
+        <a href="/work/" class="transition-colors hover:text-ink">Work</a>
+        <a href="/confirmation-outlook/" class="transition-colors hover:text-ink">Flagship</a>
+        <a href="/services/" class="transition-colors hover:text-ink">Services</a>
+        <a href="/main-street/" class="transition-colors hover:text-ink">Main Street</a>
+        <a href="/approach/" class="transition-colors hover:text-ink">Approach</a>
+        <a href="/bio/" class="transition-colors hover:text-ink">Bio</a>
+        <a href="/projects/" class="transition-colors hover:text-ink">Projects</a>
+        <a href="/blog/" class="transition-colors hover:text-ink">Blog</a>
+        <a href="/ai-news/" class="transition-colors hover:text-ink">AI News</a>
+        <a href="/faq/" class="transition-colors hover:text-ink">FAQ</a>
+        <a href="/contact/" class="transition-colors hover:text-ink">Contact</a>
+      </nav>
+      <p class="mono-label">© {year} AppliedIQ Solutions</p>
+      <p class="font-mono text-[0.625rem] uppercase tracking-[0.14em] text-ink-faint/70">
+        <a href="/projects/#ship-log" class="transition-colors hover:text-ink-faint">{plate}</a>
+      </p>
+    </div>
+  </div>
+</footer>

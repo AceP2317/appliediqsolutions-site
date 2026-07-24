@@ -1,0 +1,18 @@
+---
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import BomExplorer from '../../components/demos/bom-explorer.jsx';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'bom-explorer')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} tagline={demo.tagline} problem={demo.problem} does={demo.blurb} />
+  <BomExplorer client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </BomExplorer>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

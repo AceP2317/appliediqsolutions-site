@@ -1,0 +1,214 @@
+---
+import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import AskTooling from '../../components/AskTooling.jsx';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+import Button from '../../components/Button.astro';
+import { demos, workGroups } from '../../data/demos';
+import { flagship } from '../../data/flagship';
+
+const bySlug = (s: string) => demos.find((d) => d.slug === s)!;
+---
+<MarketingLayout
+  title="Work"
+  description={`${demos.length} live tools running now — plan volatility, order confirmation, past-due order triage, inbound ASN triage, inventory count integrity, BOM where-used, MRP parameter governance, and a review-response console for local business — plus Confirmation Outlook, a live predictive risk service. Operational software you can open right now.`}
+  brains={['top-right', 'bottom-center']}
+>
+  {/* ── Hero ────────────────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-12 sm:pt-20 sm:pb-14">
+      <p class="mono-label inline-flex items-center gap-2">
+        <span class="status-dot"></span>
+        Live · synthetic data · no login
+      </p>
+      <h1 class="mt-5 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Live tools. Open one and start clicking.
+      </h1>
+      {/* The lede no longer says everything "runs here in your browser" — true of the
+          seven, false of the flagship, which is a hosted service on a server. */}
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        These aren’t case studies — they’re the actual tools, each built for a real problem: most
+        from the supply-chain floor, the newest for a local shop’s review page. {demos.length} run
+        right here in your browser on synthetic data, with no login and nothing to install. One is
+        a deployed service with an engine behind it.
+      </p>
+    </div>
+  </section>
+
+  {/* ── /01 Predictive — the flagship, a deployed service ─────────────────
+       It is NOT in demos.ts and never will be: those seven are client-side React
+       islands at /work/<slug>/, and every consumer (the gallery below, llms.txt,
+       demoSchema, proofStats) assumes that contract. This one is a Python service on
+       a server, so it gets a hand-authored band instead of a gallery card — which is
+       also the honest way to showcase it, because it IS the flagship, not a peer. */}
+  <section class="section-band">
+    <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 01</span>
+        <span class="mono-label">Predictive · what happens next</span>
+      </p>
+      <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        One tells you what’s <span class="aiq-accent">coming</span>.
+      </h2>
+      {/* HONESTY, load-bearing: the word "predictive" must never outrun the mechanism.
+          flagship.ts forbids "ML", "model", "trained", "forecast" — the restraint is
+          the selling point, so the qualifier ships in the same breath as the label. */}
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Every probability is a <strong class="font-medium text-ink">measured frequency</strong> over
+        observed week-to-week transitions. No model is fitted, and none is claimed — the engine is
+        scored against a week it was never shown.
+      </p>
+
+      <div class="panel spotlight mt-10 grid gap-0 overflow-hidden border-accent/40 shadow-2xl shadow-black/40 lg:grid-cols-12">
+        {/* `lg:self-center` + a matching `aspect-[1200/630]` is what stops the crop.
+            This used to be `h-full ... object-cover` on a grid item, and grid items
+            STRETCH by default — so the image box took its height from the taller text
+            column beside it, and object-cover center-cropped roughly 85px off each side
+            to fill it. That sliced the app's title on the left and its "as of ... CW45"
+            metadata on the right, on desktop only (below lg the grid is one column, the
+            box is auto-height, and the image renders whole — which is why it looked fine
+            on a phone). Matching the box aspect to the image aspect makes object-cover a
+            no-op instead of a cropper. */}
+        <a href="/confirmation-outlook/" class="group block overflow-hidden lg:col-span-7 lg:self-center">
+          <img
+            src="/shots/confirmation-outlook.webp"
+            alt={`${flagship.name} — the operator console, ranking orders by probability of missing their confirmed date.`}
+            width="1200"
+            height="630"
+            loading="lazy"
+            class="aspect-[1200/630] w-full border-b border-line object-cover transition-transform duration-300 group-hover:scale-[1.02] lg:border-b-0 lg:border-r"
+          />
+        </a>
+
+        <div class="flex flex-col gap-4 p-6 sm:p-8 lg:col-span-5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="mono-label inline-flex items-center gap-2">
+              <span class="status-dot"></span>
+              {flagship.eyebrow}
+            </p>
+            <span class="mono-label text-ink-faint">{flagship.host}</span>
+          </div>
+
+          <h3 class="font-display text-2xl font-semibold tracking-tight text-ink">{flagship.name}</h3>
+          <p class="text-ink-muted"><span class="aiq-accent">{flagship.tagline}</span></p>
+          <p class="text-sm leading-relaxed text-ink-muted">{flagship.body}</p>
+
+          <dl class="grid grid-cols-2 gap-x-6 gap-y-3 border-y border-line py-4">
+            {flagship.facts.map((f) => (
+              <div class="flex items-baseline gap-2">
+                <dd class="font-display text-lg font-semibold text-ink">{f.v}</dd>
+                <dt class="mono-label text-ink-faint">{f.k}</dt>
+              </div>
+            ))}
+          </dl>
+
+          <div class="mt-auto flex flex-wrap items-center gap-3 pt-1">
+            <Button href={flagship.cta.href} variant="primary">{flagship.cta.label}</Button>
+            <Button href="/confirmation-outlook/" variant="secondary">How it’s built</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── /02 Deterministic — the browser-local tools, grouped as a map ────── */}
+  <section class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 02</span>
+      <span class="mono-label">Deterministic · what’s true right now</span>
+    </p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      {demos.length} run right here in your browser.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      Most compute the answer straight from what’s actually there — no estimation, no probability —
+      and the newest, Review Autopilot, answers a local business’s reviews with the owner keeping
+      the final say. All {demos.length} run on synthetic data, with no login. Grouped by where
+      they sit in the operation. Don’t see your exact problem? That’s the norm — yours gets built
+      around your operation, not lifted off a shelf.{' '}
+      <a href="/contact/" class="font-medium text-cyan-deep underline-offset-4 transition hover:underline">Start a project →</a>
+    </p>
+
+    <div class="mt-12 flex flex-col gap-14">
+      {workGroups.map((group) => (
+        <div>
+          <p class="mono-label border-b border-line pb-2">{group.label}</p>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            {group.slugs.map((slug) => {
+              const demo = bySlug(slug);
+              return (
+                <a
+                  href={`/work/${demo.slug}/`}
+                  class="panel lift group flex flex-col overflow-hidden"
+                >
+                  <div class="flex items-center justify-between border-b border-line bg-surface-2 px-4 py-2.5">
+                    <div class="flex items-center gap-2.5">
+                      <span class="status-dot"></span>
+                      <span class="mono-label">{demo.name}</span>
+                    </div>
+                    {demo.hero && (
+                      <span class="mono-label rounded border border-accent/40 bg-accent/10 px-1.5 py-0.5 text-[0.55rem] text-accent-2">
+                        Featured
+                      </span>
+                    )}
+                  </div>
+                  <img
+                    src={`/shots/${demo.slug}.webp`}
+                    alt={`${demo.name} — screenshot of the live tool`}
+                    width="1200"
+                    height="630"
+                    loading="lazy"
+                    class="w-full border-b border-line transition-transform duration-300 group-hover:scale-[1.02]"
+                  />
+                  <div class="flex flex-1 flex-col gap-3 p-6">
+                    <p class="text-sm font-medium text-ink">{demo.tagline}</p>
+                    <p class="text-sm leading-relaxed text-ink-muted">{demo.blurb}</p>
+                    <span class="mt-auto pt-1 text-sm font-medium text-cyan-deep">
+                      Open demo{' '}
+                      <span class="inline-block transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+                    </span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ── Ask the tooling (live assistant) — #ask is the deep-link target for
+       the per-demo "Ask the assistant about this tool" chips ─────────────── */}
+  <section id="ask" class="section-band">
+    <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <p class="mono-label inline-flex items-center gap-2">
+        <span class="status-dot"></span>
+        Ask · live
+      </p>
+      <h2 class="mt-4 font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+        Questions about any of these?
+      </h2>
+      <p class="mt-3 max-w-2xl leading-relaxed text-ink-muted">
+        Ask the tooling, live — what each one solves, how it’d fit your operation, or whether your
+        problem is the kind Ian builds for. A live assistant in his voice; Ian closes.
+      </p>
+      <AskTooling client:only="react">
+        <IslandSkeleton slot="fallback" variant="chat" />
+      </AskTooling>
+    </div>
+  </section>
+
+  {/* ── Closing CTA — the catalog's hard close (was the one page that just stopped) ── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 text-center sm:py-20">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      The tool you actually need isn’t on a shelf. I build it.
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      Each of these exists because a real operation needed it. Tell me the problem your team is carrying.
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/?intent=quote" variant="primary">Start a project</Button>
+      <Button href="/approach/" variant="secondary">How I work</Button>
+    </div>
+  </section>
+</MarketingLayout>

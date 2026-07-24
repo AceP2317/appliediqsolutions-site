@@ -1,0 +1,23 @@
+---
+import Section from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import { gaps } from '../../data/home';
+---
+<Section id="gap">
+  <SectionHead
+    index="/ 01"
+    eyebrow="The gap"
+    title="The hard part was never the AI. It’s knowing exactly what to build."
+    lede="AI made delivering software cheap. It did nothing to tell you what the software should do. That gap — between a real operational problem and the exact tool that fixes it — is where most AI projects die, and it’s the only part that was ever hard."
+  />
+
+  <div class="mt-12 grid gap-4 md:grid-cols-3">
+    {gaps.map((g) => (
+      <div class="panel flex flex-col gap-3 p-6">
+        <span class="font-mono text-2xl font-medium text-accent">{g.n}</span>
+        <h3 class="font-display text-lg font-semibold text-ink">{g.title}</h3>
+        <p class="text-sm leading-relaxed text-ink-muted">{g.body}</p>
+      </div>
+    ))}
+  </div>
+</Section>

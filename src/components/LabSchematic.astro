@@ -1,0 +1,94 @@
+---
+/**
+ * LabSchematic — the "/03 The lab" system map on /projects, code-drawn.
+ * The brand's firing-synapse motif made LITERAL: everywhere else on the site
+ * the neural network is decoration — this one is a labeled signal-path map of
+ * a real running system (phone → agents → this site → AI API, with scheduler
+ * + vault satellites), traffic pulsing along the live paths.
+ *
+ * CAPABILITY-LEVEL ONLY — no hostnames, providers, or platform names that
+ * could map the personal estate (security/OSINT rule; matches the lab cards).
+ *
+ * Decorative (aria-hidden — the prose cards beside it carry the content);
+ * pure SVG/CSS, zero client JS. Motion lives in global.css (.ls-syn/.ls-fire/
+ * .ls-spin, beside .dw-syn) — pulses hidden + everything static under
+ * prefers-reduced-motion. Picked as "Treatment A — signal path" in a
+ * throwaway /schematic-lab compare route (deleted), 2026-07-06.
+ */
+const C = {
+  accent: '#6366f1',
+  accent2: '#818cf8',
+  cyan: '#22d3ee',
+  cyan2: '#67e8f9',
+  line: '#2c3447',
+  label: '#c7a978',
+  faint: '#838b9e',
+  surface: '#161a23',
+};
+
+type Pt = [number, number];
+
+const link = ([x1, y1]: Pt, [x2, y2]: Pt, hot = false) =>
+  `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${hot ? C.accent : C.line}" stroke-width="${hot ? 1.4 : 1.2}" opacity="${hot ? 0.55 : 0.9}"/>`;
+
+const pulse = ([x1, y1]: Pt, [x2, y2]: Pt, dur: number, delay: number, color = C.cyan, w = 4) =>
+  `<line class="ls-syn" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" pathLength="100" stroke="${color}" stroke-width="${w}" style="animation-duration:${dur}s;animation-delay:${delay}s"/>`;
+
+const node = ([x, y]: Pt, opts: { r?: number; hub?: boolean; lit?: boolean } = {}) => {
+  const { r = 13, hub = false, lit = false } = opts;
+  let s = '';
+  if (hub)
+    s += `<circle class="ls-spin" cx="${x}" cy="${y}" r="${r + 9}" fill="none" stroke="${C.accent}" stroke-width="1" stroke-dasharray="2.5 7" opacity="0.5"/>`;
+  s += `<circle cx="${x}" cy="${y}" r="${r}" fill="${C.surface}" stroke="${lit ? C.accent2 : C.accent}" stroke-width="1.5"/>`;
+  s += `<circle ${lit ? 'class="ls-fire" ' : ''}cx="${x}" cy="${y}" r="3.4" fill="${lit ? C.cyan : C.accent2}"/>`;
+  return s;
+};
+
+const tag = (x: number, y: number, t: string) =>
+  `<text x="${x}" y="${y}" text-anchor="middle" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13" font-weight="600" letter-spacing="2" fill="${C.label}">${t.toUpperCase()}</text>`;
+
+const sub = (x: number, y: number, t: string) =>
+  `<text x="${x}" y="${y}" text-anchor="middle" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="10.5" letter-spacing="0.8" fill="${C.faint}">${t}</text>`;
+
+const lineTag = (x: number, y: number, t: string) =>
+  `<text x="${x}" y="${y}" text-anchor="middle" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="10" letter-spacing="1" fill="${C.faint}" opacity="0.85">${t}</text>`;
+
+function schematic() {
+  const P: Pt = [100, 150]; // phone
+  const S: Pt = [300, 48]; // scheduler
+  const V: Pt = [560, 48]; // vault
+  const A: Pt = [430, 150]; // agents (hub)
+  const W: Pt = [800, 150]; // this site
+  const Q: Pt = [1080, 150]; // ai api
+  return `<svg viewBox="0 0 1160 240" xmlns="http://www.w3.org/2000/svg">
+    ${link(P, A)}${link(S, A)}${link(V, A)}${link(A, W, true)}${link(W, Q, true)}
+    ${pulse(P, A, 3.4, -0.6)}
+    ${pulse(S, A, 2.6, -1.4, C.cyan2, 3.4)}
+    ${pulse(A, V, 2.8, -2.2, C.cyan2, 3.4)}
+    ${pulse(V, A, 2.8, -0.8)}
+    ${pulse(A, W, 3.8, -1.0)}
+    ${pulse(W, Q, 2.4, -0.5, C.cyan2, 3.4)}
+    ${pulse(Q, W, 2.4, -1.7)}
+    ${node(P)}${node(S, { r: 11 })}${node(V, { r: 11 })}${node(A, { r: 16, hub: true, lit: true })}${node(W, { lit: true })}${node(Q, { r: 12 })}
+    ${tag(100, 189, 'phone')}${sub(100, 206, 'message-driven control')}
+    ${tag(300, 24, 'scheduler')}
+    ${tag(560, 24, 'vault')}
+    ${tag(430, 198, 'agents')}${sub(430, 215, 'always-on server')}
+    ${tag(800, 189, 'this site')}${sub(800, 206, '— you’re on it')}
+    ${tag(1080, 189, 'ai api')}${sub(1080, 206, 'live answers')}
+    ${lineTag(265, 139, 'messages')}
+    ${lineTag(617, 139, 'ships')}
+    ${lineTag(942, 139, 'asks · answers')}
+  </svg>`;
+}
+---
+<div class="panel relative overflow-hidden p-6 sm:p-8">
+  <div class="bg-grid pointer-events-none absolute inset-0 opacity-40"></div>
+  <p class="mono-label relative flex items-center gap-2">
+    <span class="status-dot"></span>
+    Live — this system is running now
+  </p>
+  <div class="relative mt-4 overflow-x-auto">
+    <div class="min-w-[40rem]" aria-hidden="true" set:html={schematic()}></div>
+  </div>
+</div>

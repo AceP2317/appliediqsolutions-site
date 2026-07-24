@@ -1,0 +1,79 @@
+---
+/**
+ * DeskSchematic — the /ai-news pipeline as a labeled signal path, in the same
+ * code-drawn language as LabSchematic (/projects "The lab"): the firing-synapse
+ * motif made literal, except here the synapse chain IS the product — the
+ * autonomous run that researches, writes, gates, and ships this page daily.
+ *
+ * Stage names are process-level only (no tool/platform/host names — same
+ * OSINT discipline as LabSchematic). Decorative (aria-hidden; the hero prose
+ * carries the content); pure SVG/CSS, zero client JS; motion via the shared
+ * .ls-syn/.ls-fire classes in global.css — static under reduced motion.
+ */
+const C = {
+  accent: '#6366f1',
+  accent2: '#818cf8',
+  cyan: '#22d3ee',
+  cyan2: '#67e8f9',
+  line: '#2c3447',
+  label: '#c7a978',
+  faint: '#838b9e',
+  surface: '#161a23',
+};
+
+type Pt = [number, number];
+
+const link = ([x1, y1]: Pt, [x2, y2]: Pt, hot = false) =>
+  `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${hot ? C.accent : C.line}" stroke-width="${hot ? 1.4 : 1.2}" opacity="${hot ? 0.55 : 0.9}"/>`;
+
+const pulse = ([x1, y1]: Pt, [x2, y2]: Pt, dur: number, delay: number, color = C.cyan, w = 4) =>
+  `<line class="ls-syn" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" pathLength="100" stroke="${color}" stroke-width="${w}" style="animation-duration:${dur}s;animation-delay:${delay}s"/>`;
+
+const node = ([x, y]: Pt, opts: { r?: number; lit?: boolean } = {}) => {
+  const { r = 12, lit = false } = opts;
+  let s = `<circle cx="${x}" cy="${y}" r="${r}" fill="${C.surface}" stroke="${lit ? C.accent2 : C.accent}" stroke-width="1.5"/>`;
+  s += `<circle ${lit ? 'class="ls-fire" ' : ''}cx="${x}" cy="${y}" r="3.2" fill="${lit ? C.cyan : C.accent2}"/>`;
+  return s;
+};
+
+const tag = (x: number, y: number, t: string) =>
+  `<text x="${x}" y="${y}" text-anchor="middle" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13" font-weight="600" letter-spacing="2" fill="${C.label}">${t.toUpperCase()}</text>`;
+
+const sub = (x: number, y: number, t: string) =>
+  `<text x="${x}" y="${y}" text-anchor="middle" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="10.5" letter-spacing="0.8" fill="${C.faint}">${t}</text>`;
+
+function schematic() {
+  const Y = 78;
+  const stages: { p: Pt; name: string; note: string; lit?: boolean }[] = [
+    { p: [80, Y], name: 'sweep', note: '5 am ET · daily' },
+    { p: [288, Y], name: 'ground', note: 'sources fetched' },
+    { p: [496, Y], name: 'write', note: 'no unsourced claims' },
+    { p: [704, Y], name: 'gate', note: 'never ships red', lit: true },
+    { p: [912, Y], name: 'commit', note: 'version-controlled' },
+    { p: [1120, Y], name: 'deploy', note: 'live in ~1 min', lit: true },
+  ];
+  let s = '';
+  for (let i = 0; i < stages.length - 1; i++) {
+    s += link(stages[i].p, stages[i + 1].p, i >= 2);
+  }
+  for (let i = 0; i < stages.length - 1; i++) {
+    s += pulse(stages[i].p, stages[i + 1].p, 3.2, -0.55 * i - 0.4, i % 2 ? C.cyan2 : C.cyan, i % 2 ? 3.4 : 4);
+  }
+  for (const st of stages) s += node(st.p, { lit: st.lit });
+  for (const st of stages) {
+    s += tag(st.p[0], Y + 39, st.name);
+    s += sub(st.p[0], Y + 56, st.note);
+  }
+  return `<svg viewBox="0 0 1200 150" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+---
+<div class="panel relative overflow-hidden p-6 sm:p-8">
+  <div class="bg-grid pointer-events-none absolute inset-0 opacity-40"></div>
+  <p class="mono-label relative flex items-center gap-2">
+    <span class="status-dot"></span>
+    The pipeline — every story on this page took this path, unattended
+  </p>
+  <div class="relative mt-4 overflow-x-auto">
+    <div class="min-w-[44rem]" aria-hidden="true" set:html={schematic()}></div>
+  </div>
+</div>

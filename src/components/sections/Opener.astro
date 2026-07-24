@@ -1,0 +1,90 @@
+---
+/**
+ * Opener — the light, operator-led top of the home page (replaces the heavy Hero).
+ * Operator credibility leads: status label + headline + one operator line. The
+ * vision rides underneath as a compact pull-quote (the `own it` phrase carries the
+ * indigo→cyan brand accent). A soft accent glow stands in for the old brain well —
+ * far lighter, no grid, no signal strip. CTA jumps to the live tools (#tools).
+ */
+import Button from '../Button.astro';
+import { opener, localPortal } from '../../data/home';
+import { flagship } from '../../data/flagship';
+import { Store, Radar, ArrowRight } from '@lucide/astro';
+
+// Inject the brand accent on the vision phrase without hard-coding it in markup.
+const [before, after] = opener.visionLead.split(opener.visionAccent);
+---
+<section class="relative overflow-hidden border-b border-line">
+  <div class="accent-glow -z-10"></div>
+
+  {/* brain-clear: the top-right brain runs behind the headline at full intensity. */}
+  <div class="mx-auto max-w-6xl px-6 pt-14 pb-12 sm:pt-16 sm:pb-16">
+    <p class="mono-label inline-flex items-center gap-2">
+      <span class="status-dot"></span>
+      {opener.label}
+    </p>
+
+    <h1 class="mt-5 max-w-3xl font-display text-[clamp(2.75rem,2rem+2.4vw,3.5rem)] font-semibold leading-[1.05] tracking-tight text-ink">
+      {opener.headline}
+    </h1>
+
+    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+      {opener.operatorLine}
+    </p>
+
+    <p class="pq-lead mt-5 max-w-2xl">
+      {before}<span class="aiq-accent">{opener.visionAccent}</span>{after}
+    </p>
+
+    {/* Goes to /work/, not the #tools anchor. The tools themselves no longer live on
+        this page — scrolling to a moat statement under a button that says "see the
+        live tools" would be a small lie. */}
+    <div class="mt-7 flex flex-wrap items-center gap-3">
+      <Button href="/work/" variant="primary">See the live tools</Button>
+      <Button href="/approach/" variant="secondary">How I work</Button>
+    </div>
+
+    {/* Two portals — the local small-business focus, and the flagship. The tile stays
+        WARM (brass), because every other accent on this page is cool and the warmth is
+        what makes these two read as a different KIND of thing rather than two more
+        links. The EYEBROW is cyan: a brass instrument with a lit cyan readout. The
+        edge is a brass→teal gradient (see .tile-portal). */}
+    <div class="mt-6 grid max-w-3xl gap-3 sm:grid-cols-2">
+      <a
+        href="/main-street/"
+        class="tile-portal spotlight group flex items-center gap-4 p-4"
+      >
+        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-teal/30 bg-canvas text-brass transition-colors duration-200 group-hover:border-teal/60">
+          <Store size={20} aria-hidden="true" />
+        </span>
+        <span class="min-w-0 flex-1">
+          <span class="mono-label text-cyan-deep transition-colors duration-200 group-hover:text-cyan">{localPortal.eyebrow}</span>
+          <span class="mt-0.5 block font-display font-semibold text-ink">{localPortal.title}</span>
+        </span>
+        <ArrowRight
+          size={18}
+          class="shrink-0 text-brass transition-transform duration-200 group-hover:translate-x-0.5"
+          aria-hidden="true"
+        />
+      </a>
+
+      <a
+        href="/confirmation-outlook/"
+        class="tile-portal spotlight group flex items-center gap-4 p-4"
+      >
+        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-teal/30 bg-canvas text-brass transition-colors duration-200 group-hover:border-teal/60">
+          <Radar size={20} aria-hidden="true" />
+        </span>
+        <span class="min-w-0 flex-1">
+          <span class="mono-label text-cyan-deep transition-colors duration-200 group-hover:text-cyan">{flagship.eyebrow}</span>
+          <span class="mt-0.5 block font-display font-semibold text-ink">{flagship.name}</span>
+        </span>
+        <ArrowRight
+          size={18}
+          class="shrink-0 text-brass transition-transform duration-200 group-hover:translate-x-0.5"
+          aria-hidden="true"
+        />
+      </a>
+    </div>
+  </div>
+</section>

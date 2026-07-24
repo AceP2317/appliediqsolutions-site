@@ -1,0 +1,7 @@
+# AppliedIQ Solutions — allow all crawlers, point them at the sitemap.
+User-agent: *
+Allow: /
+# Private content console — gated by Cloudflare Access; keep it out of crawlers too.
+Disallow: /admin
+
+Sitemap: https://appliediqsolutions.com/sitemap-index.xml

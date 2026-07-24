@@ -1,0 +1,140 @@
+---
+/**
+ * /blog/<slug> — detail page for authored articles ONLY (kind: 'article').
+ * Syndicated entries (LinkedIn/Nextdoor/press) never get their own page —
+ * their canonical home is the original conversation, linked from the stream.
+ */
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import {
+  publishedFilter,
+  postSchema,
+  formatEntryDate,
+  isoDate,
+  SOURCE_META,
+  KIND_LABELS,
+} from '../../data/blog';
+
+export async function getStaticPaths() {
+  const entries = (
+    await getCollection('blog', (e) => publishedFilter(e) && e.data.kind === 'article')
+  ).sort((a, b) => +new Date(b.data.publishedAt) - +new Date(a.data.publishedAt));
+  // Newest-first order → newer/older neighbors for the footer nav.
+  return entries.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, newer: entries[i - 1] ?? null, older: entries[i + 1] ?? null },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+  newer: CollectionEntry<'blog'> | null;
+  older: CollectionEntry<'blog'> | null;
+}
+const { entry, newer, older } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+const meta = SOURCE_META[data.source];
+const origin = new URL(Astro.site!).origin;
+// Reading time off the raw markdown body — ~220 wpm, floor 1 min.
+const readMinutes = Math.max(1, Math.round((entry.body ?? '').trim().split(/\s+/).length / 220));
+---
+<MarketingLayout
+  title={data.title}
+  description={data.description}
+  image="/og/blog.png?v=1"
+  brains={['bottom-center']}
+  schema={postSchema(entry, origin)}
+  rssHref="/blog/rss.xml"
+>
+  <article class="mx-auto max-w-3xl px-6 py-16 sm:py-20">
+    <a href="/blog/" class="link-sweep text-sm font-medium">
+      ← All field notes
+    </a>
+
+    {/* Readout rail */}
+    <div class="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2">
+      <time datetime={isoDate(data.publishedAt)} class="font-mono text-xs tracking-wide text-ink-faint">
+        {formatEntryDate(data.publishedAt)}
+      </time>
+      <span class="chip">
+        <span class="chip-dot" style={`background: ${meta.dot};`}></span>
+        {meta.label}
+      </span>
+      <span class="mono-label">{KIND_LABELS[data.kind]}</span>
+      <span class="mono-label">{readMinutes} min read</span>
+      {/* Hidden until JS confirms the clipboard exists — zero-JS convention. */}
+      <button
+        type="button"
+        data-copy-link
+        hidden
+        class="mono-label rounded-md border border-line bg-surface px-2 py-1 transition-colors hover:border-line-2 hover:text-ink"
+      >
+        Copy link
+      </button>
+    </div>
+
+    <h1 class="mt-4 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      {data.title}
+    </h1>
+    <p class="mt-3 text-sm text-ink-faint">By {data.author}</p>
+
+    <div class="post-prose mt-8">
+      <Content />
+    </div>
+
+    {/* Author footer — ties the byline to the operator behind the practice. */}
+    <div class="mt-12 border-t border-line pt-8">
+      <p class="mono-label">Written by</p>
+      <p class="mt-2 font-display text-lg font-semibold text-ink">{data.author}</p>
+      <p class="mt-1 max-w-xl text-sm leading-relaxed text-ink-muted">
+        Supply-chain operator directing AI into working software — the live tools on this site are
+        the proof.{' '}
+        <a href="/bio/" class="link-sweep font-medium">
+          Who I am →
+        </a>
+      </p>
+    </div>
+
+    {/* Older / newer — hidden gracefully while the stream is young. */}
+    {(newer || older) && (
+      <nav class="mt-10 flex flex-wrap justify-between gap-4 border-t border-line pt-6" aria-label="More field notes">
+        {older ? (
+          <a href={`/blog/${older.id}/`} class="link-sweep max-w-[45%] text-sm font-medium">
+            ← {older.data.title}
+          </a>
+        ) : (
+          <span></span>
+        )}
+        {newer ? (
+          <a href={`/blog/${newer.id}/`} class="link-sweep max-w-[45%] text-right text-sm font-medium">
+            {newer.data.title} →
+          </a>
+        ) : (
+          <span></span>
+        )}
+      </nav>
+    )}
+  </article>
+
+  <script>
+    // Copy-link — shown only when the Clipboard API exists (real share affordance
+    // for a reading page without dragging in any social SDK).
+    const btn = document.querySelector('[data-copy-link]') as HTMLButtonElement | null;
+    if (btn && navigator.clipboard) {
+      btn.hidden = false;
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          const prior = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(() => {
+            btn.textContent = prior;
+          }, 1500);
+        } catch {
+          /* clipboard refused — leave the button as-is */
+        }
+      });
+    }
+  </script>
+</MarketingLayout>

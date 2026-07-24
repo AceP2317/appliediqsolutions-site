@@ -1,0 +1,92 @@
+{
+  "generatedAt": "2026-07-16T10:25:54.970Z",
+  "generatedFrom": "9a65db4",
+  "totalCommits": 167,
+  "firstCommitIso": "2026-06-21T01:09:00-04:00",
+  "milestones": [
+    {
+      "hash": "3a12614",
+      "iso": "2026-06-21T01:09:00-04:00",
+      "verb": "built",
+      "label": "Site scaffolded — design tokens, layouts, the bones every page since hangs on."
+    },
+    {
+      "hash": "2f5c65d",
+      "iso": "2026-06-21T01:47:23-04:00",
+      "verb": "ported",
+      "label": "Three live tools running on the site — 38 minutes after the scaffold commit. Ports of finished builds — the speed of the port is the point."
+    },
+    {
+      "hash": "79e16e3",
+      "iso": "2026-06-21T14:12:34-04:00",
+      "verb": "shipped",
+      "label": "Launched — custom domain live with real copy, the same day the repo was created."
+    },
+    {
+      "hash": "3b4df76",
+      "iso": "2026-06-27T11:04:07-04:00",
+      "verb": "built",
+      "label": "Home rebuilt into the full consulting site; the contact form was delivering real email within the hour."
+    },
+    {
+      "hash": "9b05c0f",
+      "iso": "2026-06-27T22:04:52-04:00",
+      "verb": "built",
+      "label": "Brand identity — the iQ mark and the firing-synapse neural backdrop — designed, compared, and live in one evening."
+    },
+    {
+      "hash": "a79f593",
+      "iso": "2026-06-30T09:43:37-04:00",
+      "verb": "ported",
+      "label": "Three more live tools in one morning — the portfolio goes 3 → 6."
+    },
+    {
+      "hash": "e2a0b9d",
+      "iso": "2026-06-30T14:25:30-04:00",
+      "verb": "shipped",
+      "label": "The seventh tool — Past-Due Order Triage — live the same afternoon."
+    },
+    {
+      "hash": "752ee92",
+      "iso": "2026-07-01T13:18:28-04:00",
+      "verb": "built",
+      "label": "The live AI assistant — a streaming /api/ask endpoint plus the on-page chat — shipped in an afternoon."
+    },
+    {
+      "hash": "292bc55",
+      "iso": "2026-07-06T19:10:10-04:00",
+      "verb": "built",
+      "label": "Blog module — the Field-notes stream, RSS, capture pipeline, and publish gates."
+    },
+    {
+      "hash": "1e33564",
+      "iso": "2026-07-06T20:08:05-04:00",
+      "verb": "built",
+      "label": "AI Signal — the autonomous daily news desk — built and seeded the same evening, an hour after the blog shipped."
+    },
+    {
+      "hash": "f3ff488",
+      "iso": "2026-07-07T10:10:55Z",
+      "verb": "autonomous",
+      "label": "First fully-unattended news sweep — researched, written, gated, and committed by the cloud pipeline with no human in the loop. (The living proof is /ai-news/ itself — its readout updates daily.)"
+    },
+    {
+      "hash": "ba05255",
+      "iso": "2026-07-07T08:54:25-04:00",
+      "verb": "built",
+      "label": "A private, access-gated admin console — paste-to-publish for blog and news."
+    },
+    {
+      "hash": "61a1109",
+      "iso": "2026-07-13T15:39:34-04:00",
+      "verb": "shipped",
+      "label": "The flagship goes live — Confirmation Outlook, a deployed risk service answering which orders miss their date next week. Its own page here, the running app at demo.appliediqsolutions.com."
+    },
+    {
+      "hash": "9a65db4",
+      "iso": "2026-07-16T06:23:19-04:00",
+      "verb": "ported",
+      "label": "Review Autopilot — the Main Street lead offer: every review answered in the owner’s voice, negatives always held. Five business skins, one console, live at /work/review-autopilot/."
+    }
+  ]
+}

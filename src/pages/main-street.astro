@@ -1,0 +1,305 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Button from '../components/Button.astro';
+import { Globe, Table, Wrench, Boxes } from '@lucide/astro';
+
+// Page-specific copy lives inline (matches approach.astro); only shared lists
+// come from data files. These offers are unique to this surface.
+const offers = [
+  {
+    icon: Globe,
+    title: 'A real website you own',
+    body: 'Not a rented template, not a page on someone else’s platform. A real site that’s yours outright — one you can change, grow, or hand to anyone, and never pay rent on forever.',
+  },
+  {
+    icon: Table,
+    title: 'Your spreadsheets, turned into a live tool',
+    body: 'The operation you run by hand — quotes, jobs, inventory, scheduling — made into something live you actually use. Your data, made into a working tool now, no enterprise stack required.',
+  },
+  {
+    icon: Wrench,
+    title: 'Any custom tool your business needs',
+    body: 'A booking tool, a quote builder, an inventory tracker, a workflow that erases an hour of busywork a day — whatever saves you time or money. If it can be built, I build it around exactly how you work. Yours to keep.',
+  },
+];
+
+const origin = new URL(Astro.site!).origin;
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/main-street/#service`,
+    name: 'Custom software for local small business',
+    serviceType: 'Custom software development for small business',
+    provider: { '@id': `${origin}/#organization` },
+    areaServed: ['New Bern, NC', 'Craven County, NC', 'United States'],
+    description:
+      'Custom, owned software for local small businesses — a real website you own, spreadsheets turned into a live tool, and custom tools built around how you actually work.',
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Main Street', item: `${origin}/main-street/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="Main Street — custom software for local small business"
+  description="Custom, owned software for local small businesses — rooted in New Bern, NC. Your spreadsheets turned into a live tool, a real website you own, and a tool built around how you actually work."
+  image="/og/main-street.png?v=1"
+  brains={['top-right', 'bottom-center']}
+>
+  {/* ── Intro hero ─────────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-4xl px-6 py-16 sm:py-24">
+      <p class="mono-label">A current focus</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Big-company software, built for Main Street.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        AI just handed the local shop the same advantage the big players have had for years — custom
+        software, built around exactly how you work, that you own outright. This is where I’m
+        pointing AppliedIQ right now, and it starts at home in <span class="aiq-accent">New Bern</span>.
+      </p>
+      <p class="mt-6 max-w-2xl text-base leading-relaxed text-ink-muted">
+        You work directly with the operator who builds it — no account manager, no handoff, no
+        offshore team. And you don’t need to know what to build, or how: tell me where your business
+        is and where you want it to be, and I build the way there.
+      </p>
+    </div>
+  </section>
+
+  {/* ── Featured — Review Autopilot, the lead offer ────────────────────────
+       The shaped proof this page long lacked: a live, local-business demo a
+       visitor can drive right now. Unnumbered band so /01–/03 stay put; copy
+       inline per page convention. The body states the autopilot rule exactly
+       (positives auto-post, negatives always held) — keep that honest. */}
+  <section class="section-band">
+    <div class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+      <p class="mono-label inline-flex items-center gap-2">
+        <span class="status-dot"></span>
+        The lead offer · live demo · no login
+      </p>
+      <h2 class="mt-4 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Review Autopilot
+      </h2>
+      <p class="mt-3 text-xl leading-relaxed">
+        <span class="aiq-accent">Every review answered, in your voice — and you keep the final say.</span>
+      </p>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Reviews land on Google, Yelp, and Facebook whether you’re watching or not. Review Autopilot
+        puts them in one queue and drafts a reply to every one in your voice — happy customers get
+        thanked automatically, and anything negative is always held for you. Nothing critical goes
+        out without your say. Try it below as five different businesses — one of them will look
+        like yours.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <Button href="/work/review-autopilot/" variant="primary">Try the live demo</Button>
+        <a href="/contact/?intent=consult" class="link-sweep text-sm font-medium text-cyan-deep">
+          The first conversation is free →
+        </a>
+      </div>
+      <a href="/work/review-autopilot/" class="mt-10 block">
+        <img
+          src="/shots/review-autopilot.webp"
+          width="1200"
+          height="630"
+          loading="lazy"
+          decoding="async"
+          alt="The Review Autopilot console — a review queue with drafted replies and the Autopilot toggle, shown as a family auto-repair shop."
+          class="w-full rounded-xl border border-line shadow-2xl shadow-black/40"
+        />
+      </a>
+      <dl class="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+        <div class="flex flex-col gap-1">
+          <dd class="font-display text-2xl font-semibold text-ink">3</dd>
+          <dt class="mono-label text-ink-faint">Review platforms</dt>
+        </div>
+        <div class="flex flex-col gap-1">
+          <dd class="font-display text-2xl font-semibold text-ink">5</dd>
+          <dt class="mono-label text-ink-faint">Business types</dt>
+        </div>
+        <div class="flex flex-col gap-1">
+          <dd class="font-display text-2xl font-semibold text-ink">Auto</dd>
+          <dt class="mono-label text-ink-faint">Positives posted</dt>
+        </div>
+        <div class="flex flex-col gap-1">
+          <dd class="font-display text-2xl font-semibold text-ink">Held</dd>
+          <dt class="mono-label text-ink-faint">Negatives — for you</dt>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  {/* ── /01 Why this, why here ─────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 01</span>
+      <span class="mono-label">Why this, why here</span>
+    </p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      The dream, close to home.
+    </h2>
+    <div class="mt-6 flex flex-col gap-5 text-lg leading-relaxed text-ink-muted">
+      <p>
+        For years, real custom software was something only big companies could afford. The local
+        business made do — rented templates, off-the-shelf subscriptions, and workarounds nobody
+        liked. AI changed that. The shop running on spreadsheets can have its data turned into a
+        working tool today, and own the custom system it runs on tomorrow — no enterprise budget, no
+        license, no asking permission.
+      </p>
+      <p class="text-ink">
+        I wasn’t born here. I chose it — New Bern is home, and it’s where I’ll always start. The
+        businesses that make this town what it is deserve tools built for them — not hand-me-downs
+        from software designed for a company ten times their size. If you run a small business here,
+        or anywhere nearby, this is for you.
+      </p>
+      <p>
+        Tryon Palace went up in 1770, and this was the capital of North Carolina — until the state
+        bought land for Raleigh in 1792 and the legislature moved there in 1794. Caleb Bradham mixed
+        the drink that became Pepsi in his pharmacy at Middle and Pollock in 1893. He bet the company
+        on sugar, the market collapsed, and by ’23 he was bankrupt. The company he invented is
+        headquartered in Purchase, New York today; he went back to running his drugstore.
+      </p>
+      <p>
+        New Bern has built things the world wanted. It hasn’t always gotten to keep them. That’s the
+        whole reason everything I build is yours to own. New Bern has been a Main Street town since
+        1980 — one of the first five in North Carolina. Let’s build the next big thing here, and keep
+        it this time.
+      </p>
+    </div>
+  </section>
+
+  {/* ── /02 What I build for you ───────────────────────────────────────── */}
+  <section class="section-band">
+    <div class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 02</span>
+        <span class="mono-label">What I build for you</span>
+      </p>
+      <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Yours to own — not rented, not borrowed.
+      </h2>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {offers.map((o) => {
+          const Icon = o.icon;
+          return (
+            <div class="panel lift lift-brass spotlight flex flex-col gap-3 p-6">
+              <span class="grid h-11 w-11 place-items-center rounded-lg border border-line bg-canvas text-brass">
+                <Icon size={20} aria-hidden="true" />
+              </span>
+              <h3 class="font-display text-lg font-semibold text-ink">{o.title}</h3>
+              <p class="text-sm leading-relaxed text-ink-muted">{o.body}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* The entry-level offer. Mirrors the "Just getting online?" block on
+          /services/ — it belongs here even more than it does there, because this is
+          the page the Nextdoor posts actually land on, and "running the business off
+          a Facebook page" describes a real slice of that audience.
+
+          NOTE the CTA differs from the /services/ copy on purpose: there it links
+          HERE, which would be a self-link on this page. It points at the free first
+          conversation instead (D5's carve-out — a named offer, never a price). Keep
+          the two in step if either is edited. */}
+      <div class="panel lift spotlight mt-4 border-accent/30 p-7">
+        <p class="mono-label text-cyan-deep">Just getting online?</p>
+        <p class="mt-2 max-w-3xl leading-relaxed text-ink-muted">
+          Running your business off a Facebook page — or nothing at all? I’ll build you a real
+          website you own, not a rented template or a profile on someone else’s platform. Same
+          principle as everything else here: it’s yours, and you’re not paying rent on it forever.
+          <span class="text-ink-faint"> (Ongoing upkeep is optional, on a retainer.)</span>
+        </p>
+        <p class="mt-3">
+          <a href="/contact/?intent=consult" class="link-sweep text-sm">
+            The first conversation is free →
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── How it works — the low-friction promise (where you are → where you
+       want to be; you bring the goal, I bring the build) ────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-8 sm:py-10">
+    <div class="panel border-accent/30 p-8 text-center sm:p-10">
+      <p class="mono-label text-cyan-deep">How it works</p>
+      <h2 class="mx-auto mt-3 max-w-2xl font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+        You don’t need to know what to build. That’s my job.
+      </h2>
+      <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+        Tell me where your business is today and where you want it to be — no spec, no tech
+        decisions, no jargon. You bring the problem and the goal; I bring the build. Then it’s yours.
+      </p>
+    </div>
+  </section>
+
+  {/* ── /03 Proof I ship (self-as-proof; honest — not testimonials) ────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 03</span>
+      <span class="mono-label">Proof I ship</span>
+    </p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      Real, live, and built by me.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      No stock photos of software that doesn’t exist — just two live sites I designed, built, and
+      run. You’re on one of them right now.
+    </p>
+
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      <a
+        href="/work/"
+        class="panel group lift lift-brass spotlight flex flex-col gap-3 p-6"
+      >
+        <span class="grid h-11 w-11 place-items-center rounded-lg border border-line bg-canvas text-brass">
+          <Globe size={20} aria-hidden="true" />
+        </span>
+        <h3 class="font-display text-lg font-semibold text-ink">This site — appliediqsolutions.com</h3>
+        <p class="text-sm leading-relaxed text-ink-muted">
+          Designed, built, and run by AppliedIQ, top to bottom — the live tools, the writing, the
+          whole thing. You’re looking at it.
+        </p>
+        <span class="mono-label link-sweep mt-1 w-fit">See what it runs →</span>
+      </a>
+      <a
+        href="https://ian-provencher.com"
+        target="_blank"
+        rel="noopener"
+        class="panel group lift lift-brass spotlight flex flex-col gap-3 p-6"
+      >
+        <span class="grid h-11 w-11 place-items-center rounded-lg border border-line bg-canvas text-brass">
+          <Boxes size={20} aria-hidden="true" />
+        </span>
+        <h3 class="font-display text-lg font-semibold text-ink">ian-provencher.com</h3>
+        <p class="text-sm leading-relaxed text-ink-muted">
+          My public build workspace — the repos, apps, cron jobs, and architectures behind the work,
+          plus field notes. Also designed, built, and run by me.
+        </p>
+        <span class="mono-label link-sweep mt-1 w-fit">Visit the workspace →</span>
+      </a>
+    </div>
+  </section>
+
+  {/* ── Closing CTA ────────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 text-center sm:py-20">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      Let’s build something that’s yours.
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      The first conversation is free. Tell me what your business is wrestling with, and I’ll tell
+      you straight how I’d build the fix — and what it takes.
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/?intent=quote" variant="primary">Start a project</Button>
+      <Button href="/bio/" variant="secondary">Who’s behind it</Button>
+    </div>
+  </section>
+</MarketingLayout>

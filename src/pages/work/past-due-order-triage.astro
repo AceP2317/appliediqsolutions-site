@@ -1,0 +1,18 @@
+---
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import PastDueOrderTriage from '../../components/demos/past-due-order-triage.jsx';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'past-due-order-triage')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} tagline={demo.tagline} problem={demo.problem} does={demo.blurb} />
+  <PastDueOrderTriage client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </PastDueOrderTriage>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

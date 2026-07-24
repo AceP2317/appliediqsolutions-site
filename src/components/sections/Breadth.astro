@@ -1,0 +1,49 @@
+---
+import Section from '../Section.astro';
+import Capability from '../Capability.astro';
+import { capabilities, capabilityAreas } from '../../data/home';
+import { demos } from '../../data/demos';
+
+// A problem-shape card cites the live tool that demonstrates it (proofSlug in
+// home.ts) — the claim wall doubles as an evidence index.
+const proofFor = (slug?: string) => {
+  const demo = slug ? demos.find((d) => d.slug === slug) : undefined;
+  return demo ? { href: `/work/${demo.slug}/`, label: demo.name } : undefined;
+};
+---
+<Section id="breadth" tone="surface">
+  <div class="max-w-3xl">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 02</span>
+      <span class="mono-label">Beyond the moat</span>
+    </p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      Supply chain is the moat. The job is bigger than supply chain.
+    </h2>
+    <p class="mt-4 text-lg leading-relaxed text-ink-muted">
+      Strip the domain away and what’s left is a repeatable move: take a hard, specific, one-off
+      problem nobody will build a product for — and deliver the exact fix, whether that’s a tool, a
+      full implementation, or root-cause problem-solving. These are the shapes I keep solving.
+    </p>
+  </div>
+
+  <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {capabilities.map((c) => (
+      <Capability icon={c.icon} title={c.title} body={c.body} proof={proofFor(c.proofSlug)} />
+    ))}
+  </div>
+
+  <div class="mt-10 flex flex-col gap-5 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
+    <p class="max-w-xl leading-relaxed text-ink-muted">
+      My competencies scale and transfer fast — if your hard problem isn’t in supply chain, that’s fine.{' '}
+      <span class="text-ink">The moat is the depth, not the boundary.</span>
+    </p>
+    <ul class="flex flex-wrap gap-2">
+      {capabilityAreas.map((area) => (
+        <li class="rounded-md border border-line bg-surface px-2.5 py-1 font-mono text-xs text-ink-muted">
+          {area}
+        </li>
+      ))}
+    </ul>
+  </div>
+</Section>

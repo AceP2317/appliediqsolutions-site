@@ -1,0 +1,130 @@
+---
+/**
+ * /ai-news — "AI Signal": the autonomous daily AI-news desk. Every story is
+ * researched, written, gated, and published end-to-end by the /ai-news
+ * pipeline (.claude/skills/ai-news/SKILL.md) — the disclaimer IS the
+ * marketing: this page is a live demo of an autonomous pipeline in
+ * production. Rolling window (standard 14d / major 21d, see
+ * src/data/news.ts) — an instrument, not an archive. No per-story pages;
+ * cards link out to their sources.
+ */
+import { getCollection } from 'astro:content';
+import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import NewsStory from '../../components/NewsStory.astro';
+import DeskSchematic from '../../components/DeskSchematic.astro';
+import Button from '../../components/Button.astro';
+import { formatEntryDate } from '../../data/blog';
+import { visibleFilter, sortByPublished, currentSpotlight, newsSchema } from '../../data/news';
+
+const entries = (await getCollection('news', visibleFilter)).sort(sortByPublished);
+const spotlight = currentSpotlight(entries);
+const stream = spotlight ? entries.filter((e) => e.id !== spotlight.id) : entries;
+const origin = new URL(Astro.site!).origin;
+const storyCount = String(entries.length).padStart(2, '0');
+// Build timestamp — daily pipeline pushes mean this refreshes daily; if runs
+// stop, this readout self-discloses the staleness.
+const builtAt = new Date();
+// Desk facts — build-time, honest by construction: the newest visible story's
+// own date, and the day the desk went autonomous (first live sweep).
+const DESK_SINCE = new Date('2026-07-06T12:00:00-04:00');
+const lastStory = entries[0]?.data.publishedAt;
+---
+<MarketingLayout
+  title="AI News"
+  description="The AI developments that matter, summarized with implications — researched, written, and published daily by an autonomous AI pipeline. Every story links to its sources."
+  image="/og/ai-news.png?v=1"
+  brains={['bottom-center']}
+  schema={newsSchema(origin)}
+>
+  {/* ── Intro ─────────────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-4xl px-6 py-16 sm:py-24">
+      <p class="mono-label">AI Signal — autonomous news desk</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        The signal, not the noise.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        The AI developments that actually matter — summarized, with what they mean for operators,
+        businesses, and people. Stories rotate on a two-to-three-week window; the strongest story
+        holds the spotlight.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        <span class="font-semibold text-ink">Full disclosure, as a feature:</span> every story on
+        this page was researched, written, fact-gated, and published end-to-end by an AI pipeline
+        I built — no human in the loop. Every story links to its sources.
+        <span class="text-ink">This page is the product demo.</span>
+      </p>
+      {/* Readout line */}
+      <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs tracking-wide text-ink-faint">
+        <span class="mono-label inline-flex items-center gap-2">
+          <span class="status-dot"></span>
+          Autonomous
+        </span>
+        <span aria-hidden="true">·</span>
+        <span>Stories: {storyCount}</span>
+        <span aria-hidden="true">·</span>
+        <span>Window: 14–21 days</span>
+        <span aria-hidden="true">·</span>
+        <span>Desk running since: {formatEntryDate(DESK_SINCE).split(' · ')[0]}</span>
+        {lastStory && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>Last story: {formatEntryDate(lastStory).split(' · ')[0]}</span>
+          </>
+        )}
+        <span aria-hidden="true">·</span>
+        <span>Updated: {formatEntryDate(builtAt)}</span>
+        <span aria-hidden="true">·</span>
+        <a href="/blog/" class="link-sweep">Human desk: Blog →</a>
+      </div>
+
+      {/* The Desk Readout — the pipeline itself, as an instrument panel */}
+      <div class="mt-8">
+        <DeskSchematic />
+      </div>
+    </div>
+  </section>
+
+  {/* ── Spotlight ─────────────────────────────────────────────────────── */}
+  {spotlight && (
+    <section class="mx-auto max-w-3xl px-6 pt-16 sm:pt-20">
+      <p class="mono-label inline-flex items-center gap-2">
+        <span class="status-dot"></span>
+        Spotlight
+      </p>
+      <div class="mt-4">
+        <NewsStory entry={spotlight} featured />
+      </div>
+    </section>
+  )}
+
+  {/* ── The stream ────────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-3xl space-y-5 px-6 py-16 sm:py-20">
+    {stream.map((entry) => <NewsStory entry={entry} />)}
+    {entries.length === 0 && (
+      <div class="panel p-8 text-center">
+        <p class="mono-label">No stories in the current window</p>
+        <p class="mx-auto mt-3 max-w-md leading-relaxed text-ink-muted">
+          The desk publishes only when something clears the bar — zero is a valid day. Check back
+          tomorrow, or read the <a href="/blog/" class="link-sweep">field notes</a>.
+        </p>
+      </div>
+    )}
+  </section>
+
+  {/* ── CTA — the page is the demo ────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 pb-20 text-center sm:pb-28">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      This page is the demo.
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      An autonomous pipeline researched, wrote, gated, and shipped everything above — daily,
+      unattended. Want one running on your problem?
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/" variant="primary">Start a project</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </section>
+</MarketingLayout>

@@ -1,0 +1,41 @@
+---
+import Button from '../Button.astro';
+import BrandBackdrop from '../BrandBackdrop.astro';
+import { signalStrip } from '../../data/home';
+---
+<section class="relative overflow-hidden border-b border-line">
+  <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+  <BrandBackdrop variant="well" position="right" shape="brain" />
+
+  <div class="mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-24">
+    <p class="mono-label inline-flex items-center gap-2">
+      <span class="status-dot"></span>
+      Working software · not slideware
+    </p>
+
+    <h1 class="mt-6 max-w-4xl font-display text-display font-semibold text-ink">
+      I build the operational software your systems leave out.
+    </h1>
+
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-ink-muted">
+      I’m a supply-chain operator who directs AI to deliver real, working software — complete
+      implementations and the one-off tools no product will build, not slideware.
+      Supply chain is my deepest moat; the actual specialty is the hard, one-off problem
+      no off-the-shelf product will ever solve.
+    </p>
+
+    <div class="mt-8 flex flex-wrap items-center gap-3">
+      <Button href="#tools" variant="primary" arrow="down">See the live tools</Button>
+      <Button href="/approach/" variant="secondary">How I work</Button>
+    </div>
+
+    <ul class="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2">
+      {signalStrip.map((item, i) => (
+        <li class="flex items-center gap-4">
+          {i > 0 && <span class="h-3 w-px bg-line-2" aria-hidden="true"></span>}
+          <span class="mono-label">{item}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

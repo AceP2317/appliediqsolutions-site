@@ -1,0 +1,118 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Breadth from '../components/sections/Breadth.astro';
+import Cta from '../components/sections/Cta.astro';
+import SocialIcon from '../components/SocialIcon.astro';
+import { socialLinks, cardEmail } from '../data/links';
+import { Mail, QrCode } from '@lucide/astro';
+---
+<MarketingLayout
+  title="Ian Provencher"
+  description="Ian Provencher — a supply-chain operator who directs AI into working software. Years running end-to-end operations — material flow, planning and production — now building the tools big systems leave out."
+  image="/og/bio.png?v=1"
+  brains={['top-right', 'bottom-center']}
+>
+  {/* ── Intro hero (branded brain well) ───────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-24">
+      <p class="mono-label">Bio</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        The operator behind the tools.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        I’m Ian Provencher — a supply-chain operator who directs AI to ship working software. Deep domain, AI
+        velocity, and a bias for the tool over the deck — here’s where that comes from, and why I
+        point it where I do.
+      </p>
+      <p class="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted">
+        AppliedIQ Solutions is my practice — custom supply-chain software and AI-built operational
+        tools, designed and shipped by one operator who’s run the floor. Working software you own,
+        not slideware.
+      </p>
+    </div>
+  </section>
+
+  {/* ── /01 The operator behind it (career narrative; employer generic) ── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 01</span>
+      <span class="mono-label">The operator behind it</span>
+    </p>
+    <div class="mt-6 flex flex-col gap-5 text-lg leading-relaxed text-ink-muted">
+      <p>
+        Five years as a Supply Chain Analyst at a global home-appliance manufacturer — deep inside
+        end-to-end supply-chain operations: the flow of material through
+        real plants and the systems that run it, from planning and sourcing to production, logistics,
+        warehousing and engineering. Not adjacent to it, not advising on it from a deck: actually
+        running the parts most software is built without ever touching — down to the MRP and BOM
+        mechanics underneath.
+      </p>
+      <p>
+        That’s the moat. When the problem is a tangle of planning logic, material constraints, and
+        the gaps your ERP left behind, I understand it in operational terms before a single line of
+        code exists — so what gets built solves the real problem, not a tidy abstraction of it.
+      </p>
+      <p>
+        And the AI half isn’t new. A passion for it ran alongside the operations work the whole way —
+        and it’s now formally part of my role, helping shape the path, scope, and implementations of
+        AI across the company’s North America region.
+      </p>
+      <p>
+        The same instinct travels. Strip the domain away and the job is constant: find the hard,
+        specific, one-off problem nobody will build a product for — and ship the exact tool that
+        solves it.
+      </p>
+      <p>
+        But the part that actually drives me isn’t the building — it’s the sharing. AI is the
+        biggest leveler small business has ever had. The shop running on spreadsheets can
+        have its data turned into a working tool today, and own the custom system it runs on
+        tomorrow — no enterprise budget, no license, no asking permission.
+      </p>
+      <p class="text-ink">
+        The businesses that harness that won’t just keep up; they’ll own what they used to buy off the shelf.
+        That’s the new shape of the <span class="aiq-accent">American Dream</span> — and helping more of them reach it is
+        the whole point of AppliedIQ.
+      </p>
+      <p class="text-base">
+        See where that’s pointed —{' '}
+        <a href="/main-street/" class="link-sweep">
+          my focus on local small business →
+        </a>
+      </p>
+    </div>
+  </section>
+
+  {/* ── /02 Beyond the moat (reused Breadth section) ──────────────────── */}
+  <Breadth />
+
+  {/* ── /03 Connect ───────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 03</span>
+      <span class="mono-label">Connect</span>
+    </p>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-ink-muted">
+      The direct lines — no funnel, no gatekeeper.
+    </p>
+    <div class="mt-6 flex flex-wrap gap-3">
+      {socialLinks.map((s) => (
+        <a href={s.href} target="_blank" rel="noopener" class="btn btn-secondary">
+          <SocialIcon path={s.iconPath} size={16} />
+          {s.name}
+        </a>
+      ))}
+      <a href={`mailto:${cardEmail}`} class="btn btn-secondary">
+        <Mail size={16} aria-hidden="true" />
+        Email
+      </a>
+      <a href="/card/" class="btn btn-secondary">
+        <QrCode size={16} aria-hidden="true" />
+        Digital card
+      </a>
+    </div>
+  </section>
+
+  {/* ── Closing CTA ───────────────────────────────────────────────────── */}
+  <Cta />
+</MarketingLayout>

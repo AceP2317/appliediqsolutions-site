@@ -1,0 +1,24 @@
+---
+import Section from '../Section.astro';
+import Stat from '../Stat.astro';
+import { proofStats } from '../../data/home';
+---
+<Section tone="surface">
+  <p class="text-sm font-medium text-ink-muted sm:text-base">
+    Built by an operator who works these problems daily — at real scale, inside a major manufacturer.
+  </p>
+  <p class="mt-4 max-w-2xl font-display text-xl font-medium leading-snug text-ink sm:text-2xl">
+    No mockups. The tools on this site are running in your browser right now.
+  </p>
+
+  {/* One column on phones, not two. At 390px a 2-col grid gives each stat a
+      155px column, and the captions below wrapped to 15+ ragged lines each.
+      Full-width single column is both readable AND shorter. */}
+  <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-4">
+    {proofStats.map((s) => (
+      <Stat value={s.value} label={s.label} caption={s.caption} valueClass={s.valueClass} link={s.link} />
+    ))}
+  </div>
+
+  {/* SLOT: when a client consents to be named, a logo / named-client row goes here. */}
+</Section>

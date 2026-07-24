@@ -1,0 +1,68 @@
+---
+/**
+ * BlogEntry — one card in the /blog stream. Instrument register: a mono
+ * datetime readout, a source chip (colored status dot per network), and a
+ * bare kind label. Authored articles show their excerpt and link inward;
+ * syndicated entries (Ian's own words only — house comments policy) render
+ * their full markdown body and link out to the original conversation.
+ */
+import { render, type CollectionEntry } from 'astro:content';
+import {
+  SOURCE_META,
+  KIND_LABELS,
+  formatEntryDate,
+  hasDetailPage,
+  isoDate,
+} from '../data/blog';
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+}
+const { entry } = Astro.props;
+const { data } = entry;
+const meta = SOURCE_META[data.source];
+const detail = hasDetailPage(entry);
+
+// Articles show their excerpt on the stream; everything else renders in full.
+let Content = null;
+if (!detail) ({ Content } = await render(entry));
+---
+<article class="panel reveal lift spotlight p-6 sm:p-7">
+  {/* Top rail — the readout line */}
+  <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+    <time datetime={isoDate(data.publishedAt)} class="font-mono text-xs tracking-wide text-ink-faint">
+      {formatEntryDate(data.publishedAt)}
+    </time>
+    <div class="flex items-center gap-2.5">
+      {data.draft && <span class="chip" style="color: var(--color-warn); border-color: var(--color-warn);">Draft</span>}
+      <span class="chip">
+        <span class="chip-dot" style={`background: ${meta.dot};`}></span>
+        {meta.label}
+      </span>
+      <span class="mono-label">{KIND_LABELS[data.kind]}</span>
+    </div>
+  </div>
+
+  {/* Body */}
+  <h3 class="mt-4 font-display text-xl font-semibold tracking-tight text-ink">
+    {detail ? <a href={`/blog/${entry.id}/`} class="transition-colors hover:text-accent-2">{data.title}</a> : data.title}
+  </h3>
+  {detail ? (
+    <p class="mt-2 leading-relaxed text-ink-muted">{data.description}</p>
+  ) : (
+    <div class="post-prose mt-2 text-[0.95rem]">
+      {Content && <Content />}
+    </div>
+  )}
+
+  {/* Foot — where this entry actually lives */}
+  <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm font-medium">
+    {detail && <a href={`/blog/${entry.id}/`} class="link-sweep">Read →</a>}
+    {!detail && data.sourceUrl && (
+      <a href={data.sourceUrl} target="_blank" rel="noopener" class="link-sweep">
+        View original →
+      </a>
+    )}
+    <span class="text-xs text-ink-faint">{data.author}</span>
+  </div>
+</article>

@@ -1,0 +1,12 @@
+---
+import Section from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import Faq from '../Faq.astro';
+import { faq } from '../../data/home';
+---
+<Section id="faq" tone="surface">
+  <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+    <SectionHead index="/ 09" eyebrow="FAQ" title="Questions before you start." />
+    <Faq items={faq} />
+  </div>
+</Section>

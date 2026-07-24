@@ -1,0 +1,41 @@
+---
+/**
+ * Capability — a compact problem-shape card (icon chip + title + body) for the
+ * secondary "breadth" grid. Icon is a string key resolved to a Lucide glyph,
+ * so the content can live in src/data/home.ts as plain data.
+ */
+import { Puzzle, ScanSearch, Radar, Activity, Wrench, Boxes, Layers, GitBranch } from '@lucide/astro';
+
+const icons = {
+  puzzle: Puzzle,
+  'scan-search': ScanSearch,
+  radar: Radar,
+  activity: Activity,
+  wrench: Wrench,
+  boxes: Boxes,
+  layers: Layers,
+  'git-branch': GitBranch,
+};
+
+interface Props {
+  icon: keyof typeof icons;
+  title: string;
+  body: string;
+  /** Evidence link — the live tool that demonstrates this problem-shape. */
+  proof?: { href: string; label: string };
+}
+const { icon, title, body, proof } = Astro.props;
+const Icon = icons[icon] ?? Wrench;
+---
+<div class="panel group lift spotlight flex flex-col gap-4 p-6">
+  <span class="inline-flex w-fit rounded-lg border border-accent/30 bg-accent/10 p-2.5 text-accent-2">
+    <Icon size={20} stroke-width={1.75} aria-hidden="true" />
+  </span>
+  <h3 class="font-display text-lg font-semibold text-ink">{title}</h3>
+  <p class="text-sm leading-relaxed text-ink-muted">{body}</p>
+  {proof && (
+    <a href={proof.href} class="link-sweep mt-auto w-fit pt-1 text-sm font-medium">
+      See it live: {proof.label} <span aria-hidden="true">→</span>
+    </a>
+  )}
+</div>

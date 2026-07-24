@@ -1,0 +1,13 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Provencher;Ian;;;
+FN:Ian Provencher
+ORG:AppliedIQ Solutions
+TITLE:Supply-Chain Operator · AI Explorer
+EMAIL;TYPE=WORK:ian@appliediqsolutions.com
+URL:https://appliediqsolutions.com
+item1.URL:https://www.linkedin.com/in/ian-provencher/
+item1.X-ABLabel:LinkedIn
+item2.URL:https://nextdoor.com/page/appliediq-solutions-new-bern-nc/
+item2.X-ABLabel:Nextdoor
+END:VCARD

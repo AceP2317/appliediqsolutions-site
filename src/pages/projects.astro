@@ -1,0 +1,217 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Button from '../components/Button.astro';
+import LabSchematic from '../components/LabSchematic.astro';
+import ShipLog from '../components/ShipLog.astro';
+import { demos } from '../data/demos';
+import { ArrowUpRight } from '@lucide/astro';
+
+// Copy drafted from real, de-identified facts — no employer named on this page
+// (employer-name firewall). The "In motion now" tool count reads from demos.length
+// so it never goes stale as the set grows.
+const inMotion = [
+  {
+    title: 'AI, applied across a manufacturing operation',
+    body:
+      'Day to day, I help shape where and how AI gets applied across a large manufacturer’s North America supply chain — reading the operation closely enough to point AI at the problems that actually move the needle, then seeing the build through. The tools on this site are the de-identified proof of that instinct: the same read on plan stability, inbound flow, and master-data health, turned into software people use.',
+  },
+  {
+    title: 'Growing AppliedIQ’s live toolset',
+    body:
+      `${demos.length} working tools now, across demand and planning, inbound and inventory, and master data and parameters — each a real app on synthetic data, built for one specific operational problem. The set grows as new problems prove worth solving in the open: another working app you can open and use, never a slide.`,
+  },
+  {
+    title: 'Tailoring around big systems',
+    body:
+      'The problem this is built for: an established operation moving mountains to make a big-name system do one specific thing. The platform stays — what gets built is the tool, process, or integration that makes it fit how you actually run, not the average company the software was designed for.',
+  },
+  {
+    title: 'Full-stack apps, secured and deployed',
+    body:
+      'The tools here start as single-file apps — the next step is standing them up as real software: user sign-in and access control, a Postgres database behind them, built for a whole team and deployed on the Abacus.ai platform. Production-shaped, not a prototype in a browser tab.',
+  },
+];
+
+// Lab cards are capability-level ONLY — no hostnames, providers, platform or
+// repo names that could map the personal estate (security/OSINT rule).
+const lab = [
+  {
+    title: 'A personal AI-agent stack',
+    body:
+      'Always-on agents running on a hardened private server: message-driven assistants I use from my phone, scheduled jobs that watch and report, and a private knowledge vault behind zero-trust access. Built, secured, and operated end to end — the same shape of system a business would own.',
+  },
+  {
+    title: 'An AI build system, not just a tool',
+    body:
+      'A private library of custom skills and operating doctrine that turns AI coding into a repeatable build system — the tooling behind how a pain point becomes deployed software in hours. Every project sharpens the system that builds the next one.',
+  },
+  {
+    title: 'This site — you’re inside the proof',
+    body:
+      'AppliedIQ itself is a personal full-stack build: static site, a Cloudflare Worker backend, a live AI assistant wired to the Anthropic API, and a digital business card that installs like an app. Everything this site claims about shipping real software, demonstrated on the surface you’re reading it on.',
+  },
+];
+
+const roadmap = [
+  {
+    title: 'SAP-native, not SAP-adjacent',
+    body:
+      'Extending the work onto SAP’s own Business Technology Platform (BTP) — so the tools plug into SAP directly instead of running beside it: integration, extensions, and AI where the ERP data already lives. Early groundwork underway.',
+  },
+  {
+    title: 'AI inside the SAP workflow',
+    body:
+      'SAP Joule — SAP’s generative-AI copilot — is next on the horizon: hands-on development to put AI assistance inside the SAP flow itself, not bolted on beside it.',
+  },
+  {
+    title: 'From tool to owned system',
+    body:
+      'The direction the work points: a single tool today, and — for the businesses ready for it — the full custom system they run on and own outright. No license, no subscription, no lock-in.',
+  },
+  {
+    title: 'The person behind the practice',
+    body:
+      'AppliedIQ is the practice — next comes the builder. A personal brand and projects site under my own name is in build now: a home for the builds, experiments, and ideas that reach beyond operational software. Launching soon.',
+  },
+];
+---
+<MarketingLayout
+  title="Projects"
+  description="What I'm building now — current focus, recent operational tools you can use, and what's shipping next."
+  image="/og/projects.png?v=1"
+  brains={['top-right', 'bottom-center']}
+>
+  {/* ── Intro hero (branded well) ─────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-24">
+      <p class="mono-label">Current projects</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        What I’m building now.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Live work, in motion — what’s on the bench, the recent builds you can already use, and
+        what’s shipping next. All of it aimed at the same thing: putting real, owned AI tools in
+        the hands of the businesses ready to harness them.
+      </p>
+    </div>
+  </section>
+
+  {/* ── /01 In motion now ─────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 01</span>
+      <span class="mono-label">In motion now</span>
+    </p>
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      {inMotion.map((p) => (
+        <div class="panel flex flex-col gap-3 p-7">
+          <h2 class="font-display text-xl font-semibold text-ink">{p.title}</h2>
+          <p class="leading-relaxed text-ink-muted">{p.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ── /02 Recent builds (the live tools, de-identified) ─────────────── */}
+  <section class="section-band">
+    <div class="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 02</span>
+        <span class="mono-label">Recent builds</span>
+      </p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Recent operational tools — live, and yours to use.
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Real tools, rebuilt as de-identified demos running on synthetic data. Open any one and
+        start clicking — no login, nothing to install.
+      </p>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {demos.map((d) => (
+          <a
+            href={`/work/${d.slug}/`}
+            class="panel group lift spotlight flex flex-col gap-3 p-6"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <h3 class="font-display text-lg font-semibold text-ink">{d.name}</h3>
+              <ArrowUpRight
+                size={18}
+                class="shrink-0 text-ink-faint transition-colors group-hover:text-accent-2"
+                aria-hidden="true"
+              />
+            </div>
+            <p class="text-sm leading-relaxed text-ink-muted">{d.tagline}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ── /03 The lab (personal builds — capability proof) ──────────────── */}
+  <section class="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 03</span>
+      <span class="mono-label">The lab</span>
+    </p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      What I build for myself.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      The fastest read on a builder is what they build when nobody’s paying. These run every day.
+    </p>
+    <div class="mt-10">
+      <LabSchematic />
+    </div>
+    <div class="mt-6 grid gap-4 md:grid-cols-3">
+      {lab.map((p) => (
+        <div class="panel lift spotlight flex flex-col gap-3 p-7">
+          <h3 class="font-display text-lg font-semibold text-ink">{p.title}</h3>
+          <p class="leading-relaxed text-ink-muted">{p.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ── /04 On the roadmap ────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 04</span>
+      <span class="mono-label">On the roadmap</span>
+    </p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      What’s shipping next.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      Two directions: taking the work up the stack — from tools that sit beside the enterprise
+      system to AI built inside it — and taking more of it public, under my own name.
+    </p>
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      {roadmap.map((p) => (
+        <div class="panel lift spotlight flex flex-col gap-3 p-7">
+          <h3 class="font-display text-lg font-semibold text-ink">{p.title}</h3>
+          <p class="leading-relaxed text-ink-muted">{p.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ── /05 The ship log — the velocity claim, receipted from git ─────── */}
+  <ShipLog />
+
+  {/* ── Light CTA ─────────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 pb-20 text-center sm:pb-28">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      Have one that belongs on this list?
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      If you’ve got a hard, specific problem worth building for, tell me about it — it might be the
+      next thing in motion.
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/" variant="primary">Start a project</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </section>
+</MarketingLayout>

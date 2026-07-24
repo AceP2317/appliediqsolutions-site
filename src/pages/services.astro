@@ -1,0 +1,194 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Button from '../components/Button.astro';
+import ServiceLadder from '../components/ServiceLadder.astro';
+import { builds, projectModel, pricingNotes, type BuildIcon } from '../data/services';
+import { Wrench, Layers, Database, Plug, Sparkles, Check, ArrowUpRight } from '@lucide/astro';
+
+const buildIcons: Record<BuildIcon, any> = {
+  wrench: Wrench,
+  layers: Layers,
+  database: Database,
+  plug: Plug,
+  sparkles: Sparkles,
+};
+
+const origin = new URL(Astro.site!).origin;
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/services/#service`,
+    name: 'Custom supply-chain software & AI tooling',
+    serviceType: 'Custom operational software development',
+    provider: { '@id': `${origin}/#organization` },
+    areaServed: 'US',
+    description:
+      'Custom operational software — a single tool, a connected suite, a full system you own, or integration into the systems you already run.',
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'What I build',
+      itemListElement: [
+        'A single operational tool',
+        'A connected tool suite',
+        'A full custom system you own',
+        'Integration & implementation into existing systems',
+      ].map((name) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name } })),
+    },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: `${origin}/services/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="Services"
+  description="Custom supply-chain software built by a supply-chain operator — one tool, a suite, a full system you own, or integration into what you run. Quote-based, yours."
+  image="/og/services.png?v=1"
+  brains={['top-right', 'mid-left', 'bottom-center']}
+>
+  {/* ── Hero — lead with the work, not the rate card ──────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-24">
+      <p class="mono-label">Services</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        What I build — and how we build it together.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        From a single tool to a full system you own — pointed at the operational problems your
+        software was never going to solve. No rate card: every engagement starts with a fixed
+        quote and ends with software that’s yours.
+      </p>
+    </div>
+  </section>
+
+  {/* ── /01 What I build ──────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 01</span>
+      <span class="mono-label">What I build</span>
+    </p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      One tool, a suite, or the whole system.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      A scope ladder, not a fixed menu — most engagements start small and specific, and grow only
+      if the problem warrants it.
+    </p>
+
+    <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {builds.map((b) => {
+        const Icon = buildIcons[b.icon];
+        return (
+          <div class="panel lift spotlight flex flex-col gap-3 p-6">
+            <span class="grid h-11 w-11 place-items-center rounded-lg border border-line bg-canvas text-accent-2">
+              <Icon size={20} aria-hidden="true" />
+            </span>
+            <h3 class="font-display text-lg font-semibold text-ink">{b.title}</h3>
+            <p class="text-sm leading-relaxed text-ink-muted">{b.body}</p>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  {/* ── /02 How we work together ──────────────────────────────────────────── */}
+  <section class="section-band">
+    <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 02</span>
+        <span class="mono-label">How we work together</span>
+      </p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Start with one build — or climb as you grow.
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        A single defined project with no commitment, or an ongoing relationship that scales with
+        you — from your first tool to a standing partnership.
+      </p>
+
+      {/* One-off: Project */}
+      <div class="panel lift spotlight mt-10 p-7 sm:flex sm:items-start sm:justify-between sm:gap-10">
+        <div class="max-w-md">
+          <p class="mono-label text-cyan-deep">One-off</p>
+          <h3 class="mt-2 font-display text-xl font-semibold text-ink sm:text-2xl">{projectModel.title}</h3>
+          <p class="mt-1 text-sm text-ink-muted">{projectModel.tagline}</p>
+        </div>
+        <ul class="mt-5 flex flex-col gap-2.5 sm:mt-0 sm:max-w-sm">
+          {projectModel.includes.map((item) => (
+            <li class="flex items-start gap-2.5 text-sm leading-relaxed text-ink-muted">
+              <Check size={16} class="mt-0.5 shrink-0 text-up" aria-hidden="true" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Ongoing: the 6-rung ladder */}
+      <p class="mono-label mt-12 text-cyan-deep">Ongoing — pick your altitude</p>
+      <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink-muted">
+        Six rungs, from your very first tool to a standing partnership — climb only as far as the
+        business needs.
+      </p>
+      <div class="mt-8 max-w-3xl">
+        <ServiceLadder />
+      </div>
+    </div>
+  </section>
+
+  {/* ── /03 How pricing works (premium, quote-based, concrete) ────────────── */}
+  <section class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 03</span>
+      <span class="mono-label">How pricing works</span>
+    </p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      No rate card — a real quote instead.
+    </h2>
+
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      {pricingNotes.map((n) => (
+        <div class="panel lift spotlight p-7">
+          <h3 class="font-display text-lg font-semibold text-ink">{n.title}</h3>
+          <p class="mt-2 leading-relaxed text-ink-muted">{n.body}</p>
+        </div>
+      ))}
+    </div>
+
+    {/* Quiet small-business / website fold-in — deliberately understated. */}
+    <div class="panel lift spotlight mt-4 border-accent/30 p-7">
+      <p class="mono-label text-cyan-deep">Just getting online?</p>
+      <p class="mt-2 max-w-3xl leading-relaxed text-ink-muted">
+        Running your business off a Facebook page — or nothing at all? I’ll build you a real
+        website you own, not a rented template or a profile on someone else’s platform. Same
+        principle as everything else here: it’s yours, and you’re not paying rent on it forever.
+        <span class="text-ink-faint"> (Ongoing upkeep is optional, on a retainer.)</span>
+      </p>
+      <p class="mt-3">
+        <a href="/main-street/" class="link-sweep text-sm">
+          More on the local small-business focus →
+        </a>
+      </p>
+    </div>
+  </section>
+
+  {/* ── Closing CTA → quote intent ────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 pb-20 text-center sm:pb-28">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      Tell me the problem. I’ll scope the fix.
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      Whichever shape it takes, it starts the same way: you describe the problem, I tell you
+      straight how I’d build it — and what it’ll take.
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/?intent=quote" variant="primary">Request a quote</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </section>
+</MarketingLayout>

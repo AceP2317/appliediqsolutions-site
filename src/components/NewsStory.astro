@@ -1,0 +1,84 @@
+---
+/**
+ * NewsStory — one story card on /ai-news (the autonomous "AI Signal" desk).
+ * Frontmatter-only data (no markdown render — uniform cards, no injection
+ * surface). Every card is explicitly badged AI-GENERATED and links out to its
+ * sources; `featured` is the Spotlight treatment. The "AppliedIQ angle" block
+ * renders only when the pipeline judged the tie-in genuine (earned, not
+ * everywhere — house register: restraint over pitch).
+ */
+import type { CollectionEntry } from 'astro:content';
+import { formatEntryDate, isoDate } from '../data/blog';
+import { TIER_META } from '../data/news';
+
+interface Props {
+  entry: CollectionEntry<'news'>;
+  featured?: boolean;
+}
+const { entry, featured = false } = Astro.props;
+const { data } = entry;
+const tierChip = TIER_META[data.tier];
+---
+<article
+  class:list={[
+    'panel reveal lift spotlight',
+    featured ? 'border-accent/40 p-7 sm:p-9' : 'p-6 sm:p-7',
+  ]}
+>
+  {/* Top rail — the readout line */}
+  <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+    <time datetime={isoDate(data.publishedAt)} class="font-mono text-xs tracking-wide text-ink-faint">
+      {formatEntryDate(data.publishedAt)}
+    </time>
+    <div class="flex items-center gap-2.5">
+      {tierChip && (
+        <span class="chip" style="color: var(--color-warn); border-color: var(--color-warn);">
+          {tierChip.label}
+        </span>
+      )}
+      <span class="chip">
+        <span class="chip-dot" style="background: var(--color-accent);"></span>
+        AI-generated
+      </span>
+    </div>
+  </div>
+
+  {/* Headline + brief */}
+  <h3
+    class:list={[
+      'mt-4 font-display font-semibold tracking-tight text-ink',
+      featured ? 'text-2xl sm:text-3xl' : 'text-xl',
+    ]}
+  >
+    {data.title}
+  </h3>
+  <p class="mt-3 leading-relaxed text-ink-muted">{data.summary}</p>
+
+  {/* Why it matters — always present */}
+  <div class="mt-5">
+    <p class="mono-label">Why it matters</p>
+    <p class="mt-2 leading-relaxed text-ink-muted">{data.implications}</p>
+  </div>
+
+  {/* The AppliedIQ angle — only when earned */}
+  {data.angle && (
+    <div class="mt-5 border-l-2 border-accent pl-4">
+      <p class="mono-label">The AppliedIQ angle</p>
+      <p class="mt-2 leading-relaxed text-ink">{data.angle}</p>
+    </div>
+  )}
+
+  {/* Sources — every story links out */}
+  <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm font-medium">
+    {data.sources.map((s) => (
+      <a
+        href={s.url}
+        target="_blank"
+        rel="noopener"
+        class="link-sweep"
+      >
+        via {s.name} →
+      </a>
+    ))}
+  </div>
+</article>

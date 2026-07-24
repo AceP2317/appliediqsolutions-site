@@ -1,0 +1,163 @@
+---
+/**
+ * SiteHeader — grouped primary nav (lg+). The mobile bar takes over below lg.
+ *
+ * Why grouped: the site outgrew a flat bar. Ten flat links leave EXACTLY 0px of
+ * slack at the lg breakpoint (1024px) — measured — and visibly break there: the
+ * wordmark collides with the first link and three items wrap. Grouping Bio /
+ * Approach / Projects under "About" and Blog / AI News under "Writing" takes it
+ * to seven roomy top-level items, and the space that frees is what lets the
+ * flagship (/confirmation-outlook/, a hosted service with no /work/ row) finally
+ * have a nav home. Nothing was demoted to get here.
+ *
+ * Zero JS. The panels reveal on `group-hover` AND `group-focus-within`, and they
+ * hide with `opacity-0 pointer-events-none` — NOT `invisible`. This is
+ * load-bearing: `visibility: hidden` removes the child links from the tab order,
+ * which would strand a keyboard user on a menu they can never open. Opacity keeps
+ * them focusable, so tabbing into one reveals its panel.
+ */
+import Wordmark from './Wordmark.astro';
+import { ChevronDown } from '@lucide/astro';
+
+const path = Astro.url.pathname;
+
+type Item = { href: string; label: string; note?: string };
+type Entry = { label: string; href?: string; children?: Item[] };
+
+const nav: Entry[] = [
+  {
+    label: 'Work',
+    href: '/work/',
+    children: [
+      { href: '/work/', label: 'All live tools', note: 'Open one in your browser' },
+      { href: '/confirmation-outlook/', label: 'Confirmation Outlook', note: 'The flagship — a live service' },
+    ],
+  },
+  { label: 'Main Street', href: '/main-street/' },
+  { label: 'Services', href: '/services/' },
+  {
+    label: 'About',
+    children: [
+      { href: '/bio/', label: 'Bio', note: 'The operator behind the tools' },
+      { href: '/approach/', label: 'Approach', note: 'How a problem becomes software' },
+      { href: '/projects/', label: 'Projects', note: 'What’s building now' },
+    ],
+  },
+  {
+    label: 'Writing',
+    children: [
+      { href: '/blog/', label: 'Field notes', note: 'Posts and mentions' },
+      { href: '/ai-news/', label: 'AI News', note: 'A daily autonomous desk' },
+    ],
+  },
+  { label: 'FAQ', href: '/faq/' },
+  { label: 'Contact', href: '/contact/' },
+];
+
+const isActive = (href: string) =>
+  path === href || path.startsWith(href.endsWith('/') ? href : href + '/');
+// A group reads as active when any of its children is the current page.
+const groupActive = (e: Entry) =>
+  (e.href ? isActive(e.href) : false) || (e.children?.some((c) => isActive(c.href)) ?? false);
+---
+{/* The frosted blur is DESKTOP-ONLY (`lg:`). A sticky header carrying a
+    `backdrop-filter` sits pinned over scrolling content, so the browser
+    re-rasterizes whatever is behind it on EVERY scroll frame — on a phone that is a
+    top cause of choppy scrolling. On mobile it goes near-solid instead: visually
+    near-identical at that size (the net barely reads behind a 95% bar anyway) and
+    free to composite.
+
+    The blur is a Tailwind UTILITY, so it CANNOT be turned off from @layer components
+    — v4 puts utilities in a later layer, which wins regardless of specificity. It has
+    to be made conditional here, in the markup. */}
+<header
+  class="sticky top-0 z-50 border-b border-line bg-canvas/95 lg:bg-canvas/80 lg:backdrop-blur-md lg:supports-[backdrop-filter]:bg-canvas/65"
+>
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+    <Wordmark />
+    <div class="flex items-center gap-2">
+      <nav class="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
+        {
+          nav.map((entry) => {
+            const active = groupActive(entry);
+            // `relative` anchors the active underline; the link is inline-flex so the
+            // chevron rides beside the label, which means the underline must be an
+            // absolutely-positioned child, not a block sibling.
+            const linkCls = `relative inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+              active ? 'text-ink' : 'text-ink-muted hover:text-ink'
+            }`;
+            const underline = (
+              <span
+                class="absolute bottom-1 left-1/2 h-px w-4 -translate-x-1/2 bg-accent"
+                aria-hidden="true"
+              />
+            );
+
+            if (!entry.children) {
+              return (
+                <a href={entry.href} aria-current={active ? 'page' : undefined} class={linkCls}>
+                  {entry.label}
+                  {active && underline}
+                </a>
+              );
+            }
+
+            return (
+              <div class="group relative">
+                {/* The trigger is a real link when the group has a page of its own
+                    (Work → /work/); About and Writing are labels only. */}
+                {entry.href ? (
+                  <a href={entry.href} aria-current={active ? 'page' : undefined} class={linkCls}>
+                    {entry.label}
+                    <ChevronDown
+                      size={13}
+                      class="opacity-50 transition-transform duration-200 group-hover:translate-y-0.5"
+                      aria-hidden="true"
+                    />
+                    {active && underline}
+                  </a>
+                ) : (
+                  <span class={`${linkCls} cursor-default`}>
+                    {entry.label}
+                    <ChevronDown
+                      size={13}
+                      class="opacity-50 transition-transform duration-200 group-hover:translate-y-0.5"
+                      aria-hidden="true"
+                    />
+                    {active && underline}
+                  </span>
+                )}
+
+                {/* opacity-0 + pointer-events-none, never `invisible` — the links
+                    must stay in the tab order so focus can open the panel. */}
+                <div
+                  class="pointer-events-none absolute left-0 top-full w-64 pt-2 opacity-0 transition-opacity duration-150 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100"
+                >
+                  <ul class="panel flex flex-col gap-0.5 p-2 shadow-2xl shadow-black/50">
+                    {entry.children.map((c) => (
+                      <li>
+                        <a
+                          href={c.href}
+                          aria-current={isActive(c.href) ? 'page' : undefined}
+                          class={`block rounded-md px-3 py-2 transition-colors ${
+                            isActive(c.href) ? 'bg-surface-2 text-ink' : 'text-ink-muted hover:bg-surface-2 hover:text-ink'
+                          }`}
+                        >
+                          <span class="block text-sm font-medium">{c.label}</span>
+                          {c.note && <span class="mt-0.5 block text-xs text-ink-faint">{c.note}</span>}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })
+        }
+      </nav>
+      <a href="/contact/" class="btn btn-primary inline-flex px-4 py-2 text-sm">
+        Start a project
+      </a>
+    </div>
+  </div>
+</header>

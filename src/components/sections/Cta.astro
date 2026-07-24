@@ -1,0 +1,25 @@
+---
+import Button from '../Button.astro';
+
+const email = 'contact@appliediqsolutions.com';
+---
+<section class="section relative scroll-mt-20 overflow-hidden border-t border-line">
+  <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-30"></div>
+
+  {/* brain-clear: the bottom-center brain sits directly behind this block. Without
+      a clearing, the muted paragraph washes out against its lit node field. */}
+  <div class="relative mx-auto max-w-3xl px-6 text-center">
+    <h2 class="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl md:text-5xl">
+      The problem your software never solved — that’s exactly what I solve.
+    </h2>
+    <p class="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-ink-muted">
+      Tell me the one thing your systems never did for you. I’ll give you a straight answer on how
+      I’d build it — then build it, <span class="aiq-accent">yours to own</span>. Every build starts with a
+      fixed quote, so you know the number up front. I read every message myself.
+    </p>
+    <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/" variant="primary">Start a project</Button>
+      <Button href={`mailto:${email}`} variant="secondary" arrow="none">{email}</Button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,225 @@
+---
+// Self-hosted type (Fontsource) — no external font CDN.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
+// The display font paints the LCP headline on every page — preload it so the
+// first paint doesn't FOUT-swap. Body/mono fonts load via CSS as usual.
+import spaceGroteskWoff2 from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+import { sameAs } from '../data/links';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  /** Extra JSON-LD nodes for this page, merged into the site-wide @graph. */
+  schema?: Record<string, unknown>[];
+  /** Keep this page out of search indexes (shareable, but not crawled). */
+  noindex?: boolean;
+  /** Per-page web-app manifest — lets a page install as its own app (e.g. /ian-card). */
+  manifest?: string;
+  /** RSS feed for this page (e.g. /blog/rss.xml) — emits <link rel="alternate">. */
+  rssHref?: string;
+}
+
+const {
+  title = 'AppliedIQ Solutions',
+  description = 'Live, interactive supply-chain tools you can use right now — working software, not slideware. I direct AI to build the tools big systems leave out.',
+  // ?v=N cache-busts social scrapers (LinkedIn pins og:image by URL for ~7 days,
+  // and /og/* is also Cache-Control: max-age=604800 at the edge). Bump N by hand
+  // whenever gen-og.mjs regenerates this card's pixels; see DECISIONS.md.
+  image = '/og/default.png?v=2',
+  schema = [],
+  noindex = false,
+  manifest = '/site.webmanifest',
+  rssHref,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+const isHome = Astro.url.pathname === '/';
+const fullTitle = isHome
+  ? `${title} — Custom Supply-Chain Software & AI Tools`
+  : `${title} · AppliedIQ Solutions`;
+
+// ── Structured data ──────────────────────────────────────────────────────
+// Site-wide entity + site nodes; per-page nodes arrive via the `schema` prop.
+// One @graph keeps @id cross-references resolvable; Google dedupes the repeated
+// site nodes across pages.
+const origin = new URL(Astro.site!).origin;
+const orgId = `${origin}/#organization`;
+const personId = `${origin}/#person`;
+const siteGraph: Record<string, unknown>[] = [
+  {
+    '@type': 'ProfessionalService',
+    '@id': orgId,
+    name: 'AppliedIQ Solutions',
+    url: `${origin}/`,
+    logo: `${origin}/android-chrome-512x512.png`,
+    image: `${origin}/og/default.png`,
+    email: 'contact@appliediqsolutions.com',
+    description:
+      'Custom supply-chain software and AI-built operational tools — working software, not slideware.',
+    slogan: 'Working software, not slideware.',
+    founder: { '@id': personId },
+    areaServed: 'US',
+    knowsAbout: [
+      'Supply chain management', 'Material requirements planning (MRP)',
+      'Bill of materials (BOM)', 'Production planning', 'Inventory management',
+      'Logistics', 'Custom software development', 'Applied AI',
+    ],
+  },
+  {
+    '@type': 'Person',
+    '@id': personId,
+    name: 'Ian Provencher',
+    jobTitle: 'Supply-chain operator & software builder',
+    description:
+      'A supply-chain operator who directs AI to ship the operational software big systems leave out.',
+    worksFor: { '@id': orgId },
+    url: `${origin}/bio/`,
+    sameAs,
+    knowsAbout: [
+      'Supply chain operations', 'MRP', 'Bill of materials',
+      'Production planning', 'Applied AI', 'Custom software',
+    ],
+  },
+  {
+    '@type': 'WebSite',
+    '@id': `${origin}/#website`,
+    name: 'AppliedIQ Solutions',
+    url: `${origin}/`,
+    publisher: { '@id': orgId },
+  },
+];
+const jsonLdStr = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [...siteGraph, ...schema],
+}).replace(/</g, '\\u003c');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    {/* 512 DARK chip, for Google Search. Without it Google renders the INDIGO
+        apple-touch-icon: every dark raster icon here is <=48px, Google wants
+        >48px, and it accepts apple-touch-icon as a favicon source. Do not
+        remove. The browser tab is fine either way; search results are not. */}
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href={manifest} />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href={spaceGroteskWoff2} />
+    <meta name="theme-color" content="#0f1117" />
+    <link rel="canonical" href={canonical} />
+    {rssHref && (
+      <link rel="alternate" type="application/rss+xml" title="AppliedIQ Solutions — Field notes" href={rssHref} />
+    )}
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- OpenGraph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AppliedIQ Solutions" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={fullTitle} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'} />
+    <meta name="generator" content={Astro.generator} />
+
+    {/* Structured data — Organization · Person · WebSite + any per-page nodes. */}
+    <script type="application/ld+json" is:inline set:html={jsonLdStr} />
+
+    {/* Scroll-reveal gate. Runs before paint so there is no flash; adds
+        `reveal-on` only when JS runs AND motion is allowed. An
+        IntersectionObserver reveals each `.reveal` once and never re-hides it.
+        On any failure, `reveal-on` is removed so content is always visible. */}
+    <script is:inline>
+      (function () {
+        try {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          var de = document.documentElement;
+          de.classList.add('reveal-on');
+          var run = function () {
+            var els = document.querySelectorAll('.reveal');
+            if (!('IntersectionObserver' in window)) {
+              els.forEach(function (el) { el.classList.add('is-visible'); });
+              return;
+            }
+            var io = new IntersectionObserver(function (entries) {
+              entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+              });
+            }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+            els.forEach(function (el) { io.observe(el); });
+          };
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', run);
+          } else {
+            run();
+          }
+        } catch (e) {
+          try { document.documentElement.classList.remove('reveal-on'); } catch (e2) {}
+        }
+      })();
+    </script>
+
+    {/* Boot sequence — the ambient net draws itself in instead of just being there.
+        Must be inline in <head> and set BEFORE paint, or the finished net flashes
+        first and the animation looks like a glitch rather than a boot. Motion-gated
+        at the source: under reduced motion the class is never added at all. */}
+    <script is:inline>
+      (function () {
+        try {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          document.documentElement.classList.add('net-boot');
+        } catch (e) {}
+      })();
+    </script>
+
+    {/* Decorative only — pointer glows, stat count-up, and the eggs. Astro bundles
+        and defers this. Nothing on the site depends on it: with JS off, every effect
+        is simply absent. */}
+    <script>
+      import '../scripts/spark.js';
+    </script>
+
+    {/* Cloudflare Web Analytics — cookieless RUM (views, referrers, Core Web
+        Vitals). LIVE 2026-07-09: the account's existing Web Analytics site for
+        appliediqsolutions.com (created at launch) was switched from automatic
+        setup — whose injection never reached this Worker-served HTML — to
+        "Enable with JS Snippet installation"; this is that snippet. The token
+        is public by design (it ships to every visitor). PROD-gated so dev
+        sessions don't pollute the data. CSP-Report-Only already allows
+        static.cloudflareinsights.com + cloudflareinsights.com. */}
+    {import.meta.env.PROD && (
+      <script
+        is:inline
+        type="module"
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "f24d0907f57d4cfd970ed6e5ddd77a83"}'></script>
+    )}
+  </head>
+  <body class="min-h-screen antialiased">
+    <a href="#main" class="skip-link">Skip to content</a>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,35 @@
+---
+/**
+ * AnnounceBar — slim, permanent, zero-JS announcement bar pointing to /main-street.
+ * Sitewide (mounted in MarketingLayout above SiteHeader); auto-excluded from the
+ * full-bleed demo pages (they use DemoLayout). It's a normal in-flow block, so it
+ * scrolls away while the sticky header pins to top-0 — no header offset needed.
+ * Self-suppresses on /main-street so it never points people to the page they're on.
+ *
+ * `backdrop-blur-sm` is doing LEGIBILITY work, not decoration: the brains now run at
+ * full intensity and bleed up behind this bar, and an 8%-tint background alone was
+ * not enough to hold the text off them. Blur diffuses whatever is behind it — the
+ * same treatment the sticky header already uses. Deliberately NOT `.brain-clear`:
+ * that utility's -7rem inset would paint a ~264px ellipse down into the hero to
+ * protect a 40px bar.
+ */
+import { Store, ArrowRight } from '@lucide/astro';
+
+const here = Astro.url.pathname.startsWith('/main-street');
+---
+{!here && (
+  <a
+    href="/main-street/"
+    class="group block border-b border-accent/25 bg-accent/[0.08] backdrop-blur-sm transition-colors hover:border-cyan/40 hover:bg-accent/[0.14]"
+  >
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-2.5 gap-y-0.5 px-6 py-2 text-center">
+      <Store size={15} class="hidden shrink-0 text-brass sm:block" aria-hidden="true" />
+      <span class="mono-label text-cyan-deep">Local business · New Bern, NC</span>
+      <span class="hidden text-sm text-ink-muted sm:inline">Custom tools you own, built for Main Street.</span>
+      <span class="inline-flex items-center gap-1 text-sm font-medium text-cyan-deep">
+        Explore
+        <ArrowRight size={14} class="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      </span>
+    </div>
+  </a>
+)}
