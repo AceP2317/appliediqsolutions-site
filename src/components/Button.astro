@@ -1,0 +1,21 @@
+---
+/**
+ * Button — the extracted button recipe (.btn + variant), with the site's
+ * arrow convention and hover nudge. Label comes from the default slot.
+ */
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  arrow?: 'right' | 'down' | 'none';
+  class?: string;
+}
+const { href, variant = 'primary', arrow = 'right', class: className = '' } = Astro.props;
+const arrowChar = arrow === 'down' ? '↓' : '→';
+const nudge = arrow === 'down' ? 'group-hover:translate-y-0.5' : 'group-hover:translate-x-1';
+---
+<a href={href} class:list={['btn', `btn-${variant}`, 'group', className]}>
+  <slot />
+  {arrow !== 'none' && (
+    <span class:list={['inline-block transition-transform', nudge]} aria-hidden="true">{arrowChar}</span>
+  )}
+</a>

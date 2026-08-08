@@ -1,0 +1,162 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Button from '../components/Button.astro';
+import { process, comparison, fit, whoItsFor } from '../data/home';
+import { Check, X, Minus } from '@lucide/astro';
+---
+<MarketingLayout
+  title="Approach"
+  description="Supply-chain operations understood before a line of code — then AI orchestration to ship fast. Working software that's yours to own, not a deck."
+  brains={['top-right', 'bottom-center']}
+>
+  {/* ── Intro ─────────────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-4xl px-6 py-16 sm:py-24">
+      <p class="mono-label">Approach</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Domain mastery, directing AI, into working software.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        The hard part isn’t the AI — it’s knowing exactly <span class="aiq-accent">what to build</span>, and building it so you
+        actually own it. This is how I do it, and who it’s for.
+      </p>
+      <p class="mt-6 text-sm text-ink-muted">
+        New here?{' '}
+        <a href="/bio/" class="link-sweep">
+          Start with who I am →
+        </a>
+      </p>
+    </div>
+  </section>
+
+  {/* ── The method ────────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 01</span>
+      <span class="mono-label">The method</span>
+    </p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      How a problem becomes a tool.
+    </h2>
+
+    <ol class="mt-10 flex flex-col gap-px overflow-hidden rounded-xl border border-line bg-line">
+      {process.map((step) => (
+        <li class="flex flex-col gap-4 bg-surface p-6 sm:flex-row sm:gap-6 sm:p-8">
+          <span class="process-node shrink-0">{step.n}</span>
+          <div>
+            <h3 class="font-display text-xl font-semibold text-ink">{step.title}</h3>
+            <p class="mt-2 leading-relaxed text-ink-muted">{step.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  {/* ── Working software vs. slideware ────────────────────────────────── */}
+  <section class="section-band">
+    <div class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 02</span>
+        <span class="mono-label">The difference</span>
+      </p>
+      <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        It ends at a tool people use — not a slide.
+      </h2>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-2">
+        <div class="panel lift spotlight p-7">
+          <p class="mono-label">{comparison.left.title}</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {comparison.left.items.map((item) => (
+              <li class="flex items-start gap-3 text-ink-muted">
+                <X size={18} class="mt-0.5 shrink-0 text-down" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="panel lift spotlight border-accent/40 p-7">
+          <p class="mono-label text-cyan-deep">{comparison.right.title}</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {comparison.right.items.map((item) => (
+              <li class="flex items-start gap-3 text-ink">
+                <Check size={18} class="mt-0.5 shrink-0 text-up" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Who I build for ───────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 03</span>
+      <span class="mono-label">Who I help</span>
+    </p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      Who I build for — and the problem they’re carrying.
+    </h2>
+
+    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {whoItsFor.map((p) => (
+        <div class="panel lift spotlight flex flex-col gap-3 p-6">
+          <h3 class="font-display text-lg font-semibold text-ink">{p.title}</h3>
+          <p class="text-sm leading-relaxed text-ink-muted">{p.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ── Fit / not a fit ───────────────────────────────────────────────── */}
+  <section class="section-band">
+    <div class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 04</span>
+        <span class="mono-label">Fit</span>
+      </p>
+      <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        A fit — and a not-a-fit.
+      </h2>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-2">
+        <div class="panel lift spotlight p-7">
+          <p class="mono-label text-up">A fit when</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {fit.fit.map((item) => (
+              <li class="flex items-start gap-3 text-ink">
+                <Check size={18} class="mt-0.5 shrink-0 text-up" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="panel lift spotlight p-7">
+          <p class="mono-label text-down">Not a fit if</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {fit.notFit.map((item) => (
+              <li class="flex items-start gap-3 text-ink-muted">
+                <Minus size={18} class="mt-0.5 shrink-0 text-down" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ── CTA ───────────────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 text-center sm:py-20">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      Have a problem that fits?
+    </h2>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/" variant="primary">Start a project</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </section>
+</MarketingLayout>

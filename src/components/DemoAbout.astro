@@ -1,0 +1,40 @@
+---
+/**
+ * DemoAbout — a crawlable "about this tool" prose block rendered below a demo's
+ * live island. The island is client:only (invisible to crawlers), so this gives
+ * each /work/<slug> route real indexable body text + a cold-visitor explainer,
+ * seeded from demos.ts `about`. Zero client JS.
+ */
+interface Props {
+  name: string;
+  about: string;
+  /** A tool-specific first question for the live assistant — renders the
+   *  "Ask the assistant" chip deep-linking to /work/#ask with ?ask= prefilled
+   *  (pre-seeds the input; never auto-sends). */
+  ask?: string;
+}
+const { name, about, ask } = Astro.props;
+const askHref = ask ? `/work/?ask=${encodeURIComponent(ask)}#ask` : null;
+---
+<section class="border-t border-line bg-surface/40">
+  <div class="mx-auto max-w-3xl px-6 py-12 sm:py-16">
+    <p class="mono-label">About this tool</p>
+    <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+      What {name} solves
+    </h2>
+    <p class="mt-4 leading-relaxed text-ink-muted">{about}</p>
+    <div class="mt-8 flex flex-wrap items-center gap-3">
+      <a href="/contact/" class="btn btn-primary">Start a project →</a>
+      <a href="/work/" class="btn btn-secondary">All tools</a>
+      {askHref && (
+        <a
+          href={askHref}
+          class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-sm text-ink-muted transition-colors hover:border-cyan/50 hover:text-ink"
+        >
+          <span class="status-dot"></span>
+          Ask the assistant about this tool
+        </a>
+      )}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,207 @@
+import type { Review } from "./types";
+
+export const MOCK_REVIEWS: Review[] = [
+  {
+    id: "1",
+    platform: "google",
+    author: "Denise M.",
+    rating: 5,
+    text: "Took my car in for a brake job and they had it done same day for less than the dealer quoted. Honest, fast, and friendly.",
+    sampleReply:
+      "Beating the dealer's number on that brake job made our day, Denise — no reason a same-day fix should cost you an arm and a leg. Thanks for the kind words, and we'll be here whenever your car needs us.",
+    date: "2026-07-10",
+    responded: false,
+  },
+  {
+    id: "2",
+    platform: "yelp",
+    author: "Carlos R.",
+    rating: 1,
+    text: "Waited two hours past my appointment time and they never called to explain the delay. Ended up leaving without the work done.",
+    sampleReply:
+      "Carlos, that's on us — two hours past your appointment with no phone call is not how we do things, and I'm sorry we left you sitting. I'd like to make it right and actually get your car taken care of; please give the shop a call and ask for the manager so we can set it straight.",
+    date: "2026-07-08",
+    responded: false,
+  },
+  {
+    id: "3",
+    platform: "facebook",
+    author: "Whitney's Bakery",
+    rating: 5,
+    text: "We use Riverside for our whole delivery fleet. Always straight with us about what actually needs fixing vs. what can wait.",
+    date: "2026-07-05",
+    responded: true,
+    responseText:
+      "Thank you for trusting us with the whole fleet, Whitney's! It means a lot to keep your delivery vans running smoothly. See you at the next service.",
+    respondedAt: "2026-07-06",
+  },
+  {
+    id: "4",
+    platform: "google",
+    author: "Anthony P.",
+    rating: 2,
+    text: "Fixed the noise I brought it in for, but now there's a new rattle that wasn't there before. Not thrilled about coming back for round two.",
+    sampleReply:
+      "That new rattle shouldn't be there, Anthony, and I don't blame you for being frustrated after coming in to quiet things down. Give us a call and we'll get you back in to track it down — no runaround, we'll make it right.",
+    date: "2026-07-03",
+    responded: false,
+  },
+  {
+    id: "5",
+    platform: "yelp",
+    author: "Grace T.",
+    rating: 4,
+    text: "Good work, fair pricing. Only reason it's not 5 stars is the waiting room could use some love — no AC on a 95 degree day.",
+    sampleReply:
+      "You're right, Grace — nobody should be sweating it out in our waiting room on a 95-degree day, and getting that cooled down is on our list. Really glad the work and the pricing treated you well, and thanks for the honest nudge.",
+    date: "2026-06-29",
+    responded: false,
+  },
+  {
+    id: "6",
+    platform: "facebook",
+    author: "Marcus D.",
+    rating: 5,
+    text: "Diagnosed an intermittent stall issue two other shops couldn't figure out. Turned out to be a $40 part. Saved me from a transmission replacement I didn't need.",
+    date: "2026-06-24",
+    responded: true,
+    responseText:
+      "That one had us stumped for a bit too, Marcus — glad we tracked it down before you paid for a transmission you didn't need. Appreciate you giving us the shot.",
+    respondedAt: "2026-06-25",
+  },
+  {
+    id: "7",
+    platform: "google",
+    author: "Priya S.",
+    rating: 1,
+    text: "Quoted me $180, charged me $310, and when I asked why the answer was basically 'that's just how it worked out.' Won't be back.",
+    sampleReply:
+      "A $130 jump with no straight answer is not okay, Priya, and I'm sorry that's how your visit went — you deserved a real explanation, not a shrug. Please call the shop and ask for me directly; I want to walk through that bill line by line and understand what happened.",
+    date: "2026-06-20",
+    responded: false,
+  },
+  {
+    id: "8",
+    platform: "google",
+    author: "Ben L.",
+    rating: 5,
+    text: "Family has been coming here for 15 years. Never once felt like they were trying to upsell me on something I didn't need.",
+    date: "2026-06-15",
+    responded: true,
+    responseText:
+      "15 years means the world to us, Ben. Thank you for sticking with us and for the kind words — we'll keep earning it.",
+    respondedAt: "2026-06-16",
+  },
+  {
+    id: "9",
+    platform: "yelp",
+    author: "Katie W.",
+    rating: 3,
+    text: "Work was fine but it took three days for a job they said would take one. Communication about the delay was pretty thin.",
+    sampleReply:
+      "Thanks for the honest read, Katie. Three days on a one-day job with barely a word from us is a communication miss, plain and simple, and we're working on keeping folks in the loop when a timeline slips. Glad the work itself held up for you.",
+    date: "2026-06-11",
+    responded: false,
+  },
+  {
+    id: "10",
+    platform: "facebook",
+    author: "Old Town Realty",
+    rating: 5,
+    text: "Every agent in our office brings their car here. Quick turnaround and they'll actually explain what's wrong in plain English.",
+    sampleReply:
+      "It means a lot that every agent at Old Town Realty trusts us with their cars — quick turnaround and plain-English answers are exactly what we're going for. Thanks for the steady business, and we'll keep it up for the whole crew.",
+    date: "2026-06-07",
+    responded: false,
+  },
+  {
+    id: "11",
+    platform: "google",
+    author: "Sam H.",
+    rating: 2,
+    text: "Second time they've missed something in an inspection that a different shop caught a week later. Starting to lose confidence.",
+    sampleReply:
+      "Missing something on an inspection twice over is a fair reason to lose confidence, Sam, and I don't take that lightly. I'd like to look into what got past us both times — please give the shop a call and ask for the manager so we can go over the details together.",
+    date: "2026-06-02",
+    responded: false,
+  },
+  {
+    id: "12",
+    platform: "yelp",
+    author: "Rachel N.",
+    rating: 5,
+    text: "Got a flat on a road trip through town and they squeezed me in within the hour so I could get back on the road. Lifesavers.",
+    date: "2026-05-28",
+    responded: true,
+    responseText:
+      "Glad we could get you back on the road quick, Rachel — road trip flats are the worst timing. Safe travels!",
+    respondedAt: "2026-05-28",
+  },
+  {
+    id: "13",
+    platform: "google",
+    author: "Devon K.",
+    rating: 4,
+    text: "Solid mechanics, reasonable prices. Scheduling online could be smoother, had to call twice to confirm my slot.",
+    sampleReply:
+      "Glad the crew and the pricing earned four stars, Devon. You shouldn't have to call twice to lock in a slot, though — we're sorting out the online scheduling so it confirms the first time around. Appreciate you sticking with us through the hiccup.",
+    date: "2026-05-22",
+    responded: false,
+  },
+  {
+    id: "14",
+    platform: "facebook",
+    author: "Lauren F.",
+    rating: 1,
+    text: "Left my car for an oil change and came back to a new scratch on the door. Nobody said anything until I pointed it out myself.",
+    sampleReply:
+      "Finding a scratch nobody mentioned is exactly the kind of thing that breaks trust, Lauren, and I'm sorry it happened on our watch. Please give the shop a call and ask for the manager — I want to take a look at that door myself and make it right.",
+    date: "2026-05-17",
+    responded: false,
+  },
+  {
+    id: "15",
+    platform: "yelp",
+    author: "Mike T.",
+    rating: 5,
+    text: "These guys replaced my alternator in under an hour while I waited. Even showed me the old part and explained why it failed.",
+    date: "2026-05-12",
+    responded: true,
+    responseText:
+      "That's exactly the kind of visit we aim for, Mike — glad we could turn it around fast and show you what was going on under the hood. Thanks for coming in.",
+    respondedAt: "2026-05-13",
+  },
+  {
+    id: "16",
+    platform: "google",
+    author: "Julia A.",
+    rating: 3,
+    text: "Nothing wrong with the repair itself, just wish the estimate process was faster. Waited a day just to get a number back.",
+    sampleReply:
+      "Thanks for the fair review, Julia. Waiting a full day just for an estimate is longer than it ought to be, and we're working on turning those numbers around quicker. Glad the repair itself gave you no trouble.",
+    date: "2026-05-06",
+    responded: false,
+  },
+  {
+    id: "17",
+    platform: "google",
+    author: "Trevor B.",
+    rating: 5,
+    text: "Brought in a car with a mystery electrical issue. They stuck with it until they found it instead of just throwing parts at it.",
+    sampleReply:
+      "Chasing down a gremlin like that instead of just swapping parts and hoping is how we'd want it done on our own cars, Trevor — glad we found it for you. Thanks for trusting us with the tricky one.",
+    date: "2026-04-29",
+    responded: false,
+  },
+  {
+    id: "18",
+    platform: "facebook",
+    author: "Nina C.",
+    rating: 2,
+    text: "Price crept up from the original quote once they 'found more things.' Felt like a bit of a bait and switch honestly.",
+    sampleReply:
+      "Nobody should walk away feeling baited, Nina, and I'm sorry the price climbed on you mid-job. When we find something new, we owe you a call and a clear yes-or-no before any more work happens — please reach out to the shop so I can go over exactly what got added and why.",
+    date: "2026-04-21",
+    responded: false,
+  },
+];

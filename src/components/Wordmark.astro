@@ -1,0 +1,44 @@
+---
+interface Props {
+  href?: string;
+  showSuffix?: boolean;
+  class?: string;
+}
+const { href = '/', showSuffix = true, class: className = '' } = Astro.props;
+// Unique gradient id so multiple <Wordmark>s on one page don't collide.
+const gid = 'aiq-' + Math.random().toString(36).slice(2, 8);
+---
+<a
+  href={href}
+  class={`group inline-flex items-center gap-2.5 ${className}`}
+  aria-label="AppliedIQ Solutions — home"
+>
+  <svg
+    viewBox="0 0 32 32"
+    class="aiq-mark h-7 w-7 shrink-0 transition-transform duration-300 ease-out group-hover:-translate-y-0.5"
+    aria-hidden="true"
+  >
+    <defs>
+      <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#818cf8" />
+        <stop offset="1" stop-color="#22d3ee" />
+      </linearGradient>
+    </defs>
+    <rect x="2" y="2" width="28" height="28" rx="7" fill="#0f1117" stroke="#262c3a" stroke-width="1.5" />
+    {/* i — stem + glowing cyan node (the tittle = a firing synapse).
+        The tittle is also the site's one clickable easter egg: click it and every
+        synapse on the page fires (see spark.js). The second circle is a transparent
+        hit target — the visible node renders at under 2px, which is unclickable. */}
+    <rect x="9" y="13" width="3" height="10" rx="1.5" fill="#e8eaf0" />
+    <g class="aiq-tittle">
+      <circle cx="10.5" cy="9.4" r="1.9" fill="#22d3ee" />
+      <circle cx="10.5" cy="9.4" r="4.6" fill="transparent" />
+    </g>
+    {/* Q — ring + indigo→cyan flow-tail */}
+    <circle cx="20" cy="16" r="5.4" fill="none" stroke="#e8eaf0" stroke-width="2.8" />
+    <path d="M20.6 19.8 L24.4 23.8" stroke={`url(#${gid})`} stroke-width="2.8" stroke-linecap="round" />
+  </svg>
+  <span class="font-display text-[1.05rem] font-semibold leading-none tracking-tight text-ink">
+    Applied<span class="aiq-accent">iQ</span>{showSuffix && <span class="mono-label ml-1.5 align-middle text-[0.6rem]">SOLUTIONS</span>}
+  </span>
+</a>

@@ -1,0 +1,39 @@
+---
+/**
+ * Offers — the three things built for a small business.
+ *
+ * Ported from /main-street/ when the home page became the pitch (D29); home.ts
+ * is now their canonical home and /main-street/ no longer carries the grid.
+ * Icon is a string key resolved to a Lucide glyph so the content stays plain
+ * data, matching the Capability pattern.
+ */
+import Section from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import { offers, offersHead } from '../../data/home';
+import { Globe, Table, Wrench } from '@lucide/astro';
+
+const icons = { globe: Globe, table: Table, wrench: Wrench };
+---
+<Section id="offers" tone="surface">
+  <SectionHead
+    index={offersHead.index}
+    eyebrow={offersHead.eyebrow}
+    title={offersHead.title}
+    lede={offersHead.lede}
+  />
+
+  <div class="mt-10 grid gap-4 md:grid-cols-3">
+    {offers.map((o) => {
+      const Icon = icons[o.icon] ?? Wrench;
+      return (
+        <div class="panel lift lift-brass spotlight flex flex-col gap-3 p-6">
+          <span class="grid h-11 w-11 place-items-center rounded-lg border border-line bg-canvas text-brass">
+            <Icon size={20} aria-hidden="true" />
+          </span>
+          <h3 class="font-display text-lg font-semibold text-ink">{o.title}</h3>
+          <p class="text-sm leading-relaxed text-ink-muted">{o.body}</p>
+        </div>
+      );
+    })}
+  </div>
+</Section>

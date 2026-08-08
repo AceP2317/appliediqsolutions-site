@@ -1,0 +1,79 @@
+---
+/**
+ * ServiceLadder — the 6-rung "ongoing" engagement ladder for /services.
+ * Three bands of two rungs (Just starting · Established · At scale). The node
+ * numerals climb from faint → outlined → filled as the bands rise, and a hairline
+ * connector links the two rungs in each band — so the visual reads as a climb you
+ * make as the business grows. Data in src/data/services.ts. Zero client JS.
+ */
+import { ladder } from '../data/services';
+import { Check } from '@lucide/astro';
+
+// Node treatment climbs with the band index: faint → accent-outline → filled.
+const nodeCls = [
+  'border border-line bg-surface text-ink-faint',
+  'border border-accent/50 bg-surface text-accent-2',
+  'border border-accent bg-accent text-white',
+];
+const bandCls = ['text-ink-faint', 'text-accent-2', 'text-accent-2'];
+---
+<div class="flex flex-col gap-8">
+  {ladder.map((band, bi) => (
+    <div>
+      <p class:list={['mono-label mb-4', bandCls[bi]]}>{band.label}</p>
+      <div>
+        {band.rungs.map((r, ri) => (
+          <div class:list={['rung', ri < band.rungs.length - 1 && 'rung--connected']}>
+            <div class="rung-rail">
+              <span class:list={['rung-node', nodeCls[bi]]}>{r.n}</span>
+            </div>
+            <div class="panel lift flex-1 p-6">
+              <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <h3 class="font-display text-xl font-semibold text-ink">{r.name}</h3>
+                <p class="text-sm text-accent-2">{r.forWhom}</p>
+              </div>
+              <ul class="mt-4 flex flex-col gap-2.5">
+                {r.includes.map((item) => (
+                  <li class="flex items-start gap-2.5 text-sm leading-relaxed text-ink-muted">
+                    <Check size={16} class="mt-0.5 shrink-0 text-up" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .rung { display: flex; gap: 1rem; align-items: stretch; }
+  .rung--connected { margin-bottom: 1rem; }
+  .rung-rail { position: relative; flex: 0 0 2.5rem; display: flex; justify-content: center; }
+  .rung-node {
+    position: relative;
+    z-index: 1;
+    margin-top: 0.25rem;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  /* hairline connector from below this node down to the next rung's node */
+  .rung--connected .rung-rail::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 3rem;
+    bottom: -1.25rem;
+    width: 1px;
+    background: var(--color-line-2);
+  }
+</style>

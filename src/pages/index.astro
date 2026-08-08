@@ -1,0 +1,65 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { homeSchema } from '../data/demos';
+import Opener from '../components/sections/Opener.astro';
+import ProofBar from '../components/sections/ProofBar.astro';
+import LeadOffer from '../components/sections/LeadOffer.astro';
+import Offers from '../components/sections/Offers.astro';
+import Breadth from '../components/sections/Breadth.astro';
+import ToolsDoorway from '../components/sections/ToolsDoorway.astro';
+import Ask from '../components/sections/Ask.astro';
+import Cta from '../components/sections/Cta.astro';
+import { shapesHead } from '../data/home';
+
+const origin = new URL(Astro.site!).origin;
+---
+<MarketingLayout
+  title="AppliedIQ Solutions"
+  description="Custom software for small local business — a real website you own, your spreadsheets turned into a live tool, and Review Autopilot answering every review in your voice. Built by an operator who does this at industrial scale. Yours to own, not rented."
+  brains={['top-right', 'mid-left', 'bottom-center']}
+  schema={homeSchema(origin)}
+>
+  {/* THE PITCH, not a navigation hub (D29). A visitor arriving from Google, a
+      business card, or Nextdoor lands on the offer — not on a menu asking them
+      to pick a door. That reversal is the whole point of this page.
+
+      Order is load-bearing. The offer (LeadOffer, Offers) sits ABOVE the
+      industrial proof (Breadth's at-scale links), because a proof strip leading
+      with manufacturing scale, read before any offer, tells a shop owner this
+      is an enterprise site. If this order ever slips back to proof-first, the
+      pivot fails quietly.
+
+      Confirmation Outlook is NOT a section here and no longer has a portal tile
+      in the Opener — it is a deployed enterprise service, which is exactly the
+      thing this page stopped selling. It keeps its own page, reached from the
+      Work nav group and from /work/'s proof band. It is also not in demos.ts:
+      proofStats says "open any one in your browser", true of the islands and
+      false of it.
+
+      The old LiveTools section is GONE. It made the same proof-at-scale
+      argument the shape grid below already makes, for 763px on a page that
+      measured 9,462px on a phone — and this page's whole history is it growing
+      back (12,696px in July). Its caliber claim moved into the Shapes lede and
+      its one door to /work/ hangs in Breadth's foot slot.
+
+      Indices read /01–/02. Copy lives in src/data/home.ts. */}
+  <Opener />
+  <ProofBar />
+  <LeadOffer />
+  <Offers />
+  <Breadth
+    id="shapes"
+    tone="canvas"
+    index={shapesHead.index}
+    eyebrow={shapesHead.eyebrow}
+    title={shapesHead.title}
+    lede={shapesHead.lede}
+    columns={2}
+    showAreas={false}
+    showScales={true}
+  >
+    <ToolsDoorway />
+  </Breadth>
+  <Ask />
+  <Cta />
+</MarketingLayout>
