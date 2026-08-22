@@ -1,0 +1,23 @@
+---
+/**
+ * Section — uniform vertical rhythm + optional alternating background +
+ * the scroll-reveal hook. The long-scroll home composes these top to bottom.
+ * `tone="surface"` flips the band from canvas to the raised surface color.
+ */
+interface Props {
+  id?: string;
+  tone?: 'canvas' | 'surface';
+  class?: string;
+}
+const { id, tone = 'canvas', class: className = '' } = Astro.props;
+const band = tone === 'surface' ? 'section-band' : '';
+// A full-bleed decorative backdrop (e.g. a BrandBackdrop well) can be slotted in
+// via the `backdrop` named slot; it sits behind the centered content column.
+const hasBackdrop = Astro.slots.has('backdrop');
+---
+<section id={id} class:list={['section', 'reveal', 'scroll-mt-20', band, hasBackdrop && 'relative overflow-hidden', className]}>
+  {hasBackdrop && <slot name="backdrop" />}
+  <div class="relative mx-auto max-w-6xl px-6">
+    <slot />
+  </div>
+</section>

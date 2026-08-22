@@ -1,0 +1,34 @@
+---
+/**
+ * DemoFraming — a slim context bar shown above a full-bleed demo embed, so a
+ * cold visitor lands with the tool name + "the problem → what it does" before
+ * the dense console. It also carries the page's single <h1>: the demo routes are
+ * otherwise heading-less (their UI is a client-only island invisible to crawlers).
+ */
+interface Props {
+  name: string;
+  tagline?: string;
+  problem: string;
+  does: string;
+}
+const { name, tagline, problem, does } = Astro.props;
+---
+<div class="border-b border-line bg-surface/60">
+  <div class="mx-auto max-w-6xl px-5 py-4">
+    <div class="mb-3">
+      <h1 class="font-display text-lg font-semibold tracking-tight text-ink sm:text-xl">{name}</h1>
+      {tagline && <p class="mt-0.5 text-sm text-ink-muted">{tagline}</p>}
+    </div>
+    <div class="flex flex-col gap-3 sm:flex-row sm:gap-6">
+      <div class="shrink-0 sm:max-w-xs">
+        <span class="mono-label">The problem</span>
+        <p class="mt-1 text-sm leading-relaxed text-ink">{problem}</p>
+      </div>
+      <div class="hidden w-px self-stretch bg-line sm:block" aria-hidden="true"></div>
+      <div>
+        <span class="mono-label">What it does</span>
+        <p class="mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted">{does}</p>
+      </div>
+    </div>
+  </div>
+</div>

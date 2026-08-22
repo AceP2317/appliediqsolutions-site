@@ -1,0 +1,42 @@
+---
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import ReviewAutopilot from '../../components/demos/review-autopilot/Dashboard';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+// The five vertical heading faces — imported here (not in BaseLayout) so the
+// ~150–200 KB of extra woff2 loads on this route only. The bridge vars in
+// src/styles/review-autopilot.css map them onto the demo's skin tokens.
+import '@fontsource-variable/oswald';
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/rubik';
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource/cormorant-garamond/600.css';
+import '@fontsource/cormorant-garamond/700.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+
+const demo = demos.find((d) => d.slug === 'review-autopilot')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+
+<DemoLayout
+  title={demo.name}
+  description={demo.seoDescription}
+  {/* ?v=2 — this card's pixels changed with D29 (eyebrow LIVE TOOL -> THE LEAD
+      OFFER) and a regenerated PNG at an unchanged URL is invisible to every
+      cache that already fetched it. NOTE the other demo routes carry no ?v= at
+      all: D24's cache-bust was never applied to them. Add one the first time
+      any of their cards is regenerated. */}
+  image={`/og/${demo.slug}.png?v=2`}
+  toolName={demo.name}
+  schema={schema}
+>
+  <DemoFraming name={demo.name} tagline={demo.tagline} problem={demo.problem} does={demo.blurb} />
+  <ReviewAutopilot client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </ReviewAutopilot>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

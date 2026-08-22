@@ -1,0 +1,47 @@
+---
+/**
+ * DemoCard — one tool in the /work gallery grid.
+ *
+ * Extracted from work/index.astro when the gallery split into two bands (local
+ * offer vs. proof at scale, D29). Both bands render the identical card, so the
+ * markup lives here once rather than being duplicated per band.
+ *
+ * The `hero` flag renders the "Featured" pill — it marks the lead offer, and
+ * exactly one demo carries it (see demos.ts).
+ */
+import type { Demo } from '../data/demos';
+
+interface Props {
+  demo: Demo;
+}
+const { demo } = Astro.props;
+---
+<a href={`/work/${demo.slug}/`} class="panel lift group flex flex-col overflow-hidden">
+  <div class="flex items-center justify-between border-b border-line bg-surface-2 px-4 py-2.5">
+    <div class="flex items-center gap-2.5">
+      <span class="status-dot"></span>
+      <span class="mono-label">{demo.name}</span>
+    </div>
+    {demo.hero && (
+      <span class="mono-label rounded border border-accent/40 bg-accent/10 px-1.5 py-0.5 text-[0.55rem] text-accent-2">
+        Featured
+      </span>
+    )}
+  </div>
+  <img
+    src={`/shots/${demo.slug}.webp`}
+    alt={`${demo.name} — screenshot of the live tool`}
+    width="1200"
+    height="630"
+    loading="lazy"
+    class="w-full border-b border-line transition-transform duration-300 group-hover:scale-[1.02]"
+  />
+  <div class="flex flex-1 flex-col gap-3 p-6">
+    <p class="text-sm font-medium text-ink">{demo.tagline}</p>
+    <p class="text-sm leading-relaxed text-ink-muted">{demo.blurb}</p>
+    <span class="mt-auto pt-1 text-sm font-medium text-cyan-deep">
+      Open demo{' '}
+      <span class="inline-block transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+    </span>
+  </div>
+</a>

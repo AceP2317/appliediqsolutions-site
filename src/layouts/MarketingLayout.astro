@@ -1,0 +1,48 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import AnnounceBar from '../components/AnnounceBar.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import MobileTabBar from '../components/MobileTabBar.astro';
+import BrandBackdrop from '../components/BrandBackdrop.astro';
+
+type Brain = 'top-right' | 'mid-left' | 'bottom-center';
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  /** Which neural brains to place, by page length. Bottom is the anchor (behind
+   *  the closing CTA); add top-right on medium pages, mid-left on the longest.
+   *  Short pages → ['bottom-center']; medium → 2; long → all three. */
+  brains?: Brain[];
+  /** Per-page JSON-LD nodes, forwarded to BaseLayout's site-wide @graph. */
+  schema?: Record<string, unknown>[];
+  /** RSS feed for this page (e.g. /blog/rss.xml), forwarded to BaseLayout. */
+  rssHref?: string;
+}
+const { title, description, image, brains = ['bottom-center'], schema, rssHref } = Astro.props;
+const brainClass: Record<Brain, string> = {
+  'top-right': 'pb-top-right',
+  'mid-left': 'pb-mid-left',
+  'bottom-center': 'pb-bottom-center',
+};
+---
+<BaseLayout title={title} description={description} image={image} schema={schema} rssHref={rssHref}>
+  <BrandBackdrop variant="ambient" />
+  <div class="page-host">
+    {/* Page-wide neural brains — count + placement declared per page (by length),
+        so short pages get just the bottom one and nothing hides behind a banner. */}
+    {brains.map((b) => (
+      <BrandBackdrop variant="well" shape="brain" position="center" class={`page-brain ${brainClass[b]}`} />
+    ))}
+    <AnnounceBar />
+    <SiteHeader />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+  </div>
+  {/* Spacer so the fixed mobile tab bar never overlaps footer content. */}
+  <div class="h-16 lg:hidden" aria-hidden="true"></div>
+  <MobileTabBar />
+</BaseLayout>

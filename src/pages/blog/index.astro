@@ -1,0 +1,92 @@
+---
+/**
+ * /blog — "Field notes": one chronological stream mixing four sources
+ * (authored articles · LinkedIn · Nextdoor · press mentions), newest first.
+ * Entries live as markdown in src/content/blog/ (see src/content.config.ts);
+ * ingestion runs through the /blog-capture and /mentions-sweep skills, which
+ * gate every entry through the firewall check (npm run gate).
+ *
+ * Pagination: deliberately none at launch (volume starts near zero). When the
+ * stream passes ~40 entries, switch to Astro's paginate() → /blog/2/ etc.
+ */
+import { getCollection } from 'astro:content';
+import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import BlogEntry from '../../components/BlogEntry.astro';
+import Button from '../../components/Button.astro';
+import {
+  publishedFilter,
+  sortByPublished,
+  hasDetailPage,
+  blogSchema,
+  SOURCE_META,
+} from '../../data/blog';
+
+const entries = (await getCollection('blog', publishedFilter)).sort(sortByPublished);
+const articles = entries.filter(hasDetailPage);
+const origin = new URL(Astro.site!).origin;
+
+// Instrument readout — a sparse young feed reads as a live instrument, not a
+// broken page: state the count, the sources on line, and the feed.
+const sourcesOnLine = [...new Set(entries.map((e) => e.data.source))].map(
+  (s) => SOURCE_META[s].label,
+);
+const entryCount = String(entries.length).padStart(2, '0');
+---
+<MarketingLayout
+  title="Blog"
+  description="Field notes from the build: posts, updates, and mentions of AppliedIQ Solutions — wherever they land, collected in one chronological stream."
+  image="/og/blog.png?v=1"
+  brains={['bottom-center']}
+  schema={blogSchema(origin, articles)}
+  rssHref="/blog/rss.xml"
+>
+  {/* ── Intro ─────────────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-4xl px-6 py-16 sm:py-24">
+      <p class="mono-label">Field notes</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        The build, in public.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Every post, wherever it lands — collected here. What I write on this site, what I share on
+        LinkedIn and Nextdoor, and what others say about the work, in one chronological stream.
+        Anything shared elsewhere links back to the original conversation.
+      </p>
+      {/* Readout line */}
+      <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs tracking-wide text-ink-faint">
+        <span class="mono-label inline-flex items-center gap-2">
+          <span class="status-dot"></span>
+          Live stream
+        </span>
+        <span aria-hidden="true">·</span>
+        <span>Entries: {entryCount}</span>
+        <span aria-hidden="true">·</span>
+        <span>Sources: {sourcesOnLine.join(' / ')}</span>
+        <span aria-hidden="true">·</span>
+        <a href="/blog/rss.xml" class="link-sweep">Feed: RSS →</a>
+        <span aria-hidden="true">·</span>
+        <a href="/ai-news/" class="link-sweep">AI desk: AI News →</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── The stream ────────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-3xl space-y-5 px-6 py-16 sm:py-20">
+    {entries.map((entry) => <BlogEntry entry={entry} />)}
+  </section>
+
+  {/* ── Light CTA ─────────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 pb-20 text-center sm:pb-28">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      Reading along and carrying a problem of your own?
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      The notes are the commentary — the tools are the proof, and the next one could be yours to own.
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/" variant="primary">Start a project</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </section>
+</MarketingLayout>

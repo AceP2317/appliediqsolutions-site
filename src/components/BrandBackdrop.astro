@@ -1,0 +1,266 @@
+---
+/**
+ * BrandBackdrop — the "intelligence network" / firing-synapse glow, code-drawn.
+ *  - variant="ambient": a faint neural network spread across the ENTIRE site
+ *    background (fixed, full-coverage, very subtle) with a few slow firing
+ *    synapses — the living background theme.
+ *  - variant="well": the vivid neural cluster (brain = "IQ") for the hero &
+ *    closing CTA — denser nodes, lit synapses that FIRE (a glowing pulse travels
+ *    each active connection), a soft glow core.
+ * Decorative + aria-hidden; pure SVG/CSS; firing is motion-safe (static under
+ * prefers-reduced-motion).
+ */
+interface Props {
+  variant?: 'ambient' | 'well';
+  position?: 'right' | 'center' | 'left';
+  /** "brain" = the anatomical side-profile brain (wrinkled cortex); default
+   *  "cluster" = the original abstract node cluster. */
+  shape?: 'cluster' | 'brain';
+  class?: string;
+}
+const { variant = 'ambient', position = 'center', shape = 'cluster', class: className = '' } = Astro.props;
+
+type Pt = [number, number];
+
+const ACCENT = '#6366f1';
+const ACCENT2 = '#818cf8';
+const CYAN = '#22d3ee';
+const CYAN2 = '#67e8f9';
+
+// ── Site-wide ambient neural net (spread everywhere, subtle) ─────────────────
+// The viewBox is SQUARE and the grid is dense, and both are load-bearing.
+//
+// It used to be 1600x900 on an 8x5 grid. With preserveAspectRatio="slice" on a
+// fixed, full-viewport host, a 390x844 phone scaled it to cover (x0.938 -> 1500x844)
+// and therefore showed only the middle 390/1500 = 26% of its WIDTH — about two of
+// its eight columns. The net was not dim on mobile, it was structurally absent, and
+// no opacity change could ever have fixed that. A square viewBox crops far less on a
+// portrait screen, and the denser grid means even a cropped slice still reads as a
+// network. It also fixes the desktop look: 8x5 rendered as a sparse polygon web, not
+// a neural net.
+function ambientSvg() {
+  const W = 1200, H = 1200, cols = 12, rows = 12;
+  const nodes: [number, number][] = [];
+  for (let gy = 0; gy < rows; gy++) {
+    for (let gx = 0; gx < cols; gx++) {
+      const jx = (((gx * 7 + gy * 13) % 5) - 2) * 13;
+      const jy = (((gx * 11 + gy * 5) % 5) - 2) * 13;
+      nodes.push([Math.round((gx + 0.5) * (W / cols) + jx), Math.round((gy + 0.5) * (H / rows) + jy)]);
+    }
+  }
+  const lit = new Set([17, 34, 40, 51, 68, 77, 85, 102, 119]);
+  const conns: [number, number][] = [];
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const d = Math.hypot(nodes[i][0] - nodes[j][0], nodes[i][1] - nodes[j][1]);
+      // Threshold tracks node spacing (now 100x100, was 200x180). Leaving this at
+      // the old 240 with a 12x12 grid turns the net into a hairball.
+      if (d < 132) conns.push([i, j]);
+    }
+  }
+  let lines = '';
+  conns.forEach(([i, j]) => {
+    lines += `<line x1="${nodes[i][0]}" y1="${nodes[i][1]}" x2="${nodes[j][0]}" y2="${nodes[j][1]}" stroke="#3a4463" stroke-width="1" opacity="0.62"/>`;
+  });
+  let pulses = '';
+  // Traveling synapses — the one bit of motion on otherwise-static pages.
+  conns.filter((_, i) => i % 7 === 1).slice(0, 22).forEach(([i, j], k) => {
+    const dur = (5 + (k % 3) * 2).toFixed(1);
+    const delay = (-k * 1.3).toFixed(1);
+    pulses += `<line class="amb-syn" x1="${nodes[i][0]}" y1="${nodes[i][1]}" x2="${nodes[j][0]}" y2="${nodes[j][1]}" stroke="${CYAN}" stroke-width="3.4" style="animation-duration:${dur}s;animation-delay:${delay}s"/>`;
+  });
+  let dots = '';
+  nodes.forEach((n, i) => {
+    const L = lit.has(i);
+    const cls = L ? 'class="amb-fire" ' : '';
+    const st = L ? ` style="animation-delay:${(-i * 0.6).toFixed(1)}s"` : '';
+    dots += `<circle ${cls}cx="${n[0]}" cy="${n[1]}" r="${L ? 2.9 : 2.0}" fill="${L ? '#8891c8' : '#646e94'}" opacity="${L ? 0.85 : 0.62}"${st}/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${lines}${pulses}${dots}</svg>`;
+}
+
+// ── Vivid neural cluster ("IQ" brain) with firing synapses ───────────────────
+function wellSvg(uid: string) {
+  const nodes: [number, number][] = [
+    [500, 500], [470, 458], [540, 468], [500, 545], [448, 520], [560, 545], [512, 428], [438, 482],
+    [402, 440], [612, 452], [382, 545], [632, 562], [460, 602], [560, 612], [500, 378], [420, 600],
+    [602, 622], [330, 472], [682, 492], [352, 600], [672, 610], [440, 332], [572, 340], [300, 545],
+    [712, 545], [500, 662],
+  ];
+  const lit = new Set([0, 2, 4, 9, 13, 18, 22]); // nodes that fire
+  const conns: [number, number, boolean][] = [];
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const d = Math.hypot(nodes[i][0] - nodes[j][0], nodes[i][1] - nodes[j][1]);
+      if (d < 112) conns.push([i, j, lit.has(i) && lit.has(j)]);
+    }
+  }
+  let links = '';
+  conns.forEach(([i, j, hot]) => {
+    links += `<line x1="${nodes[i][0]}" y1="${nodes[i][1]}" x2="${nodes[j][0]}" y2="${nodes[j][1]}" stroke="${hot ? CYAN : ACCENT}" stroke-width="${hot ? 1.4 : 1}" opacity="${hot ? 0.55 : 0.28}"/>`;
+  });
+  // Firing pulses — every hot (lit-lit) link + a few extra near-center links.
+  const pulseList = conns.filter((c) => c[2]).concat(conns.filter((c) => !c[2]).filter((_, i) => i % 3 === 0).slice(0, 9));
+  let pulses = '';
+  pulseList.forEach(([i, j], k) => {
+    const dur = (2.0 + (k % 4) * 0.5).toFixed(1);
+    const delay = (-k * 0.6).toFixed(1);
+    pulses += `<line class="dw-syn" x1="${nodes[i][0]}" y1="${nodes[i][1]}" x2="${nodes[j][0]}" y2="${nodes[j][1]}" stroke="${k % 3 ? CYAN2 : CYAN}" stroke-width="6" style="animation-duration:${dur}s;animation-delay:${delay}s"/>`;
+  });
+  let dots = '';
+  nodes.forEach((n, i) => {
+    const L = lit.has(i);
+    const cls = L ? 'class="dw-fire" ' : '';
+    const st = L ? ` style="animation-delay:${(-i * 0.4).toFixed(1)}s"` : '';
+    dots += `<circle ${cls}cx="${n[0]}" cy="${n[1]}" r="${L ? 4.6 : 2.6}" fill="${L ? (i % 2 ? CYAN : ACCENT2) : '#7c83b8'}" opacity="${L ? 0.95 : 0.7}"${st}/>`;
+  });
+  let code = '';
+  [150, 300, 720, 860].forEach((x, ci) => {
+    for (let k = 0; k < 8; k++) {
+      const ch = ((ci * 3 + k * 7) % 2) ? '1' : '0';
+      code += `<text x="${x}" y="${120 + k * 48}" font-family="monospace" font-size="15" fill="${CYAN}" opacity="${(0.05 + 0.045 * ((k + ci) % 4)).toFixed(2)}">${ch}</text>`;
+    }
+  });
+  return `<svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="g${uid}"><stop offset="0" stop-color="#818cf8" stop-opacity="0.5"/><stop offset="0.5" stop-color="#6366f1" stop-opacity="0.15"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></radialGradient></defs>
+    ${code}<circle class="dw-core" cx="500" cy="500" r="180" fill="url(#g${uid})"/>${links}${pulses}${dots}
+  </svg>`;
+}
+
+// ── Anatomical side-profile brain (wrinkled cortex) with firing synapses ──────
+// A node network laid over a brain silhouette (cortex + cerebellum + stem), with
+// cortical fold-lines (gyri) so it reads unmistakably as a brain. Same firing
+// treatment as wellSvg (dw-syn / dw-fire / dw-core, all motion-safe via CSS).
+function bFill(inside: (x: number, y: number) => boolean, x0: number, x1: number, y0: number, y1: number, step: number): Pt[] {
+  const out: Pt[] = [];
+  let gy = 0;
+  for (let y = y0; y <= y1; y += step, gy++) {
+    let gx = 0;
+    for (let x = x0; x <= x1; x += step, gx++) {
+      const jx = (((gx * 7 + gy * 13) % 5) - 2) * 8;
+      const jy = (((gx * 11 + gy * 5) % 5) - 2) * 8;
+      const px = x + jx, py = y + jy;
+      if (inside(px, py)) out.push([Math.round(px), Math.round(py)]);
+    }
+  }
+  return out;
+}
+function bRing(cx: number, cy: number, rx: number, ry: number, bump: (a: number) => number, steps: number, keep?: (x: number, y: number) => boolean): Pt[] {
+  const out: Pt[] = [];
+  for (let k = 0; k < steps; k++) {
+    const a = (k / steps) * Math.PI * 2;
+    const b = bump(a);
+    const x = cx + rx * b * Math.cos(a), y = cy + ry * b * Math.sin(a);
+    if (!keep || keep(x, y)) out.push([Math.round(x), Math.round(y)]);
+  }
+  return out;
+}
+function bDedupe(nodes: Pt[], grid = 16): Pt[] {
+  const seen = new Set<string>();
+  const out: Pt[] = [];
+  for (const [x, y] of nodes) {
+    const k = `${Math.round(x / grid)}:${Math.round(y / grid)}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push([x, y]);
+  }
+  return out;
+}
+function bLitNear(nodes: Pt[], targets: Pt[]): number[] {
+  const out = new Set<number>();
+  for (const [tx, ty] of targets) {
+    let best = -1, bd = Infinity;
+    nodes.forEach((n, i) => {
+      const d = Math.hypot(n[0] - tx, n[1] - ty);
+      if (d < bd) { bd = d; best = i; }
+    });
+    if (best >= 0) out.add(best);
+  }
+  return [...out];
+}
+function bGyri(inside: (x: number, y: number) => boolean, x0: number, x1: number, yTop: number, yBot: number, bands: number): string {
+  let out = '';
+  for (let b = 0; b < bands; b++) {
+    const t = (b + 0.5) / bands;
+    const yc = yTop + (yBot - yTop) * t;
+    const amp = 11 + 7 * Math.sin(b * 1.27);
+    const k = 0.03 + 0.018 * (b % 3);
+    const ph = b * 0.9;
+    const hot = b % 4 === 0;
+    let seg: Pt[] = [];
+    const flush = () => {
+      if (seg.length > 2) {
+        out += `<polyline points="${seg.map((p) => p.join(',')).join(' ')}" fill="none" stroke="${hot ? CYAN : ACCENT2}" stroke-width="${hot ? 1.7 : 2}" opacity="${hot ? 0.34 : 0.26}" stroke-linecap="round"/>`;
+      }
+      seg = [];
+    };
+    for (let x = x0; x <= x1; x += 7) {
+      const y = yc + amp * Math.sin(k * x + ph);
+      if (inside(x, y) && inside(x, y - 4) && inside(x, y + 4)) seg.push([Math.round(x), Math.round(y)]);
+      else flush();
+    }
+    flush();
+  }
+  return out;
+}
+function brainSvg(uid: string) {
+  const cx = 505, cy = 455, rx = 250, ry = 175;
+  const bump = (a: number) => 1 + 0.06 * Math.sin(7 * a) + 0.035 * Math.sin(3 * a + 1.2);
+  const inside = (x: number, y: number) => {
+    const dx = (x - cx) / rx, dy = (y - cy) / ry;
+    const a = Math.atan2(dy, dx);
+    const b = bump(a);
+    const cortex = dx * dx + dy * dy <= b * b && y < 600;
+    const cerebellum = Math.hypot(x - 345, y - 580) <= 76;
+    const stem = Math.abs(x - 360) < 19 && y >= 560 && y <= 665;
+    return cortex || cerebellum || stem;
+  };
+  let nodes: Pt[] = [
+    ...bRing(cx, cy, rx, ry, bump, 64, (x, y) => y < 595),
+    ...bRing(345, 580, 76, 76, () => 1, 22, (x, y) => y > 540 || x < 345),
+    [360, 615], [360, 648], [342, 655], [378, 652],
+    ...bFill(inside, 290, 760, 300, 660, 44),
+  ];
+  nodes = bDedupe(nodes);
+  const lit = new Set(bLitNear(nodes, [[430, 400], [560, 420], [505, 495], [620, 460], [380, 500], [480, 560], [345, 580]]));
+  const conns: [number, number, boolean][] = [];
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const d = Math.hypot(nodes[i][0] - nodes[j][0], nodes[i][1] - nodes[j][1]);
+      if (d < 98) conns.push([i, j, lit.has(i) && lit.has(j)]);
+    }
+  }
+  let links = '';
+  conns.forEach(([i, j, hot]) => {
+    links += `<line x1="${nodes[i][0]}" y1="${nodes[i][1]}" x2="${nodes[j][0]}" y2="${nodes[j][1]}" stroke="${hot ? CYAN : ACCENT}" stroke-width="${hot ? 1.4 : 1}" opacity="${hot ? 0.55 : 0.26}"/>`;
+  });
+  const pulseList = conns.filter((c) => c[2]).concat(conns.filter((c) => !c[2]).filter((_, i) => i % 4 === 0).slice(0, 12));
+  let pulses = '';
+  pulseList.forEach(([i, j], k) => {
+    const dur = (2.0 + (k % 4) * 0.5).toFixed(1);
+    const delay = (-k * 0.6).toFixed(1);
+    pulses += `<line class="dw-syn" x1="${nodes[i][0]}" y1="${nodes[i][1]}" x2="${nodes[j][0]}" y2="${nodes[j][1]}" stroke="${k % 3 ? CYAN2 : CYAN}" stroke-width="6" style="animation-duration:${dur}s;animation-delay:${delay}s"/>`;
+  });
+  let dots = '';
+  nodes.forEach((n, i) => {
+    const L = lit.has(i);
+    const cls = L ? 'class="dw-fire" ' : '';
+    const st = L ? ` style="animation-delay:${(-i * 0.4).toFixed(1)}s"` : '';
+    dots += `<circle ${cls}cx="${n[0]}" cy="${n[1]}" r="${L ? 4.6 : 2.6}" fill="${L ? (i % 2 ? CYAN : ACCENT2) : '#7c83b8'}" opacity="${L ? 0.95 : 0.7}"${st}/>`;
+  });
+  const gyri = bGyri(inside, 300, 745, 320, 600, 10) + bGyri((x, y) => Math.hypot(x - 345, y - 580) <= 70, 285, 410, 545, 615, 4);
+  return `<svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="g${uid}"><stop offset="0" stop-color="#818cf8" stop-opacity="0.5"/><stop offset="0.5" stop-color="#6366f1" stop-opacity="0.15"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></radialGradient></defs>
+    <circle class="dw-core" cx="505" cy="470" r="175" fill="url(#g${uid})"/>${gyri}${links}${pulses}${dots}
+  </svg>`;
+}
+
+const uid = Math.random().toString(36).slice(2, 7);
+const svg = variant === 'well' ? (shape === 'brain' ? brainSvg(uid) : wellSvg(uid)) : ambientSvg();
+const posClass = position === 'right' ? 'data-well--right' : position === 'left' ? 'data-well--left' : 'data-well--center';
+const cls =
+  variant === 'well'
+    ? `data-well ${posClass} ${shape === 'brain' ? 'data-well--brain' : ''} ${className}`
+    : `brand-backdrop ${className}`;
+---
+<div class={cls} aria-hidden="true" set:html={svg}></div>
