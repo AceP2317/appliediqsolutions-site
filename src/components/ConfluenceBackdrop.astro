@@ -1,0 +1,183 @@
+---
+/**
+ * ConfluenceBackdrop — the marketing surface's owned visual idea.
+ *
+ * WHAT IT IS. Two broad currents entering from the top corners, bending toward
+ * each other, and leaving as one channel at the bottom. New Bern exists because
+ * the Neuse and the Trent join here; a downtown restaurant is named Confluence.
+ * It is also the argument the site makes about its owner — a counter and a
+ * factory floor arriving at the same place — so the decoration and the pitch are
+ * the same shape rather than two unrelated ideas sharing a page.
+ *
+ * WHY IT REPLACED THE NEURAL NET on marketing pages. The old ambient network was
+ * built for a near-black ground, where a faint glowing web reads as depth. On the
+ * warm off-white page it reads as a purple scrawl over paper, and it told a
+ * visitor "AI product" on a page whose headline is "I ran a restaurant". The net
+ * is NOT deleted — the demo islands keep their own dark instrument look,
+ * because an industrial tool should look like an instrument.
+ *
+ * WHY IT IS DRAWN, NOT PHOTOGRAPHED. The New Bern research is explicit that
+ * ocean, palm and beach imagery is wrong here: this is a brackish, wind-driven
+ * river town and the beaches are twenty miles away. Contour lines are how water
+ * is drawn on a chart, which keeps it a diagram rather than a mood.
+ *
+ * TRAPS, both of which look correct and silently do nothing:
+ *   1. It must sit at a NEGATIVE z-index and be `pointer-events: none`, or it
+ *      eats clicks on everything above it.
+ *   2. The curves deliberately extend past the viewport so they never show a cut
+ *      end. `overflow: hidden` on the wrapper is what stops that widening the
+ *      document and letting the page slide sideways under a thumb on a phone.
+ */
+interface Props {
+  /** Extra classes for placement. */
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+
+/* Deterministic, NOT random. Math.random() here would redraw the field on every
+   build, changing the CSS-in-HTML each time and busting caches for a picture
+   nobody can tell apart. A fixed integer hash gives the same field forever. */
+const jitter = (i: number, spread: number) => {
+  const x = Math.sin(i * 12.9898) * 43758.5453;
+  return (x - Math.floor(x) - 0.5) * spread;
+};
+
+const LINES = 22;
+
+/* THE MOTIF IS ANCHORED RIGHT, NOT SPREAD ACROSS THE PAGE.
+   Every hero here is a left-weighted column inside a centred container, so the
+   right of the viewport is empty and the left is words. Drawing across both and
+   masking the difference was the first attempt and it failed: the lines still
+   ran through the paragraphs. Confining the geometry is what fixes it, and the
+   mask then only has to soften an edge rather than rescue a composition.
+
+   THE TWO CURRENTS CONVERGE AND STAY CONVERGED. That is the whole picture. The
+   first version used an S continuation, which carried each curve PAST its
+   partner and splayed them apart below the meeting point — two ribbons crossing,
+   which is not what a confluence is. Both families now terminate on a shared
+   channel and run down it together. */
+const THROAT_X = 74;   // where the two currents meet
+const THROAT_Y = 74;
+
+const paths = Array.from({ length: LINES }, (_, i) => {
+  const t = i / (LINES - 1);
+
+  // Upper current, entering high and from the inside.
+  const aX = 44 + t * 20 + jitter(i, 3);
+  const aY = -10 + jitter(i + 20, 8);
+
+  // Lower current, entering from off the right edge.
+  const bX = 118 - t * 8 + jitter(i + 60, 3);
+  const bY = 6 + t * 34 + jitter(i + 80, 6);
+
+  // The shared channel: a narrow band, not a point, so it reads as water rather
+  // than as a funnel with everything meeting at one pixel.
+  const tx = THROAT_X + jitter(i + 110, 7);
+  const ty = THROAT_Y + jitter(i + 140, 5);
+  const outX = tx + jitter(i + 170, 9);
+
+  return {
+    upper: `M ${aX} ${aY} C ${aX + 4} ${aY + 30}, ${tx - 14} ${ty - 22}, ${tx} ${ty} C ${tx + 3} ${ty + 14}, ${outX - 2} ${ty + 28}, ${outX} 128`,
+    lower: `M ${bX} ${bY} C ${bX - 16} ${bY + 12}, ${tx + 16} ${ty - 16}, ${tx} ${ty} C ${tx + 3} ${ty + 14}, ${outX - 2} ${ty + 28}, ${outX} 128`,
+    // TEXTURE, NOT A PICTURE. Raised to be visible, then pulled back once it was:
+    // at full weight the motif competed with the headline and invited the reader to
+    // work out what it depicts, which is the wrong job for a background. It should
+    // register as the page having a ground, and nothing more.
+    w: 0.2 + (i % 4) * 0.08,
+    o: 0.085 + (i % 5) * 0.022,
+  };
+});
+---
+
+<div class={`confluence ${className}`} aria-hidden="true">
+  <svg viewBox="0 0 100 128" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      {/* The two rivers are two colours, and they stay distinguishable right up
+          to the throat — that is the whole point of the picture. */}
+      <linearGradient id="conf-left" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="var(--color-cyan)" />
+        <stop offset="100%" stop-color="var(--color-cyan-deep)" />
+      </linearGradient>
+      <linearGradient id="conf-right" x1="1" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--color-teal)" />
+        <stop offset="100%" stop-color="var(--color-brass-deep)" />
+      </linearGradient>
+      {/* The motif is already confined to the right by its geometry, so this only
+          has to soften its inner edge and its ends. It is no longer rescuing a
+          composition, which is why it can be this simple. */}
+      <linearGradient id="conf-clear-x" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#fff" stop-opacity="0" />
+        <stop offset="34%" stop-color="#fff" stop-opacity="0" />
+        <stop offset="56%" stop-color="#fff" stop-opacity="0.75" />
+        <stop offset="100%" stop-color="#fff" stop-opacity="1" />
+      </linearGradient>
+      <linearGradient id="conf-clear-y" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fff" stop-opacity="0.25" />
+        <stop offset="16%" stop-color="#fff" stop-opacity="1" />
+        <stop offset="84%" stop-color="#fff" stop-opacity="1" />
+        <stop offset="100%" stop-color="#fff" stop-opacity="0.15" />
+      </linearGradient>
+      <mask id="conf-mask">
+        {/* Masks read LUMINANCE — white shows, black hides — which is why both
+            ramps are white with varying alpha rather than black with varying
+            alpha. Getting that backwards hides exactly the half you meant to
+            keep, and it looks deliberate either way. */}
+        <rect x="0" y="0" width="100" height="128" fill="url(#conf-clear-x)" />
+        <rect
+          x="0"
+          y="0"
+          width="100"
+          height="128"
+          fill="url(#conf-clear-y)"
+          style="mix-blend-mode: multiply"
+        />
+      </mask>
+    </defs>
+
+    <g mask="url(#conf-mask)" fill="none" stroke-linecap="round">
+      {paths.map((p) => (
+        <>
+          <path d={p.upper} stroke="url(#conf-left)" stroke-width={p.w} opacity={p.o} />
+          <path d={p.lower} stroke="url(#conf-right)" stroke-width={p.w} opacity={p.o} />
+        </>
+      ))}
+    </g>
+  </svg>
+</div>
+
+<style>
+  .confluence {
+    position: fixed;
+    inset: 0;
+    /* Behind everything. A positive value here puts a decorative field on top of
+       the site and swallows every click on the page. */
+    z-index: -10;
+    pointer-events: none;
+    /* The curves run past the frame on purpose so no line shows a cut end. This
+       is what stops that widening the document on a phone. */
+    overflow: hidden;
+  }
+
+  .confluence svg {
+    position: absolute;
+    /* Slightly oversized so the curve ends are always outside the frame. */
+    inset: -6%;
+    width: 112%;
+    height: 112%;
+  }
+
+  /* ON A PHONE THE RULE ABOVE INVERTS. The desktop layout is a left-weighted
+     column with an empty right half, which is what the horizontal clear ramp is
+     built around. A phone is a single full-width column, so that same bloom
+     lands directly under the body copy. Pulled well back rather than re-masked,
+     because a second mask would be a second thing to keep in step. */
+  @media (max-width: 640px) {
+    .confluence svg {
+      opacity: 0.22;
+    }
+  }
+
+  /* Nothing here animates, so there is no motion to gate. Stated rather than
+     assumed: a future drift on these curves WOULD need a prefers-reduced-motion
+     guard, and this is the note that says so. */
+</style>

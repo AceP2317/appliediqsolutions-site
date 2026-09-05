@@ -1,0 +1,25 @@
+---
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import PastDueOrderTriage from '../../components/demos/past-due-order-triage.jsx';
+/* The "demand & planning" band letters its labels in a condensed face, the way
+   a schedule board is. Inter and IBM Plex Mono load site-wide from BaseLayout;
+   Oswald does not, so it is pulled in per route exactly as the shelf tools do
+   — a face that fails to load falls back rather than erroring, so the identity
+   would go quietly missing instead of breaking. */
+import '@fontsource-variable/oswald';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'past-due-order-triage')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} tagline={demo.tagline} problem={demo.problem} does={demo.blurb}
+  plain={demo.plain} />
+  <PastDueOrderTriage client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </PastDueOrderTriage>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

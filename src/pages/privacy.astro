@@ -1,0 +1,250 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+
+/* WHY THIS PAGE EXISTS, and why it was missing for so long.
+   The site collects a name, an email, a company and four narrow answers through
+   ContactForm.jsx and POSTs them to /api/contact, and src/scripts/track.js posts
+   click events to /api/event. California's online privacy law
+   (Cal. Bus. & Prof. Code §§ 22575-22579) requires any commercial site
+   collecting personal details from its residents to post a policy, and it
+   reaches operators OUTSIDE California — no revenue threshold, no size
+   exemption. There was no privacy route in src/pages/ at all until 2026-08-27.
+
+   It also unblocks things that have nothing to do with privacy law: business
+   text-message registration and several ad platforms refuse an applicant whose
+   site has no reachable policy.
+
+   THE STATUTE WAS READ RATHER THAN RECALLED, 2026-09-03, and the page was
+   checked against subsection (b) clause by clause. Four of its six were already
+   here: the categories collected and who they go to, how to ask for a change,
+   how a change to this policy is announced, and a date. TWO WERE MISSING and
+   are the "Do not track" and "Anyone else watching" sections below. The claim
+   is registered in src/data/external-claims.js so it ages rather than being
+   trusted forever.
+
+   THE CCPA LAYER IS DELIBERATELY ABSENT AND THAT IS A DECISION, not an
+   oversight. Its thresholds are roughly $26.6M revenue, 100,000 California
+   residents' data a year, or half of revenue from selling data — none is close.
+   A "Do Not Sell or Share" link here would claim to be governed by a law that
+   does not reach this business, which is a false statement in the one document
+   whose entire value is being accurate.
+
+   EVERY CLAIM BELOW IS TRUE OF WHAT THIS SITE ACTUALLY DOES. Do not copy a
+   generic policy over it. If the contact form, the logging or the tracking ever
+   changes, this page changes with it IN THE SAME COMMIT — and
+   `npm run gate` now refuses a build where an outside service the site actually
+   reaches is not named on this page.
+
+   TWO CLAIMS HERE WERE TOO NARROW UNTIL 2026-09-03 and both are corrected
+   below. The form section said a message "is emailed to me" while the Worker
+   also writes it to Cloudflare's log first, and the counting section described
+   Cloudflare as keeping "ordinary server records" while a counting script runs
+   in the visitor's own browser. Neither was a lie and both were less than the
+   whole thing, which on this page is the same failure. */
+
+/* The statute asks for an EFFECTIVE date, not a "last updated" one. Same value,
+   and the word it uses is the word it wants. */
+const EFFECTIVE = '3 September 2026';
+---
+<MarketingLayout
+  title="Privacy"
+  description="What this site collects, why, and what happens to it. Short, and true of what the site actually does."
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-4xl px-6 py-16 sm:py-24">
+      <p class="mono-label">Privacy</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        What this site collects.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Short, because there is not much of it. In effect from {EFFECTIVE}.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-6 py-14 sm:py-20">
+    <div class="space-y-10 leading-relaxed text-ink-muted">
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">The short version</h2>
+        <p class="mt-3">
+          The only thing this site collects about you is what you type into the contact form and
+          press send. <strong class="text-ink">The tools do not collect anything at all</strong> —
+          they run entirely in your browser, and nothing you type into one is sent anywhere, stored
+          by anyone, or seen by me. That is not a policy I could quietly change later; it is how
+          they are built.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">When you use the contact form</h2>
+        <p class="mt-3">
+          It asks for your name, your email address, optionally your business, and your answers to
+          four short questions about the work. That is emailed to me. I read every one myself —
+          there is no sales team and no customer-relationship system it lands in.
+        </p>
+        <p class="mt-3">
+          <strong class="text-ink">One thing worth being exact about.</strong> A moment before that
+          email is sent, what you wrote is also written to this site's own server log at Cloudflare.
+          That exists so a message is not simply lost if the email fails to send, which is the only
+          way I would ever know you had tried. Cloudflare keeps those logs for a limited period and
+          then discards them. It is a safety net rather than a record I go looking through.
+        </p>
+        <p class="mt-3">
+          I keep those emails for as long as they are useful, and I do not add you to any mailing
+          list. There is no newsletter here to be signed up to.
+        </p>
+        <p class="mt-3">
+          The form is delivered by <strong class="text-ink">Resend</strong>, an email service, and
+          the site runs on <strong class="text-ink">Cloudflare</strong>. Both handle your message
+          only in order to deliver it.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">When you use one of the tools</h2>
+        <p class="mt-3">
+          Nothing leaves the page. No account, no login, no upload. Even a spreadsheet you drop into
+          one is read by the page itself and never sent. Every tool on this site says so on its own
+          panel, and it is true of all of them.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">When we meet on a video call</h2>
+        <p class="mt-3">
+          A call runs through Daily, a video service, and the picture and sound pass through their
+          servers to reach us both. That is how any browser video call works — two computers on
+          ordinary networks cannot usually reach each other directly.
+        </p>
+        <p class="mt-3">
+          <strong class="text-ink">I record only if I ask you first.</strong> If a call is being
+          recorded, your screen shows an indicator the whole time, so you never have to take my word
+          for it. A recording is stored by that same video service, and I delete it when it has done
+          its job. Say no and we simply talk — nothing about the call depends on it.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">If you pay me</h2>
+        <p class="mt-3">
+          Payments are handled by <strong class="text-ink">Stripe</strong>, whether I send you an
+          invoice or you pay for something here directly. They get your name, your email address and
+          the amount, because that is what an invoice needs.
+        </p>
+        <p class="mt-3">
+          <strong class="text-ink">Your card details go to Stripe and never to this site or to
+          me.</strong> Paying happens on a page Stripe runs, not on a page I built, so the numbers
+          never pass through anything of mine. That is not a policy I could quietly change later —
+          it is a term in every agreement I sign with a client.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">What is counted</h2>
+        <p class="mt-3">
+          I count how often certain links get clicked — which pages people open, which tools get
+          tried. <strong class="text-ink">That count records what was clicked, not who clicked
+          it.</strong> Alongside it the site records which page you arrived from and which country
+          you are in, which arrives with the request rather than being asked for.
+        </p>
+        <p class="mt-3">
+          <strong class="text-ink">There is also a small counting script from Cloudflare on every
+          page.</strong> It records how many times a page was opened, which site a visitor came from,
+          and how quickly the page drew. I use it to tell whether my own pages are fast. It sets no
+          cookie, it does not identify you, and it cannot follow you anywhere else.
+        </p>
+        <p class="mt-3">
+          There is no advertising tracker on this site, no product building a profile of you, and
+          nothing here is sold or shared with anyone for advertising.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Anyone else watching</h2>
+        <p class="mt-3">
+          <strong class="text-ink">No.</strong> No other company can watch what you do here, or
+          follow you from this site to other sites over time. The only outside services this site
+          touches are the ones named on this page, each doing one job, and none of them is in the
+          advertising business.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">"Do not track"</h2>
+        <p class="mt-3">
+          Some browsers can send a "do not track" request to every site you visit.
+          <strong class="text-ink">This site does not respond to it, and the honest reason is that
+          there is nothing for it to switch off.</strong> The thing that signal exists to stop —
+          being followed from site to site and profiled — is not something this site does to anyone,
+          with or without the request.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Cookies</h2>
+        <p class="mt-3">
+          This site sets none of its own. It does keep one thing in your browser while the tab is
+          open: a random number with nothing attached to it, so that a handful of clicks in one
+          visit can be counted as one visit rather than several. <strong class="text-ink">It is
+          thrown away the moment you close the tab</strong>, it is not a cookie, and it says nothing
+          about who you are.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">What I will never do</h2>
+        <p class="mt-3">
+          Sell your information. Share it for advertising. Pass it to anyone except the services
+          named above that are needed to deliver your message to me.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Asking me to delete it</h2>
+        <p class="mt-3">
+          Email me and ask what I hold about you, ask me to correct it, or ask me to delete it. I
+          will do it and reply within 30 days. You do not have to give a reason.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Children</h2>
+        <p class="mt-3">
+          This site is not aimed at children under 13, and I do not knowingly collect anything from
+          them.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Security</h2>
+        <p class="mt-3">
+          I take reasonable care with what I hold. <strong class="text-ink">No website can promise
+          perfect security</strong> and I am not going to pretend otherwise. If something ever went
+          wrong involving personal information, I would tell the people affected and the North
+          Carolina Attorney General, as state law requires.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">If this changes</h2>
+        <p class="mt-3">
+          The date at the top changes with it, and the new version replaces this one here.
+        </p>
+      </div>
+
+      <div class="panel panel--flat rounded-lg p-6">
+        <h2 class="font-display text-xl font-semibold text-ink">Who I am</h2>
+        <p class="mt-3">
+          Ian David Provencher, doing business as AppliedIQ Solutions — a sole proprietorship in
+          New Bern, North Carolina.
+        </p>
+        <p class="mt-3">
+          <a class="link-quiet" href="/contact/">Contact me</a> · every message comes straight to me.
+        </p>
+      </div>
+
+    </div>
+  </section>
+</MarketingLayout>

@@ -1,0 +1,107 @@
+---
+/**
+ * /check/ — the free instant check. THIS IS THE LEAD OFFER.
+ *
+ * It replaces Review Autopilot in that slot, which stopped being defensible in
+ * March 2026 when a platform shipped that whole category free inside the tool
+ * the buyer already opens daily.
+ *
+ * WHY A CALCULATOR AND NOT A DEMO. The seven industrial demos prove capability
+ * and prove nothing about the VISITOR. This hands them a number about their own
+ * business in under a minute, ungated, and the commerce lives inside the answer
+ * rather than in front of it. That is the pattern the strongest sites aimed at
+ * local owners use, and it is the only thing on this site that works on somebody
+ * who has never heard of custom software.
+ *
+ * THE HONESTY CONTRACT is stated on the page and enforced in the island: every
+ * figure is the visitor's own input through arithmetic printed beside it. No
+ * model, no forecast, no benchmark. Same discipline as Confirmation Outlook's,
+ * for the same reason — a claim nobody can check is worth less than no claim.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import CostCheck from '../components/CostCheck.jsx';
+import IslandSkeleton from '../components/IslandSkeleton.astro';
+import { startingPrice } from '../data/services';
+---
+<MarketingLayout
+  title="What is the paperwork costing you?"
+  description="A free check: two numbers in, one number back, with the arithmetic printed. No signup, nothing sent anywhere. Then a straight conversation about whether software is worth building."
+  image="/og/default.png"
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">Free · no signup · nothing sent anywhere</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Find out what the paperwork is costing you.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Every business I have worked in had somebody doing the ordering by hand and nobody adding up
+        what that was worth. Two numbers below and you will know — with the
+        <span class="aiq-accent">arithmetic printed</span>, so you can check it yourself.
+      </p>
+    </div>
+  </section>
+
+  {/* The check itself, as high on the page as it can go. Nielsen's eye-tracking
+      puts roughly 42% of all viewing time in the top fifth of a page, so
+      anything between the headline and the first input is time spent on
+      persuasion the tool would have done better. */}
+  <section class="mx-auto max-w-3xl px-6 py-10 sm:py-14">
+    <CostCheck client:only="react">
+      <IslandSkeleton slot="fallback" variant="chat" />
+    </CostCheck>
+  </section>
+
+  {/* Everything below is for the visitor who has their number and wants to know
+      what happens next. It is deliberately AFTER the tool, never before it. */}
+  <section class="mx-auto max-w-3xl px-6 pb-16 sm:pb-24">
+    <div class="border-t border-line pt-10">
+      <p class="mono-label">What this is not</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        No model, no forecast, no industry average.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        Every figure above is one of your own numbers multiplied out, and the working is printed
+        next to each line. Nothing is compared against a benchmark I cannot show you, and nothing
+        you typed left your browser — there is no form here, and no email box.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        The number is not a promise about what software would save you. It is the size of the
+        problem, which is the only honest thing a calculator can tell you. What a build would
+        actually change depends on what gets built, and that is what the first conversation is for.
+      </p>
+    </div>
+
+    <div class="mt-10 border-t border-line pt-10">
+      <p class="mono-label">And then</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        A straight answer, then a fixed number.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        The first conversation is free and it can happen at your counter. If there is nothing worth
+        building I will say so — that is a shorter conversation and it costs you nothing either way.
+        If there is, {startingPrice.line.toLowerCase()} {startingPrice.qualifier}
+      </p>
+      {/* THE ASSESSMENT DOOR, added 2026-09-03, and this is the sharpest step on
+          the site. A reader here has just watched their own numbers turn into an
+          hours figure and has no way to tell WHICH of those hours is worth
+          automating. That is the assessment's entire job.
+
+          NOT ITS PRICE, ONLY A LINK. scripts/verify-assessment.mjs asserts that
+          this page does not carry the assessment's price line, as a negative
+          control proving the price is not simply everywhere. A link keeps that
+          control meaningful. If a later change wants the figure here, that
+          control gets REDESIGNED rather than deleted. */}
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        And if the number above is real but you cannot tell which part of it to fix first — that is
+        what the <a href="/ai-fit/" class="link-sweep">AI Fit Assessment</a> is for. I come out, watch
+        the work, and write the list in order.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=consult" class="btn btn-primary">Start with a free conversation →</a>
+        <a href="/work/" class="btn btn-secondary">See what I build</a>
+      </div>
+    </div>
+  </section>
+</MarketingLayout>

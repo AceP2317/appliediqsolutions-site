@@ -1,0 +1,79 @@
+---
+/**
+ * /deadlines/ — the dates that catch New Bern businesses out.
+ *
+ * NOT A ROW IN demos.ts, and that is deliberate rather than an omission. D22
+ * derives every "N live tools" count on this site from demos.length, and this is
+ * not a tool: it computes nothing from the visitor's numbers and it is not
+ * something anybody buys. Putting it in that array would inflate a count with
+ * something that is not what the count claims to be.
+ *
+ * IT IS THE ONE PAGE ON THIS SITE THAT ROTS BY THE CALENDAR. Every tool computes
+ * from the visitor's own inputs and so cannot be wrong about the world. This
+ * makes claims about the world — a form is due on a date, a threshold is a
+ * number of employees — and those go quietly false when a rule changes, with
+ * nothing erroring. So every row carries its authority, a live link and the day
+ * it was last read, and `npm run gate` fails on a row missing any of the three
+ * or read longer ago than the age limit in the data file (D19).
+ *
+ * Free and ungated, like /check/. There is no form on it.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import DeadlineFinder from '../components/DeadlineFinder.jsx';
+import IslandSkeleton from '../components/IslandSkeleton.astro';
+import { DEADLINES } from '../data/deadlines';
+
+/* Derived, never typed — the same rule the tool count follows. */
+const sourceCount = new Set(DEADLINES.map((d) => d.authority)).size;
+---
+<MarketingLayout
+  title="What is due, and when — New Bern and Craven County"
+  description="A free list of the filing and permit dates that catch small businesses out in Craven County. Every one linked to whoever published it. No signup, nothing sent anywhere."
+  image="/og/default.png"
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">Free · no signup · nothing sent anywhere</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        The dates that catch people out.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Nine questions about your business, and you get back only the filing and permit dates that
+        actually apply to it — each one linked to the office that published it. Nothing here is
+        advice and nothing here is complete. It is a list of dates with their sources attached,
+        which is more than most of us are working from.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-4xl px-6 py-12 sm:py-16">
+    <DeadlineFinder client:only="react">
+      <IslandSkeleton slot="fallback" name="Deadline finder" variant="chat" />
+    </DeadlineFinder>
+  </section>
+
+  <section class="border-t border-line">
+    <div class="mx-auto max-w-4xl px-6 py-12 sm:py-16">
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-ink">
+        Why every line has a link on it
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        A page of dates with no sources is a page you have to trust, and there is no reason to
+        trust mine. Every row here names the office that publishes it and links to the page it was
+        read off, with the date I last read it. {sourceCount} different authorities are cited, and
+        where I could not find a primary source I have left the item off and said so rather than
+        quoting a company that sells filing services.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Rules change and this page does not know when they do — so a row that has not been checked
+        in six months fails my own build rather than sitting here looking confident. That is the
+        only honest way to publish something that goes out of date on a calendar instead of on a
+        code change.
+      </p>
+      <div class="mt-8">
+        <a href="/check/" class="btn btn-secondary">See what the paperwork is costing you →</a>
+      </div>
+    </div>
+  </section>
+</MarketingLayout>

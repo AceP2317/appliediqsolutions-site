@@ -1,0 +1,46 @@
+---
+/**
+ * ToolsDoorway — one door to /work/, plus the testimonial slot.
+ *
+ * Was a whole home-page section (LiveTools) until the pivot. Its section made
+ * the same proof-at-scale argument the problem-shape grid already makes, for
+ * 763px of a page that had grown to 9,462px on a phone — so the claim moved
+ * into the Shapes lede and only the door survived, hung in Breadth's foot slot.
+ *
+ * Deliberately ONE door: the tools are not re-listed here. /work/ presents them
+ * properly, and a home page that re-lists them worse is just the gallery twice.
+ */
+import { demos } from '../../data/demos';
+import { testimonial, toolsDoorway } from '../../data/home';
+import { LayoutGrid, ArrowRight } from '@lucide/astro';
+---
+<a
+  href="/work/"
+  class="panel group lift lift-cyan spotlight mt-10 flex items-center gap-4 border-accent/40 p-5"
+>
+  <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-line bg-canvas text-cyan">
+    <LayoutGrid size={20} aria-hidden="true" />
+  </span>
+  <span class="min-w-0 flex-1">
+    {/* Derived, never hardcoded — D22. */}
+    <span class="mono-label text-cyan-deep">All {demos.length} live tools</span>
+    <span class="mt-0.5 block font-display font-semibold text-ink">
+      {toolsDoorway.title}
+    </span>
+  </span>
+  <ArrowRight
+    size={18}
+    class="shrink-0 text-cyan transition-transform group-hover:translate-x-0.5"
+    aria-hidden="true"
+  />
+</a>
+
+{testimonial && (
+  <figure class="mt-10 max-w-3xl">
+    <blockquote class="pullquote">{testimonial.quote}</blockquote>
+    <figcaption class="mono-label mt-4">
+      {testimonial.attribution}{testimonial.role ? ` · ${testimonial.role}` : ''}
+    </figcaption>
+  </figure>
+)}
+{/* SLOT: first real, consented client testimonial drops in via `testimonial` in data/home.ts. */}

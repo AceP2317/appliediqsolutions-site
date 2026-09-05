@@ -1,0 +1,173 @@
+---
+/**
+ * /tools/ — the shelf, sold.
+ *
+ * WHY THIS IS NOT JUST /work/. That page's job is "open one and see what gets
+ * built"; this page's job is "pick the one that is yours and find out what it
+ * costs". Buying copy — what you put in, what it remembers, what it will not do,
+ * what it costs — roughly doubles a card's height, and /work/ also carries eight
+ * at-scale tools underneath. Two jobs, two pages.
+ *
+ * EVERY TOOL KEEPS ITS /work/<slug>/ ADDRESS, and that is instrument protection
+ * rather than conservatism. src/scripts/track.js classifies a click as
+ * `demo_open` by testing path.startsWith('/work/'), so moving the tools would
+ * silently stop the conversion counting on exactly the pages that matter most,
+ * with nothing erroring anywhere.
+ *
+ * THE COUNT IS DERIVED, never typed (D22) — shelfSlugs comes from every group in
+ * the local band, so a tool added tomorrow appears here and in the count with no
+ * edit to this file.
+ *
+ * areaServed is US rather than New Bern. The shelf is not geographically bound,
+ * and splitting it against /main-street/ is what stops the two cannibalising
+ * each other in search (D29).
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import DemoCard from '../components/DemoCard.astro';
+import { demos, workGroups, shelfSlugs, shelfCount } from '../data/demos';
+import { startingPrice } from '../data/services';
+
+/* THE SHELF, not merely the local band. Review Autopilot sits in a local group
+   marked offShelf: it is a tool built for a local business and belongs on
+   /work/, but it is not sold here. Its drafting is sample-only, so it fails
+   two of the blanket claims this page makes about everything on it — that
+   each runs on your own numbers, and that nothing is modelled. Filtering on
+   band alone put it on the page and inside shelfCount. */
+const localGroups = workGroups.filter((g) => g.band === 'local' && !g.offShelf);
+const bySlug = new Map(demos.map((d) => [d.slug, d]));
+
+const schema = [{
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Custom browser tools for small local business',
+  provider: { '@type': 'Organization', name: 'AppliedIQ Solutions' },
+  areaServed: { '@type': 'Country', name: 'US' },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Finished tools',
+    itemListElement: shelfSlugs.map((slug) => {
+      const d = bySlug.get(slug)!;
+      return {
+        '@type': 'Offer',
+        itemOffered: { '@type': 'SoftwareApplication', name: d.name, description: d.seoDescription },
+        url: `/work/${slug}/`,
+      };
+    }),
+  },
+}];
+---
+<MarketingLayout
+  title="Finished tools you can drive right now"
+  description={`Small, finished tools for local business — each one runs on your own numbers, in your own browser, and nothing you type leaves the page. ${startingPrice.line}`}
+  image="/og/tools.png"
+  schema={schema}
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-12 sm:pt-24 sm:pb-16">
+      <p class="mono-label">Finished · yours to own · nothing leaves your browser</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        The tool is already built. It just needs your numbers in it.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Every one of these runs on the rules that belong to your business rather than to your
+        whole trade — your split, your pars, your rates, your intervals. That is exactly why no
+        platform has taken any of these jobs, and why they are still done on a legal pad.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Open any of them right now. They run on made-up numbers from a made-up town until you
+        put your own in, and nothing you type is sent anywhere, stored by anyone, or seen by me.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/contact/?intent=quote" class="btn btn-primary">Talk about fitting one →</a>
+        <a href="/check/" class="btn btn-secondary">See what the paperwork is costing you</a>
+      </div>
+    </div>
+  </section>
+
+  {localGroups.map((group) => (
+    <section class="border-b border-line">
+      <div class="mx-auto max-w-6xl px-6 py-12 sm:py-16">
+        <p class="mono-label">{group.label}</p>
+        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {group.slugs.map((slug) => <DemoCard demo={bySlug.get(slug)!} />)}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="border-b border-line">
+    <div class="mx-auto max-w-6xl px-6 py-12 sm:py-16">
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-ink">
+        What all {shelfCount} of them have in common
+      </h2>
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="panel p-5">
+          <p class="mono-label">The rule is yours</p>
+          <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+            None of them suggests a rate, a target, a par or an interval. Those are the decisions
+            you are actually paid to make, and a tool that guessed at one would be inventing the
+            only part that matters.
+          </p>
+        </div>
+        <div class="panel p-5">
+          <p class="mono-label">The working is printed</p>
+          <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+            Every figure shows the arithmetic beside it. Nothing is modelled, forecast, smoothed or
+            compared against an industry average I cannot show you.
+          </p>
+        </div>
+        <div class="panel p-5">
+          <p class="mono-label">It says when it cannot answer</p>
+          <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+            A count that cannot be true, a pot with nobody in it, a line with no rate on it — each
+            one stops the sheet with a plain sentence rather than quietly producing a
+            plausible-looking number.
+          </p>
+        </div>
+        <div class="panel p-5">
+          <p class="mono-label">Nothing leaves the page</p>
+          <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+            No account, no login, no upload. Even a spreadsheet you drop in is read by the page
+            itself. That is not a policy I could change later — it is how they are built.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="mx-auto max-w-6xl px-6 py-12 sm:py-16">
+      <h2 class="font-display text-2xl font-semibold tracking-tight text-ink">
+        What it costs, and what happens next
+      </h2>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink">
+        {startingPrice.line} <span class="text-ink-muted">{startingPrice.shelf}</span>
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        {startingPrice.qualifier} The first conversation is free, and it is a conversation about
+        whether one of these is actually worth having — including the answer that it is not, or
+        that something you already pay for does it.
+      </p>
+      {/* Added 2026-09-03. Somebody on this page is choosing between tools, which
+          is exactly the question the assessment answers in writing. No figure
+          here — the price and its credit travel together and belong on the page
+          that can carry both. */}
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Cannot tell which of these is yours? The
+        {' '}<a href="/ai-fit/" class="link-sweep">AI Fit Assessment</a> is a visit and a written
+        list of what is worth building, in order, with a number beside each line.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Fitting one means it runs on your roster, your rate card, your product list and your
+        words. It ends up in an account in your name, and you get a copy of the whole thing as a
+        single file that opens with the internet off. Revoke my access the next morning and it
+        keeps working, because there is nothing of mine left in it.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/contact/?intent=quote" class="btn btn-primary">Start a conversation →</a>
+        <a href="/work/" class="btn btn-secondary">See the industrial work as well</a>
+      </div>
+    </div>
+  </section>
+</MarketingLayout>

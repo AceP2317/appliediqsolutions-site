@@ -1,0 +1,207 @@
+---
+/**
+ * MobileTabBar — app-style fixed bottom navigation for < lg viewports.
+ *
+ * FOUR link tabs plus the Menu sheet, which occupies a slot of its own — five
+ * slots across the bar. This comment used to read "Five tabs + a Menu sheet",
+ * which counts six, and it stayed wrong through the change that swapped Services
+ * out for the free check. Zero client JS (the sheet is a <details>, which
+ * carries native toggle semantics for assistive tech).
+ *
+ * History: this bar used to try to carry EVERY destination — 6 → 7 → 8 tabs, and
+ * at 8 it was at a hard ceiling (icon 16, 9px labels, tracking-tighter, zero inner
+ * padding) recorded as DECISIONS D15. That ceiling existed only because the bar was
+ * the sole mobile nav. It no longer is: the Menu sheet holds everything, so the bar
+ * is free to carry just the highest-traffic destinations at a comfortable size
+ * (~78px per slot at 390px, vs 48px before). Nothing was demoted — the sheet lists
+ * every page, including Home, Review Autopilot, and Confirmation Outlook, none of
+ * which ever had a mobile nav seat.
+ *
+ * Auto-excluded from the full-bleed demo routes (they use DemoLayout, not
+ * MarketingLayout, which is the only layout that mounts this).
+ */
+import {
+  LayoutGrid, Store, Layers, Mail, Menu, X,
+  Route, User, Hammer, Rss, HelpCircle, Newspaper, Radar,
+  House, Wrench,
+  CalendarClock, Calculator, Compass, Globe,
+} from '@lucide/astro';
+
+const path = Astro.url.pathname;
+// '/' must be an EXACT match. The generic prefix test below reduces to
+// `path.startsWith('/')` for the root href, which is true of every page — so
+// adding Home to the sheet without this guard lights it everywhere.
+const isActive = (href: string) =>
+  href === '/'
+    ? path === '/'
+    : path === href || path.startsWith(href.endsWith('/') ? href : href + '/');
+
+// The ones that earn a permanent tab. Everything else lives in the sheet.
+const tabs = [
+  { href: '/work/', label: 'Work', Icon: LayoutGrid },
+  { href: '/main-street/', label: 'Main St', Icon: Store },
+  /* THE CHECK TAKES A TAB, and Services gives up its slot: a thing the
+     visitor can DO in a minute beats a page describing things they could have.
+     Services is still one tap away in the Menu sheet. */
+  { href: '/check/', label: 'Free check', Icon: Calculator },
+  { href: '/contact/', label: 'Contact', Icon: Mail },
+];
+
+/* THE CEILING, ASSERTED RATHER THAN REMEMBERED. Four links plus the Menu sheet
+   fills the bar at ~78px per slot on a 390px phone. A fifth link makes six slots
+   and squeezes every label back toward the 48px crush D15 recorded — and nothing
+   would error, because the row simply gets tighter. The comment above said
+   "five" for the whole life of the four-item array, which is exactly why this is
+   a build failure now instead of a sentence somebody has to notice.
+
+   Proven able to fire, 2026-08-26: a planted fifth tab stopped the build with
+   "5 link tabs plus the Menu sheet is 6 slots" while rendering /404. */
+if (tabs.length > 4) {
+  throw new Error(
+    `MobileTabBar: ${tabs.length} link tabs plus the Menu sheet is ${tabs.length + 1} slots. ` +
+      'Four links is the measured ceiling at 390px — move one into the sheet instead.',
+  );
+}
+
+// The sheet carries EVERY destination — including the ones the tab bar has no
+// room for and Confirmation Outlook, which has no /work/ row.
+//
+// Home leads it. The sheet claims to list everything and had NO route to / at
+// all, which was survivable while / was a navigation hub and is not now that /
+// is the pitch: a phone visitor deep in the site had no way back to the offer.
+const sheet = [
+  { href: '/', label: 'Home', note: 'What I build for your business', Icon: House },
+  { href: '/tools/', label: 'Finished tools', note: 'Built already — open one now', Icon: Wrench },
+  /* The sheet calls itself "Everything on this site" and did not carry the
+     free deadline list, which had one inbound link anywhere. */
+  { href: '/deadlines/', label: 'What is due', note: 'Craven County dates, free', Icon: CalendarClock },
+  { href: '/work/', label: 'Work', note: 'The industrial work as well', Icon: LayoutGrid },
+  { href: '/confirmation-outlook/', label: 'Confirmation Outlook', note: 'A deployed service, at scale', Icon: Radar },
+  { href: '/main-street/', label: 'Main Street', note: 'New Bern, NC — in person', Icon: Store },
+  { href: '/services/', label: 'Services', note: 'What I build', Icon: Layers },
+  { href: '/websites/', label: 'Websites', note: 'A site you own, and what it costs', Icon: Globe },
+  /* The paid assessment, 2026-09-03. It goes in the SHEET and not on the bar:
+     tabs.length > 4 throws at build time, and the four that are there are the
+     four measured to fit at 390px. */
+  { href: '/ai-fit/', label: 'AI Fit Assessment', note: 'Where AI fits, in writing', Icon: Compass },
+  { href: '/approach/', label: 'Approach', note: 'How I work', Icon: Route },
+  { href: '/bio/', label: 'Bio', note: 'The operator', Icon: User },
+  { href: '/projects/', label: 'Projects', note: 'Building now', Icon: Hammer },
+  /* Field notes de-listed 2026-08-24 — see SiteHeader for the reason. */
+  { href: '/ai-news/', label: 'AI News', note: 'A daily autonomous desk', Icon: Newspaper },
+  { href: '/faq/', label: 'FAQ', note: 'Straight answers', Icon: HelpCircle },
+  { href: '/contact/', label: 'Contact', note: 'Start a project', Icon: Mail },
+];
+// Any page not on the bar should light the Menu tab, so the user is never left
+// looking at a bar with nothing active.
+const inSheetOnly = !tabs.some((t) => isActive(t.href)) && sheet.some((s) => isActive(s.href));
+---
+{/* ONLY the Menu tab is the <details>. An earlier cut wrapped the whole bar in one
+    <summary>, which put every tab link inside a toggle — clicking "Services" then
+    both navigated AND armed the disclosure. Scope the toggle to the one control that
+    should toggle. */}
+<nav class="fixed inset-x-0 bottom-0 z-50 lg:hidden" aria-label="Primary mobile">
+  {/* This bar is pinned over scrolling content on the one device class that can
+      least afford it. A `backdrop-filter` here means the browser re-rasterizes
+      everything behind the bar on EVERY scroll frame, for the whole session — it was
+      a direct cause of choppy scrolling on a phone. The blur is gone; the layer is
+      near-solid instead, which at this size looks the same and composites for free.
+
+      HISTORICAL NOTE, still load-bearing: this layer exists as a SIBLING of the sheet,
+      never an ancestor. `backdrop-filter` (like `filter` and `transform`) makes an
+      element the containing block for its `position: fixed` descendants — with a blur
+      on the <nav>, the sheet's `fixed` resolved against the 64px bar instead of the
+      viewport and it opened invisibly. Keep any future blur/filter OUT of the sheet's
+      ancestor chain. */}
+  <div
+    {/* FULLY OPAQUE, deliberately. It was bg-canvas/95, which on the old near-black
+        theme was indistinguishable from solid — 5% of near-black bleeding through
+        near-black shows nothing. On the warm light ground the same 5% let a
+        saturated rose button read straight through the bar, which looked like a
+        rendering fault rather than a design.
+
+        NO backdrop-filter here, ever. See the note above: it would make this
+        element the containing block for every position:fixed descendant, and the
+        menu sheet would then resolve against the 64px bar and open invisibly. */}
+    class="absolute inset-0 -z-10 border-t border-line bg-canvas shadow-[0_-4px_16px_-8px_color-mix(in_oklab,var(--color-ink)_18%,transparent)]"
+    aria-hidden="true"
+  ></div>
+
+  <ul class="mx-auto flex w-full items-stretch px-1 pb-[env(safe-area-inset-bottom)]">
+    {tabs.map(({ href, label, Icon }) => (
+      <li class="min-w-0 flex-1">
+        <a
+          href={href}
+          aria-current={isActive(href) ? 'page' : undefined}
+          class:list={[
+            'relative flex flex-col items-center gap-1 px-1 py-2.5 text-[11px] font-medium transition-colors',
+            isActive(href) ? 'text-accent-2' : 'text-ink-faint hover:text-ink',
+          ]}
+        >
+          {isActive(href) && (
+            <span class="absolute inset-x-3 top-0 h-px bg-accent" aria-hidden="true"></span>
+          )}
+          <Icon size={19} aria-hidden="true" />
+          <span>{label}</span>
+        </a>
+      </li>
+    ))}
+
+    <li class="min-w-0 flex-1">
+      <details class="tabbar-sheet group">
+        <summary
+          class:list={[
+            'tabbar-summary relative flex list-none flex-col items-center gap-1 px-1 py-2.5 text-[11px] font-medium transition-colors',
+            inSheetOnly ? 'text-accent-2' : 'text-ink-faint',
+          ]}
+        >
+          {inSheetOnly && (
+            <span class="absolute inset-x-3 top-0 h-px bg-accent" aria-hidden="true"></span>
+          )}
+          <Menu size={19} class="group-open:hidden" aria-hidden="true" />
+          <X size={19} class="hidden group-open:block" aria-hidden="true" />
+          <span class="group-open:hidden">Menu</span>
+          <span class="hidden group-open:block">Close</span>
+        </summary>
+
+        {/* The sheet — every destination on the site. `bottom-16` keeps it clear of
+            the bar so the Close control stays reachable. */}
+        <div class="fixed inset-x-0 bottom-16 top-0 overflow-y-auto bg-canvas/95 backdrop-blur-md">
+          <div class="mx-auto max-w-lg px-5 pb-8 pt-6">
+            <p class="mono-label">Everything on this site</p>
+
+            <ul class="mt-5 flex flex-col gap-2">
+              {sheet.map(({ href, label, note, Icon }) => (
+                <li>
+                  <a
+                    href={href}
+                    aria-current={isActive(href) ? 'page' : undefined}
+                    class:list={[
+                      'panel flex items-center gap-4 p-4 text-left transition-colors',
+                      isActive(href) ? 'border-accent/50 bg-surface-2' : 'hover:border-accent/40',
+                    ]}
+                  >
+                    <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas text-accent-2">
+                      <Icon size={18} aria-hidden="true" />
+                    </span>
+                    <span class="min-w-0 flex-1">
+                      <span class="block font-display text-sm font-semibold text-ink">{label}</span>
+                      <span class="mt-0.5 block text-xs text-ink-faint">{note}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href="/contact/?intent=quote"
+              class="btn btn-primary mt-5 flex w-full items-center justify-center px-4 py-3 text-sm"
+            >
+              Start a project
+            </a>
+          </div>
+        </div>
+      </details>
+    </li>
+  </ul>
+</nav>

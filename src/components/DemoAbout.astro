@@ -1,0 +1,76 @@
+---
+/**
+ * DemoAbout — the crawlable "about this tool" block below a demo's live island,
+ * and the ONLY exit a visitor on a tool page has.
+ *
+ * WHY THAT MATTERS MORE THAN IT LOOKS. The island is `client:only`, so crawlers
+ * see nothing of it and this prose is the page's real body text. And every tool
+ * has its own shareable URL, so these eight routes are the most likely place a
+ * stranger ARRIVES — from a link, a card, a search result — rather than a place
+ * they reach by browsing.
+ *
+ * Until 2026-08-24 that arrival got two buttons and nothing else: no offer, no
+ * price, and no way into the rest of the site, because /work/<slug> uses the
+ * full-bleed DemoLayout and so carries no header, no footer and no tab bar. A
+ * visitor who liked what they just clicked around in had to guess.
+ *
+ * Zero client JS, deliberately — this sits under an island that already ships
+ * a lot of it.
+ */
+import { startingPrice } from '../data/services';
+
+interface Props {
+  name: string;
+  about: string;
+  /** RETIRED PROP, kept so no caller has to be edited. It used to seed a chip
+   *  deep-linking into the live assistant, which was retired on 2026-08-24. The
+   *  chip pointed at a #ask anchor that no longer exists, and a link to a
+   *  missing anchor does not error — the browser loads the page and scrolls
+   *  nowhere, which reads as the site being broken rather than the feature
+   *  being gone. Do not wire this back up without rebuilding the target. */
+  ask?: string;
+}
+const { name, about } = Astro.props;
+---
+<section class="border-t border-line bg-surface/40">
+  <div class="mx-auto max-w-3xl px-6 py-12 sm:py-16">
+    <p class="mono-label">About this tool</p>
+    <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+      What {name} solves
+    </h2>
+    <p class="mt-4 leading-relaxed text-ink-muted">{about}</p>
+
+    {/* THE OFFER, ON THE PAGE PEOPLE ACTUALLY LAND ON. It was on nine other
+        pages and none of these eight, which is exactly backwards: this is where
+        a stranger arrives from a shared link with the tool still open in front
+        of them, and it was the one place the site asked for nothing. */}
+    <div class="mt-8 rounded-xl border border-line bg-canvas p-5">
+      <p class="font-display text-lg font-semibold text-ink">
+        Yours would be built the same way.
+      </p>
+      <p class="mt-2 leading-relaxed text-ink-muted">
+        This one runs on made-up data. The version built for your business runs on yours, and you
+        own it outright. <span class="text-ink">{startingPrice.line}</span>
+        {' '}{startingPrice.qualifier} The first conversation is free.
+      </p>
+      <div class="mt-5 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=consult" class="btn btn-primary">Start with a free conversation →</a>
+        <a href="/work/" class="btn btn-secondary">All the tools</a>
+      </div>
+    </div>
+
+    {/* A WAY BACK INTO THE SITE. DemoLayout is full-bleed by design — no header,
+        no footer, no tab bar — so without this a visitor's only options were the
+        two buttons above and the browser's back button. These are the four
+        places someone who just liked a tool would actually want to go. */}
+    <nav class="mt-8 border-t border-line pt-6" aria-label="Elsewhere on this site">
+      <p class="mono-label">Elsewhere</p>
+      <ul class="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        <li><a href="/" class="link-sweep text-ink-muted transition-colors hover:text-ink">Home</a></li>
+        <li><a href="/main-street/" class="link-sweep text-ink-muted transition-colors hover:text-ink">New Bern</a></li>
+        <li><a href="/services/" class="link-sweep text-ink-muted transition-colors hover:text-ink">What I build</a></li>
+        <li><a href="/bio/" class="link-sweep text-ink-muted transition-colors hover:text-ink">Who I am</a></li>
+      </ul>
+    </nav>
+  </div>
+</section>

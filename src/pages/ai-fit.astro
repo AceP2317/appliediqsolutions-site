@@ -1,0 +1,217 @@
+---
+/**
+ * /ai-fit/ — the AI Fit Assessment. THE SECOND PAID THING ON THIS SITE.
+ *
+ * WHY IT ENDS IN A PRICED BUILD LIST RATHER THAN A REPORT. src/data/home.ts's
+ * `comparison`, rendered on /approach/, heads a column "What AI consulting
+ * usually ends with" and lists `An "AI readiness" audit` inside it. Selling an
+ * assessment whose deliverable is a document would put this practice's own
+ * named failure mode on its own price list, two clicks from the page saying so.
+ *
+ * The distinction is not wording, it is the last page. A roadmap says what to
+ * think about. This says what to build, what each one costs, and which one goes
+ * first — which is a quote with its reasoning attached, and quoting is already
+ * what this practice does. That is why /approach/ needs no edit and never has to
+ * argue with itself: the difference lives here, in "What this is not".
+ *
+ * WHY THE VISIT IS INCLUDED RATHER THAN SOLD AS AN UPGRADE. D33 makes the career
+ * the positioning — a restaurant floor, a bank's lending division, a clinic's
+ * front office, an insurance practice, a plant's planning floor. Standing in the
+ * business is the one part of this no competitor in these counties can publish.
+ * A cheaper remote tier would have sold the version that does not use it, at the
+ * lower price, to the buyer least able to tell the difference.
+ *
+ * WHY THE FEE IS CREDITED. Uncredited, an assessment ending in a priced build
+ * makes that build cost more than buying it directly — the document would argue
+ * against its own recommendation, and a buyer does that arithmetic out loud. See
+ * the block above ASSESSMENT_USD in src/lib/pricing.js.
+ *
+ * THE PRICE AND ITS QUALIFIER ARE ONE OBJECT. Rendering `assessmentPrice.amount`
+ * without `.qualifier` publishes a fee and hides the credit, which is a different
+ * and worse offer. Same rule, same reason, as startingPrice.
+ *
+ * ITS OWN SHARE CARD SINCE 2026-09-03. It shared /og/default.png before, so a
+ * link posted to LinkedIn or Nextdoor showed a picture saying nothing about the
+ * assessment — on the page where a share is most likely to be somebody's first
+ * contact with this practice. The card carries NO figure, for the reason above:
+ * the price and its credit are one statement and neither fits on a card.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { assessmentPrice, startingPrice } from '../data/services';
+import { ASSESSMENT_USD } from '../lib/pricing.js';
+import { ASSESSMENT_PAYMENT_LINK, PAY_NOTE, canTakePayment } from '../lib/payments.js';
+import { Search, Footprints, ListChecks, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+const steps = [
+  {
+    icon: Footprints,
+    n: '01',
+    t: 'I come and watch the work happen',
+    b: 'Wherever I can drive to you, that is included — there is no separate visit fee and no cheaper version without it. An hour standing where the job is done tells me more than any questionnaire, because the things costing you money are the ones nobody thinks to mention.',
+  },
+  {
+    icon: Search,
+    n: '02',
+    t: 'I go through how it actually runs today',
+    b: 'The spreadsheet somebody rebuilt, the thing that gets re-typed into two systems, the job that only one person knows how to do. I want the workarounds, not the org chart — a workaround is a business telling you exactly where its software stopped.',
+  },
+  {
+    icon: ListChecks,
+    n: '03',
+    t: 'You get it in writing, with numbers beside it',
+    b: 'A short document naming what is worth doing, what is not, what each one would cost to build, and which I would do first and why. It is yours whether or not you ever hire me, and it is written so another developer could work from it.',
+  },
+];
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/ai-fit/#service`,
+    name: 'AI Fit Assessment',
+    serviceType: 'Operational assessment and build scoping',
+    provider: { '@id': `${origin}/#organization` },
+    areaServed: 'US',
+    description:
+      'A visit, a read of how the work is actually done, and a written list of what is worth building — each with a price beside it. The fee comes off the build.',
+    offers: {
+      '@type': 'Offer',
+      price: ASSESSMENT_USD,
+      priceCurrency: 'USD',
+      description: assessmentPrice.qualifier,
+    },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: `${origin}/services/` },
+      { '@type': 'ListItem', position: 3, name: 'AI Fit Assessment', item: `${origin}/ai-fit/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="AI Fit Assessment"
+  description={`Where AI actually fits your business, and where it does not. I come out, watch the work, and write you a list of what is worth building with a price beside each one. ${assessmentPrice.line} ${assessmentPrice.qualifier}`}
+  image="/og/ai-fit.png"
+>
+  {/* ── Hero ──────────────────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">A visit · a written answer · {assessmentPrice.amount}</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Everyone says you should be using AI. Nobody says <span class="aiq-accent">where</span>.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        That is the actual problem, and it is not a knowledge gap you can read your way out of. What
+        fits depends on how your business really runs, which is why I come and look at it rather than
+        sending you a questionnaire.
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        You end up holding a list of what is worth building, in order, with a number beside each one.
+      </p>
+
+      <div class="panel mt-8 max-w-2xl p-6">
+        <p class="font-display text-2xl font-semibold text-ink">{assessmentPrice.line}</p>
+        <p class="mt-2 leading-relaxed text-ink-muted">{assessmentPrice.qualifier}</p>
+        <p class="mt-3 text-sm leading-relaxed text-ink-faint">
+          So if you go ahead, the assessment cost you nothing. If you do not, you still keep the
+          document — and it is written for any developer, not only for me.
+        </p>
+      </div>
+
+      {/* THE PAY BUTTON RENDERS ONLY WHEN A REAL LINK EXISTS, and the asking
+          route stays first either way. Ordering is the decision here: the free
+          first conversation is a named offer on this site, so a stranger's
+          shortest path is still to ask rather than to pay. Paying is for
+          somebody who has already decided.
+
+          When ASSESSMENT_PAYMENT_LINK is null nothing below appears and the
+          page reads exactly as it did before — a button pointing at a link
+          nobody created is worse than no button, because it reads as working
+          and fails at the one moment somebody has decided to buy. */}
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=assessment" class="btn btn-primary">Ask about an assessment →</a>
+        {canTakePayment() && (
+          <a href={ASSESSMENT_PAYMENT_LINK} class="btn btn-secondary" rel="noopener">
+            Or pay {assessmentPrice.amount} and book it
+          </a>
+        )}
+        <a href="/check/" class="btn btn-secondary">Or run the free check first</a>
+      </div>
+      {canTakePayment() && (
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-ink-faint">{PAY_NOTE}</p>
+      )}
+    </div>
+  </section>
+
+  {/* ── What happens ──────────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+    <p class="mono-label">What happens</p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink">
+      Three things, and one of them is me showing up.
+    </h2>
+    <div class="mt-10 grid gap-6 sm:grid-cols-3">
+      {steps.map((s) => (
+        <div class="panel lift flex flex-col gap-3 p-6">
+          <div class="flex items-center gap-3">
+            <s.icon class="h-5 w-5 text-accent" aria-hidden="true" />
+            <span class="mono-label">{s.n}</span>
+          </div>
+          <h3 class="font-display text-lg font-semibold leading-snug text-ink">{s.t}</h3>
+          <p class="text-sm leading-relaxed text-ink-muted">{s.b}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ── What this is not — the section that keeps /approach/ honest ────────── */}
+  <section class="mx-auto max-w-3xl px-6 pb-14 sm:pb-20">
+    <div class="border-t border-line pt-10">
+      <p class="mono-label">What this is not</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        Not a strategy deck, and not a readiness score.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        There is no maturity rating, no roadmap, no vendor shortlist, and no comparison against
+        companies I have never seen. Every line in the document is a thing that could be built, with
+        what it would cost to build it, because a recommendation you cannot price is just an opinion
+        with a font.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        I am not selling you AI either. If the honest answer is that a whiteboard and a changed
+        Tuesday routine would fix it, that is what the document says, and you still keep the
+        document. Plenty of the best work I have done for a business had no AI anywhere near it.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        And it is not a first conversation. That is still free, still has no assessment attached, and
+        is still the right place to start if you already know what you want built.
+        {' '}{startingPrice.line} {startingPrice.qualifier}
+      </p>
+    </div>
+
+    <div class="mt-10 border-t border-line pt-10">
+      <p class="mono-label">Why me</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        I have stood on the floor in most of these businesses.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        A restaurant floor at a casino for five and a half years. A bank's lending division, then
+        cash management at a second bank. A clinical practice's scheduling and records. A licensed
+        insurance practice. Now the planning floor of the appliance plant in town. That is not a
+        credential I am waving — it is why I can watch an hour of your work and know which part of it
+        is unusual, which is the only skill this job actually needs.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=assessment" class="btn btn-primary">
+          Ask about an assessment <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+        <a href="/bio/" class="btn btn-secondary">The whole run of it</a>
+      </div>
+    </div>
+  </section>
+</MarketingLayout>

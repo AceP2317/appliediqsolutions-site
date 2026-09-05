@@ -1,0 +1,59 @@
+---
+/**
+ * /host/ — the operator's own console for making a client meeting room.
+ *
+ * WHY IT IS A SEPARATE ROUTE FROM /admin. /admin is the content console: it is
+ * built for writing news stories, and the meeting-room button arrived there as a
+ * second tab because that was where the sign-in gate already was. Reaching it
+ * meant recalling an unlisted address, landing on the wrong tool, and switching
+ * tabs — three steps for the one action now performed most often.
+ *
+ * IT INSTALLS AS ITS OWN APP. host.webmanifest gives it an icon, a name and its
+ * own window, so it pins to a taskbar and to a phone home screen. That is the
+ * actual fix: a bookmark opens a tab inside whatever window was already there,
+ * an installed app opens onto the button. `scope` is /host/ rather than /, so
+ * the installed window stays this console instead of becoming a second browser
+ * for the marketing site.
+ *
+ * SECURITY IS THE WORKER'S, NOT THIS FILE'S. worker/index.js refuses /host to
+ * anyone without a valid Access session, and it only gets the chance because
+ * wrangler.jsonc lists /host in assets.run_worker_first — without that the
+ * assets layer answers first and the gate is dead code (L-265). The API behind
+ * the button re-checks independently, so neither layer is load-bearing alone.
+ *
+ * noindex and sitemap-excluded. It holds no secret, but a private console has no
+ * business in search results.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Wordmark from '../components/Wordmark.astro';
+import HostConsole from '../components/HostConsole.jsx';
+---
+<BaseLayout
+  title="Meeting host"
+  description="Create a private client meeting room."
+  manifest="/host.webmanifest"
+  noindex
+>
+  <main id="main" class="mx-auto flex min-h-[100svh] max-w-2xl flex-col px-6 py-8 sm:py-12">
+    <header class="mb-10 flex flex-wrap items-baseline justify-between gap-4">
+      <Wordmark />
+      <p class="mono-label">Meeting host</p>
+    </header>
+
+    {/* CENTRED IN THE REMAINING HEIGHT, not stacked under the header. Left at the
+        top, the button sat above a screen of empty paper on a desktop — which
+        reads as a page missing its content rather than as a tool with one job.
+        Centring is what makes the emptiness look chosen. */}
+    <div class="flex flex-1 items-center">
+      <HostConsole client:load />
+    </div>
+
+    <footer class="pt-12">
+      <p class="text-xs leading-relaxed text-ink-faint">
+        Rooms are private and expire after 14 days. Recording is off until you start it, and
+        everyone on the call sees an indicator while it runs.
+        <a class="underline underline-offset-4 hover:text-ink-muted" href="/admin/">Content console →</a>
+      </p>
+    </footer>
+  </main>
+</BaseLayout>

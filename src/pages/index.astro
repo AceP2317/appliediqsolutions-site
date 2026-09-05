@@ -1,0 +1,97 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { homeSchema } from '../data/demos';
+import Opener from '../components/sections/Opener.astro';
+import ProofBar from '../components/sections/ProofBar.astro';
+import CheckBand from '../components/sections/CheckBand.astro';
+import LeadOffer from '../components/sections/LeadOffer.astro';
+import Offers from '../components/sections/Offers.astro';
+import AssessmentBand from '../components/sections/AssessmentBand.astro';
+import Breadth from '../components/sections/Breadth.astro';
+import ToolsDoorway from '../components/sections/ToolsDoorway.astro';
+import Cta from '../components/sections/Cta.astro';
+import { shapesHead } from '../data/home';
+
+const origin = new URL(Astro.site!).origin;
+---
+<MarketingLayout
+  title="AppliedIQ Solutions"
+  description="Custom software for small local business — a real website you own, your spreadsheets turned into a live tool, and a shelf of finished tools that run on your own rules in your own browser. Built by an operator who does this at industrial scale. Yours to own, not rented."
+  schema={homeSchema(origin)}
+>
+  {/* THE PITCH, not a navigation hub (D29). A visitor arriving from Google, a
+      business card, or Nextdoor lands on the offer — not on a menu asking them
+      to pick a door. That reversal is the whole point of this page.
+
+      Order is load-bearing. The offer (LeadOffer, Offers) sits ABOVE the
+      industrial proof (Breadth's at-scale links), because a proof strip leading
+      with manufacturing scale, read before any offer, tells a shop owner this
+      is an enterprise site. If this order ever slips back to proof-first, the
+      pivot fails quietly.
+
+      Confirmation Outlook is NOT a section here and no longer has a portal tile
+      in the Opener — it is a deployed enterprise service, which is exactly the
+      thing this page stopped selling. It keeps its own page, reached from the
+      Work nav group and from /work/'s proof band. It is also not in demos.ts:
+      proofStats says "open any one in your browser", true of the islands and
+      false of it.
+
+      The old LiveTools section is GONE. It made the same proof-at-scale
+      argument the shape grid below already makes, for 763px on a page that
+      measured 9,462px on a phone — and this page's whole history is it growing
+      back (12,696px in July). Its caliber claim moved into the Shapes lede and
+      its one door to /work/ hangs in Breadth's foot slot.
+
+      MEASURED 9,738px ON 2026-09-03, after the assessment band. The band cost
+      276px, which is the price of the paid offer being reachable from this page
+      at all. Re-measure with `node scripts/measure-pages.mjs` before the next
+      section rather than trusting either figure here — that is the whole reason
+      no threshold is written down.
+
+      Indices read /01–/02. Copy lives in src/data/home.ts. */}
+  <Opener />
+  {/* THE CHECK TAKES THE SLOT STRAIGHT AFTER THE OPENER, as the plan reserved.
+      It is the lead offer, and it is the only thing on this page that works on a
+      visitor who has never heard of custom software: two numbers in, one number
+      about THEIR business back, with the arithmetic printed.
+
+      It sits ABOVE the proof bar deliberately. A visitor who has just been told
+      what a stranger's career was is more likely to act on something they can do
+      than on more reasons to believe him. */}
+  <CheckBand />
+  <ProofBar />
+  {/* THE OFFER COMES BEFORE THE PROOF OF IT, reordered 2026-08-24.
+      Review Autopilot used to sit here as "the lead offer", which stopped
+      being true when a platform shipped its whole category built in and free.
+      It is now what it actually is: a working tool a visitor can open, sitting
+      UNDER the three things actually being sold rather than in front of them.
+
+      When the free instant check ships it takes the slot directly after the
+      opener, and this comment is the note that says so. */}
+  <Offers />
+  {/* THE ASSESSMENT SITS HERE AND NOWHERE HIGHER, added 2026-09-03. It answers
+      the question Offers above leaves behind — a reader has just seen the three
+      things that get built and may not know which one is theirs. That is what
+      the assessment sells, so it belongs immediately after and nowhere else.
+
+      It stays BELOW the free check on purpose. The check is the lead offer and
+      the only thing on this page a stranger can act on; a paid item above it
+      would pull the reader out of the funnel at the point it is meant to draw
+      them in. The band names no figure, which is what keeps it one band tall. */}
+  <AssessmentBand />
+  <LeadOffer />
+  <Breadth
+    id="shapes"
+    tone="canvas"
+    index={shapesHead.index}
+    eyebrow={shapesHead.eyebrow}
+    title={shapesHead.title}
+    lede={shapesHead.lede}
+    columns={2}
+    showAreas={false}
+    showScales={true}
+  >
+    <ToolsDoorway />
+  </Breadth>
+  <Cta />
+</MarketingLayout>

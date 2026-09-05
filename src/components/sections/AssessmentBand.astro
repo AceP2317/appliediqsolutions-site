@@ -1,0 +1,47 @@
+---
+/**
+ * AssessmentBand — the home page's door into the AI Fit Assessment.
+ *
+ * WHY IT EXISTS. The assessment shipped on 2026-09-03 with four inbound links,
+ * and not one of them was on the home page: the footer, the Services drop-down,
+ * the mobile Menu sheet, and one panel on /services/. A paid offer reachable
+ * only from a menu is a paid offer most visitors never learn about.
+ *
+ * WHY IT SITS AFTER Offers AND NOT NEAR THE TOP. index.astro records the page
+ * order as load-bearing, and the free check holds the slot straight after the
+ * opener because it is the one thing on the page a stranger can act on. Putting
+ * a paid item above it would take the reader out of the funnel at the exact
+ * point it is meant to pull them in. The reader who reaches this band has
+ * already been shown the free check and the three things that get built, which
+ * is the right moment to say "and if you cannot tell which of those you need".
+ *
+ * IT NAMES NO FIGURE, AND THAT IS A RULE RATHER THAN A STYLE CHOICE. The price
+ * and the credit are one statement — the fee WITHOUT the credit is a worse offer
+ * than the one being sold — and scripts/verify-assessment.mjs requires them
+ * within 400 characters of each other wherever the price appears. This band has
+ * no room for the pair, so it carries neither. The page it opens carries both.
+ *
+ * ONE HEADING, ONE PARAGRAPH, ONE BUTTON. Headroom on a 390px phone is thin and
+ * this page's whole history is growing back. Measure with
+ * `node scripts/measure-pages.mjs` before adding a second sentence.
+ */
+import Section from '../Section.astro';
+---
+<Section tone="canvas">
+  <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+    <div class="max-w-xl">
+      <p class="mono-label">If you cannot tell which of those you need</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+        Everyone says you should be using AI. Nobody says where.
+      </h2>
+      <p class="mt-3 leading-relaxed text-ink-muted">
+        So I come out, watch an hour of the work actually happening, and write you a list of what is
+        worth building — in order, with a number beside each line. If the honest answer is that no
+        software fixes it, the document says that, and you still keep the document.
+      </p>
+    </div>
+    <div class="shrink-0">
+      <a href="/ai-fit/" class="btn btn-primary">The AI Fit Assessment →</a>
+    </div>
+  </div>
+</Section>

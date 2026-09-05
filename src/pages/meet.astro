@@ -1,0 +1,48 @@
+---
+/**
+ * /meet/ — the client meeting room.
+ *
+ * A client reaches this from a link in Ian's reply: /meet/?r=aiq-3f9c2a. The
+ * room comes from a query string rather than a path segment ON PURPOSE. A path
+ * like /meet/aiq-3f9c2a/ would need a dynamic route, and a dynamic route with
+ * an unknown-at-build-time value needs server rendering — which this site does
+ * not do. It ships as static files behind a Worker with an ASSETS binding and
+ * no Astro adapter. A query string keeps the whole thing one built file.
+ *
+ * DELIBERATELY NOT THE MARKETING LAYOUT. The announce bar, nav, footer and
+ * mobile tab bar all belong on a page that is selling; a person about to be on
+ * camera does not need somewhere else to click. The wordmark stays, because a
+ * client following a link still needs to see whose room this is.
+ *
+ * noindex + excluded from the sitemap in astro.config.mjs. The page is harmless
+ * to crawl — without a valid ?r= it renders an expired-link message — but a
+ * meeting room has no business in search results.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Wordmark from '../components/Wordmark.astro';
+import MeetRoom from '../components/MeetRoom.jsx';
+---
+<BaseLayout
+  title="Meeting room"
+  description="Join a scheduled call with Ian Provencher of AppliedIQ Solutions."
+  noindex
+>
+  <main id="main" class="mx-auto max-w-5xl px-6 py-8 sm:py-12">
+    <header class="mb-8 flex flex-wrap items-baseline justify-between gap-4">
+      <Wordmark />
+      <p class="mono-label">Private meeting room</p>
+    </header>
+
+    {/* client:only — Daily needs a real browser with a camera. Server-rendering
+        it would fail at build time, and a client:load island would still try to
+        render once on the server first. */}
+    <MeetRoom client:only="react">
+      <div slot="fallback" class="panel p-8">
+        <p class="mono-label"><span class="status-dot"></span> Opening the room</p>
+        <p class="mt-3 text-sm leading-relaxed text-ink-muted">
+          One moment — your browser will ask for camera and microphone access.
+        </p>
+      </div>
+    </MeetRoom>
+  </main>
+</BaseLayout>

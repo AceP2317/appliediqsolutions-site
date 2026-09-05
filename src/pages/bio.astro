@@ -1,0 +1,162 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { opsYears as opsYearsNow } from '../lib/career.js';
+import Breadth from '../components/sections/Breadth.astro';
+import Cta from '../components/sections/Cta.astro';
+import SocialIcon from '../components/SocialIcon.astro';
+import { socialLinks, cardEmail } from '../data/links';
+import { Mail, QrCode } from '@lucide/astro';
+
+/* REWRITTEN 2026-08-24 under D33. This page used to open on the manufacturer and
+   stay there, which made the whole site read as an industrial pitch — the
+   operator's own diagnosis of why it was not selling.
+
+   The career is now the pitch, and the facts and their sourcing live in
+   docs/career-record.md. Two names on this page are deliberate operator
+   decisions, not defaults:
+
+     • Jimmy Buffett's Margaritaville at Mohegan Sun is NAMED. It is his own
+       employment history, published on resumes sent externally, and it is the
+       detail that proves the scale — a casino restaurant turns more covers in a
+       night than most New Bern rooms do in a week.
+
+     • The psychiatric center is NOT named. "A clinical practice" carries the
+       entire credential — patient scheduling and records under federal privacy
+       law — without putting a mental-health facility's name on a sales page.
+       Decided 2026-08-24; do not "improve" it by adding the name back.
+
+   THE APPLIANCE PLANT IS STILL NEVER NAMED (D1, D8). Every local resolves "the
+   appliance plant in town" instantly, and it borrows nobody's branding.
+
+   NO PERCENTAGES. Nine of them exist across the resumes and every one is held,
+   because no underlying calculation exists for any of them and a number a client
+   can ask about is a number that needs working. */
+
+/* Derived, never a literal — the same rule as the tool count and for the same
+   reason: a hardcoded number is wrong every January and nothing would error.
+   IMPORTED, not re-declared. This page carried its own copy of the start date
+   and its own division for it, which is two places for one fact and no way to
+   notice when they stop agreeing. src/lib/career.js is the one copy, and the
+   share-card generator already reads the same module. */
+const opsYears = opsYearsNow();
+---
+<MarketingLayout
+  title="Ian Provencher"
+  description={`Ian Provencher — ${opsYears} years running operations in five trades: restaurant, banking, a clinical practice, insurance, and manufacturing. Now building the software all five of them needed.`}
+  image="/og/bio.png"
+>
+  {/* ── Intro hero (branded brain well) ───────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-24">
+      <p class="mono-label">Bio</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Before I built software, I ran the businesses.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        I’m Ian Provencher. A restaurant floor, a bank’s lending division, a clinic’s front office, an
+        insurance book, and now the planning floor of the appliance plant in town — {opsYears} years
+        of running operations before a line of code. Not advising any of them. Running them.
+      </p>
+      <p class="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted">
+        Every one of them ran on something that almost worked, and none of them was ever going to get
+        software built for it. That’s the whole reason AppliedIQ exists.
+      </p>
+    </div>
+  </section>
+
+  {/* ── /01 The run — five trades, one recurring problem ───────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 01</span>
+      <span class="mono-label">The run</span>
+    </p>
+    <div class="mt-6 flex flex-col gap-5 text-lg leading-relaxed text-ink-muted">
+      <p>
+        I started on a restaurant floor at Jimmy Buffett’s Margaritaville inside Mohegan Sun, and
+        stayed five and a half years — supervisor first, then operations manager and head of the
+        beverage department. That meant the schedule, the staffing, the inventory, the pour cost, and
+        a profit-and-loss statement I had to explain every month. A casino restaurant turns more
+        covers in a night than most rooms do in a week, and none of it was run on software built for
+        it. It was run on spreadsheets and on me.
+      </p>
+      <p>
+        From there, banking. I ran consumer lending operations at United Bank in Hartford — the
+        day-to-day, the policies, the hiring and training — then cash management at Dime Bank, where
+        the work was financial reporting and closing the books clean enough to survive an audit.
+        Different building, same shape of problem: the system covered most of it, and a person
+        covered the rest by hand.
+      </p>
+      <p>
+        Then a clinical practice, where I ran patient scheduling and treatment records under federal
+        privacy rules. If you run a dental office or a family practice, you already know that work.
+        After that a licensed insurance practice — reading policy documents to people who needed them
+        explained, and working out what someone actually needed rather than what was easiest to sell.
+      </p>
+      <p>
+        And now supply chain at the appliance plant in town. Materials planning, bills of
+        material, supplier performance, and the ordering logic that decides whether a production line
+        runs on Monday. If a part is missing, the line stops — so the whole discipline is knowing what
+        you are about to run out of, long before you run out of it.
+      </p>
+      <p class="text-ink">
+        Five trades. One problem, every single time: <span class="aiq-accent">the software almost
+        fit</span>, and somebody was quietly holding the rest together.
+      </p>
+      <p>
+        That gap used to be permanent, because the software that would have closed it was priced for
+        companies a hundred times the size. That stopped being true. I build those tools now, and the
+        business that gets one owns it outright — codebase, data, accounts in its own name.
+      </p>
+      <p>
+        The AI half isn’t new either. It ran alongside the operations work the whole way, and it’s now
+        formally part of the work — shaping the path, scope and implementations of AI across the
+        company’s North America region. But it’s the leverage, not the point. The point is that a shop
+        running on a spreadsheet can now have a real tool built around exactly how it works — no
+        enterprise budget, no licence, no asking permission.
+      </p>
+      <p>
+        I wasn’t born here. I chose it.
+      </p>
+      <p class="text-base">
+        See where that’s pointed —{' '}
+        <a href="/main-street/" class="link-sweep">
+          my focus on local small business →
+        </a>
+      </p>
+    </div>
+  </section>
+
+  {/* ── /02 Beyond the moat (reused Breadth section) ──────────────────── */}
+  <Breadth />
+
+  {/* ── /03 Connect ───────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 03</span>
+      <span class="mono-label">Connect</span>
+    </p>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-ink-muted">
+      The direct lines — no funnel, no gatekeeper.
+    </p>
+    <div class="mt-6 flex flex-wrap gap-3">
+      {socialLinks.map((s) => (
+        <a href={s.href} target="_blank" rel="noopener" class="btn btn-secondary">
+          <SocialIcon path={s.iconPath} size={16} />
+          {s.name}
+        </a>
+      ))}
+      <a href={`mailto:${cardEmail}`} class="btn btn-secondary">
+        <Mail size={16} aria-hidden="true" />
+        Email
+      </a>
+      <a href="/card/" class="btn btn-secondary">
+        <QrCode size={16} aria-hidden="true" />
+        Digital card
+      </a>
+    </div>
+  </section>
+
+  {/* ── Closing CTA ───────────────────────────────────────────────────── */}
+  <Cta />
+</MarketingLayout>

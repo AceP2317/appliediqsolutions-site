@@ -1,0 +1,249 @@
+---
+/**
+ * /websites/ — the website build. THE THIRD PAID THING ON THIS SITE, and the
+ * first page that argues against the thing most visitors are already using.
+ *
+ * WHY IT EXISTS AT ALL, WHICH IS A REVERSAL. D55 (2026-08-30) decided the
+ * website starting figure stays on client paper, and answered the anchor problem
+ * with one sentence on /services/ and /main-street/: a site "carries its own
+ * number, scoped and quoted before anything starts". That sentence is true and
+ * it leaves a reader knowing only that a site costs more than the build floor. Somebody
+ * comparing three quotes reads that as evasion, and the floor beside it — sized
+ * for a fitted shelf tool — is the number they carry away instead.
+ *
+ * IT CLEARS THE THIRD-NUMBER TEST WRITTEN INTO src/lib/pricing.js, which allows
+ * one only for a product a visitor could buy without buying either of the
+ * others. A business can buy a site without buying a shelf tool or an
+ * assessment, and most of them arrive wanting exactly that.
+ *
+ * THE PRICE AND ITS QUALIFIER ARE ONE OBJECT and the qualifier here is longer
+ * than the other two on purpose. The entire argument for the website floor over
+ * a monthly subscription is the six things it buys, so a page showing the
+ * figure without them has published the objection and withheld the answer.
+ *
+ * THE COMPARISON NAMES COMPANIES, AND EVERY LEFT-HAND CLAIM IS REGISTERED.
+ * `wix-no-site-export`, `squarespace-lapse-window` and `godaddy-no-app-market`
+ * live in src/data/external-claims.js as `human` claims — they age, they warn,
+ * and a person re-reads them. They cannot be probed: REACHABLE_HOSTS defaults to
+ * no, and a green tick beside a competitor's terms would be the same failure
+ * wearing a check mark.
+ *
+ * ONE ARGUMENT IS REFUSED ON EVIDENCE AND MUST STAY REFUSED. Builder sites are
+ * not slow — default-template mobile Core Web Vitals pass rates measured
+ * 2026-09-03 run Wix 80.7%, Squarespace 70.2%, WordPress 49.3%. A speed claim
+ * would be disprovable by any prospect with a free testing tool.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { websitePrice, startingPrice } from '../data/services';
+import { websiteComparison } from '../data/home';
+import { WEBSITE_USD } from '../lib/pricing.js';
+import { Check, X, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+/* The six things, straight off §1.1–§1.6 of
+   docs/engagement/agreements/website-build-scope.md. The scope IS the argument
+   for the number, so this list and that document must not drift — five of these
+   six were never priced into the published floor, which is the whole reason a
+   second floor exists. */
+const included = [
+  {
+    n: '01',
+    t: 'A website that belongs to you',
+    b: 'Built for your business rather than picked off a rack, on a domain and hosting in your name. You hold the accounts. I do not sit between you and anything.',
+  },
+  {
+    n: '02',
+    t: 'Email from your own address that lands in inboxes',
+    b: 'The records that tell the world your mail is really yours. Skip them and a quote sent to a customer goes to junk, which is the failure nobody notices until they lose the job.',
+  },
+  {
+    n: '03',
+    t: 'Findable, and right when somebody shares it',
+    b: 'Your search listing and business profile set up properly, and the link showing your name and a real picture when it is pasted into a message rather than a blank box.',
+  },
+  {
+    n: '04',
+    t: 'A privacy page and a terms page in your name',
+    b: 'The moment a form on your site asks for a name and an email, California law reaches you whatever state you trade in, and there is no size threshold to hide under.',
+  },
+  {
+    n: '05',
+    t: 'One working tool built into the site',
+    b: 'Not a contact form. The arithmetic your business actually runs on — the tip-out, the reorder point, the job quote — sitting on your own site where your customers or your crew can use it.',
+  },
+  {
+    n: '06',
+    t: 'Handed over so it survives without me',
+    b: 'Every account tested by you logging into it while I watch, not a list of passwords in an email. If I disappear, nothing about your business stops.',
+  },
+];
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/websites/#service`,
+    name: 'Website build',
+    serviceType: 'Custom website design and development',
+    provider: { '@id': `${origin}/#organization` },
+    areaServed: 'US',
+    description:
+      'A website you own outright — your accounts, your domain, working email, a search listing, the two policy pages, and one working tool built into the site.',
+    offers: {
+      '@type': 'Offer',
+      price: WEBSITE_USD,
+      priceCurrency: 'USD',
+      description: websitePrice.qualifier,
+    },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: `${origin}/services/` },
+      { '@type': 'ListItem', position: 3, name: 'Websites', item: `${origin}/websites/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="A website you own"
+  description={`A real website in your own accounts, with working email, a search listing, the policy pages, and one tool built in. ${websitePrice.line} ${websitePrice.qualifier}`}
+  image="/og/websites.png"
+>
+  {/* ── Hero. The figure and its qualifier are one block, never a screen apart. */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">A site in your name · yours outright · from {websitePrice.amount}</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Renting a website is cheap. Here is what it <span class="aiq-accent">actually costs</span>.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        The monthly ones are genuinely cheap and they genuinely work. What is never on the pricing
+        page is what happens the day you want to leave, and on most of them the answer is that you
+        cannot — not with your pages, anyway.
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        This is the other option. It costs more once and nothing after that, and at the end of it you
+        are holding the thing rather than borrowing it.
+      </p>
+
+      <div class="panel mt-8 max-w-2xl p-6">
+        <p class="font-display text-2xl font-semibold text-ink">{websitePrice.line}</p>
+        <p class="mt-2 leading-relaxed text-ink-muted">{websitePrice.qualifier}</p>
+        <p class="mt-3 text-sm leading-relaxed text-ink-faint">
+          It is a floor because I quote the job rather than the category. I would rather be honest
+          about where it starts than advertise a number I cannot hold.
+        </p>
+      </div>
+
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=quote" class="btn btn-primary">Ask what yours would cost →</a>
+        <a href="/main-street/" class="btn btn-secondary">Three of these are free right now</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── What the number buys. This section IS the justification for the figure. */}
+  <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+    <p class="mono-label">What the number buys</p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink">
+      Six things, and five of them are the ones people forget.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      Most quotes for a website cover the pages and stop there. Then the mail goes to junk, nobody
+      can find you, and there is no policy page the day a form starts collecting names.
+    </p>
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {included.map((s) => (
+        <div class="panel lift flex flex-col gap-3 p-6">
+          <span class="mono-label">{s.n}</span>
+          <h3 class="font-display text-lg font-semibold leading-snug text-ink">{s.t}</h3>
+          <p class="text-sm leading-relaxed text-ink-muted">{s.b}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ── The comparison. Every left-hand line is a registered, dated claim. ─── */}
+  <section class="section-band border-y border-line">
+    <div class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+      <p class="mono-label">The difference</p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        The question is not what it costs. It is what you are holding at the end.
+      </h2>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-2">
+        <div class="panel lift spotlight p-7">
+          <p class="mono-label">{websiteComparison.left.title}</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {websiteComparison.left.items.map((item) => (
+              <li class="flex items-start gap-3 text-ink-muted">
+                <X size={18} class="mt-0.5 shrink-0 text-down" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="panel lift spotlight border-accent/40 p-7">
+          <p class="mono-label text-cyan-deep">{websiteComparison.right.title}</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {websiteComparison.right.items.map((item) => (
+              <li class="flex items-start gap-3 text-ink">
+                <Check size={18} class="mt-0.5 shrink-0 text-up" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <p class="mt-6 max-w-3xl text-sm leading-relaxed text-ink-faint">
+        Every line on the left was read off those companies' own help and pricing pages on 3
+        September 2026. Terms change, so if you are weighing this up, go and check them again rather
+        than taking my word for it.
+      </p>
+    </div>
+  </section>
+
+  {/* ── What this is not. The /check/ and /ai-fit/ pattern. ────────────────── */}
+  <section class="mx-auto max-w-3xl px-6 py-14 sm:py-20">
+    <p class="mono-label">What this is not</p>
+    <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+      Not a reason to leave something that is working.
+    </h2>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      If you have a site you like, people find it when they search for you, and your mail arrives —
+      then you do not need me, and I will say so on the call. The businesses this is for are running
+      on a Facebook page, on nothing at all, or on a subscription they resent and cannot leave.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      It is also not a claim that those platforms are badly built, because they are not. What they
+      will not do is hand you the thing, and they have nowhere to put the one piece of software your
+      business actually runs on — which is the part you cannot buy monthly at any price.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      And it is not the only number here. A tool on its own is a smaller job and a smaller number:
+      {' '}{startingPrice.line.toLowerCase()} {startingPrice.qualifier}
+    </p>
+
+    <div class="mt-10 border-t border-line pt-10">
+      <p class="mono-label">Not sure a site is the thing you need</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        Then buy the answer before you buy the build.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        The AI Fit Assessment is a visit, a read of how your work actually runs, and a written list
+        of what is worth building with a price beside each line. If a website is not the first thing
+        on that list, it will say so — and the fee comes off whatever you do build.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=quote" class="btn btn-primary">
+          Ask what yours would cost <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+        <a href="/ai-fit/" class="btn btn-secondary">Read about the assessment</a>
+      </div>
+    </div>
+  </section>
+</MarketingLayout>

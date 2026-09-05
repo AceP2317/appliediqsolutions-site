@@ -1,0 +1,302 @@
+---
+// Self-hosted type (Fontsource) — no external font CDN.
+import '@fontsource-variable/inter';
+// FRAUNCES IS THE DISPLAY FACE from 2026-08-24. Space Grotesk is one of the two
+// or three most-used faces on technology sites, which is exactly the "looks like
+// every dev site" the rebuild is answering — a typeface that common is a
+// generated-design tell, not a choice.
+//
+// Fraunces is a variable serif with an optical-size axis, so it can be set warm
+// and characterful at headline sizes without turning quirky. It was ALREADY a
+// dependency, so this costs no new package.
+//
+// BODY STAYS INTER, deliberately, against the usual advice to pair a grotesk
+// display with a serif body. This site's reader is around fifty and often on a
+// phone in daylight, and a sans at small sizes is the safer half of that trade.
+// The warmth is carried by the headings and by the ground, where it costs
+// nothing in legibility.
+import '@fontsource-variable/fraunces';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
+// The display font paints the LCP headline on every page — preload it so the
+// first paint doesn't FOUT-swap. Body/mono fonts load via CSS as usual.
+import displayWoff2 from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+import { personSameAs, businessSameAs } from '../data/links';
+import { versioned } from '../data/asset-version';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  /** Extra JSON-LD nodes for this page, merged into the site-wide @graph. */
+  schema?: Record<string, unknown>[];
+  /** Keep this page out of search indexes (shareable, but not crawled). */
+  noindex?: boolean;
+  /** Per-page web-app manifest — lets a page install as its own app (e.g. /ian-card). */
+  manifest?: string;
+  /** RSS feed for this page (e.g. /blog/rss.xml) — emits <link rel="alternate">. */
+  rssHref?: string;
+}
+
+const {
+  title = 'AppliedIQ Solutions',
+  description = 'Custom software for small local business — a real website you own, your spreadsheets turned into a live tool, and live tools you can try right now. Working software you own, not slideware.',
+  /* NO VERSION TYPED HERE, and none typed by any page either. The layout
+     stamps ART_VERSION on whatever path it is given — see
+     src/data/asset-version.ts for why a per-page number kept going stale. */
+  image = '/og/default.png',
+  schema = [],
+  noindex = false,
+  manifest = '/site.webmanifest',
+  rssHref,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+/* The version is stamped HERE, not by the page. See src/data/asset-version.ts. */
+const ogImage = new URL(versioned(image), Astro.site);
+const isHome = Astro.url.pathname === '/';
+// The home suffix IS the SERP headline for every brand query. It said "Custom
+// Supply-Chain Software & AI Tools" until D29, which is the offer the practice
+// stopped leading with. Keep it under ~60 chars including the brand.
+const fullTitle = isHome
+  ? `${title} — Custom Software for Small Business`
+  : `${title} · AppliedIQ Solutions`;
+
+// ── Structured data ──────────────────────────────────────────────────────
+// Site-wide entity + site nodes; per-page nodes arrive via the `schema` prop.
+// One @graph keeps @id cross-references resolvable; Google dedupes the repeated
+// site nodes across pages.
+const origin = new URL(Astro.site!).origin;
+const orgId = `${origin}/#organization`;
+const personId = `${origin}/#person`;
+const siteGraph: Record<string, unknown>[] = [
+  {
+    '@type': 'ProfessionalService',
+    '@id': orgId,
+    name: 'AppliedIQ Solutions',
+    url: `${origin}/`,
+    logo: `${origin}/android-chrome-512x512.png`,
+    /* Versioned like every other reference to a committed image; this one
+       had no cache-buster at all, so a scraper reading the structured data
+       could pin the retired card independently of the og:image tag. */
+    image: `${origin}${versioned('/og/default.png')}`,
+    email: 'contact@appliediqsolutions.com',
+    description:
+      'Custom software for small business, built by an operator — a website you own, spreadsheets turned into a live tool, and the tools the big systems leave out. Working software, not slideware.',
+    slogan: 'Working software, not slideware.',
+    founder: { '@id': personId },
+    /* THE BUSINESS'S OWN EXTERNAL IDENTITY. This node had no `sameAs` at all
+       until 2026-08-27, while the Nextdoor BUSINESS page sat in the Person's
+       list — so the structured data claimed the listing was a personal profile
+       and claimed nothing whatsoever for the business. The Google listing is in
+       here rather than the footer: it is what ties this domain to that entity,
+       and a human sent to a listing with no reviews is worse served than one
+       who was never sent. */
+    sameAs: businessSameAs,
+    areaServed: 'US',
+    // ADD small-business terms, never trade the supply-chain ones away. The
+    // pivot moves what is SOLD; it does not make the operator's depth untrue,
+    // and the long tail on those terms is the only organic traffic this site
+    // has earned so far (D29 risk 1).
+    knowsAbout: [
+      'Small business software', 'Custom web application development',
+      'Website design and development', 'Business process automation',
+      'Spreadsheet to web application', 'Online review management',
+      'Supply chain management', 'Material requirements planning (MRP)',
+      'Bill of materials (BOM)', 'Production planning', 'Inventory management',
+      'Logistics', 'Custom software development', 'Applied AI',
+    ],
+  },
+  {
+    '@type': 'Person',
+    '@id': personId,
+    name: 'Ian Provencher',
+    jobTitle: 'Supply-chain operator & software builder',
+    description:
+      'A supply-chain operator who directs AI to ship custom software for small business — the tools the big systems leave out.',
+    worksFor: { '@id': orgId },
+    url: `${origin}/bio/`,
+    sameAs: personSameAs,
+    knowsAbout: [
+      'Small business software', 'Custom software', 'Web application development',
+      'Business process automation', 'Supply chain operations', 'MRP',
+      'Bill of materials', 'Production planning', 'Applied AI',
+    ],
+  },
+  {
+    '@type': 'WebSite',
+    '@id': `${origin}/#website`,
+    name: 'AppliedIQ Solutions',
+    url: `${origin}/`,
+    publisher: { '@id': orgId },
+  },
+];
+const jsonLdStr = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [...siteGraph, ...schema],
+}).replace(/</g, '\\u003c');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* ?v=N ON EVERY ICON, AND IT IS THE FIX FOR A BUG THAT LOOKED LIKE A STALE FILE.
+        The tab icon was redrawn on 2026-08-25 and the operator still saw the
+        retired indigo tile the next day. Production was serving the correct
+        bytes — verified by checksum against the repo — and his browser was
+        holding the old picture, because `public/_headers` gives /favicon.svg and
+        every .png a seven-day cache and the ADDRESS never changed. A browser
+        with a valid cached copy does not ask again, so redrawing the file
+        reached nobody who had already visited. Chrome also keeps a favicon store
+        of its own, separate from the HTTP cache and stickier than it.
+
+        The share cards already solved this exact problem with ?v=N (D24): a
+        different URL cannot hit a cached response, so the new picture is fetched
+        the moment the version moves. THERE IS NOW ONE NUMBER FOR ALL OF IT, in
+        src/data/asset-version.ts, stamped by versioned() rather than typed
+        here — because these were kept in step by hand and one of them was
+        missed for two days. */}
+    <link rel="icon" type="image/svg+xml" href={versioned('/favicon.svg')} />
+    <link rel="icon" type="image/png" sizes="32x32" href={versioned('/favicon-32.png')} />
+    {/* 512 DARK chip, for Google Search. Without it Google renders the INDIGO
+        apple-touch-icon: every dark raster icon here is <=48px, Google wants
+        >48px, and it accepts apple-touch-icon as a favicon source. Do not
+        remove. The browser tab is fine either way; search results are not. */}
+    <link rel="icon" type="image/png" sizes="512x512" href={versioned('/favicon-512.png')} />
+    {/* THE .ico CARRIES THE VERSION TOO, AND SKIPPING IT WAS THE WHOLE BUG.
+        The note here used to argue it needed none: `_headers` covers .svg and
+        .png but not .ico, so it falls through to the site-wide block, sets no
+        Cache-Control, and therefore revalidates. That is true of the HTTP
+        cache and it is not the whole story. `sizes="any"` declares this icon
+        scalable, which is the strongest signal a browser has when choosing
+        between candidates, so this is very likely the file actually being
+        displayed — and Chrome keeps a favicon store separate from the HTTP
+        cache, keyed by URL and stickier than it. One address that never
+        changed, on the one file most likely to be shown. */}
+    <link rel="icon" href={versioned('/favicon.ico')} sizes="any" />
+    <link rel="apple-touch-icon" href={versioned('/apple-touch-icon.png')} />
+    <link rel="manifest" href={manifest} />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href={displayWoff2} />
+    {/* THE ADDRESS BAR ON A PHONE. Mobile Chrome and Safari tint their chrome
+        with this, so it is the one colour a visitor sees BEFORE the page paints
+        — and it sat at the retired slate #0f1117 for two days after the palette
+        inverted, tinting every phone's browser near-black above a warm page.
+
+        It is the canvas, not the accent: this tints a bar sitting directly
+        above the page, and a saturated bar over an oyster ground reads as a
+        different site's chrome bolted on top. Kept in step with the tokens by
+        `npm run gate`, which fails if it drifts from --color-canvas. */}
+    <meta name="theme-color" content="#faf7f2" />
+    <link rel="canonical" href={canonical} />
+    {rssHref && (
+      <link rel="alternate" type="application/rss+xml" title="AppliedIQ Solutions — Field notes" href={rssHref} />
+    )}
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- OpenGraph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AppliedIQ Solutions" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={fullTitle} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'} />
+    <meta name="generator" content={Astro.generator} />
+
+    {/* Structured data — Organization · Person · WebSite + any per-page nodes. */}
+    <script type="application/ld+json" is:inline set:html={jsonLdStr} />
+
+    {/* Scroll-reveal gate. Runs before paint so there is no flash; adds
+        `reveal-on` only when JS runs AND motion is allowed. An
+        IntersectionObserver reveals each `.reveal` once and never re-hides it.
+        On any failure, `reveal-on` is removed so content is always visible. */}
+    <script is:inline>
+      (function () {
+        try {
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          var de = document.documentElement;
+          de.classList.add('reveal-on');
+          var run = function () {
+            var els = document.querySelectorAll('.reveal');
+            if (!('IntersectionObserver' in window)) {
+              els.forEach(function (el) { el.classList.add('is-visible'); });
+              return;
+            }
+            var io = new IntersectionObserver(function (entries) {
+              entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+              });
+            }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+            els.forEach(function (el) { io.observe(el); });
+          };
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', run);
+          } else {
+            run();
+          }
+        } catch (e) {
+          try { document.documentElement.classList.remove('reveal-on'); } catch (e2) {}
+        }
+      })();
+    </script>
+
+    {/* THE BOOT SCRIPT IS GONE — removed 2026-08-26. It added `net-boot` to
+        <html> on every page render, and the only rule that ever read that class
+        was `.net-boot .brand-backdrop svg`. BrandBackdrop.astro was deleted on
+        2026-08-25, so nothing has emitted `.brand-backdrop` since and the class
+        drove nothing. It was an inline blocking script in <head>, shipped to
+        every visitor, doing nothing at all. Deleting the component left the two
+        halves that referenced it in place, which is the ordinary shape of this:
+        a removal is not finished until what pointed at the thing is gone too. */}
+
+    {/* Decorative only — pointer glows, stat count-up, and the eggs. Astro bundles
+        and defers this. Nothing on the site depends on it: with JS off, every effect
+        is simply absent. */}
+    <script>
+      import '../scripts/spark.js';
+    </script>
+    {/* The conversion instrument. Loads on every page, records CTA clicks and
+        demo openings by DESTINATION so a new link never has to be tagged by
+        hand, and posts them to /api/event. See src/scripts/track.js for why
+        this exists: before it, nothing on this site recorded behaviour. */}
+    <script>
+      import '../scripts/track.js';
+    </script>
+
+
+    {/* Cloudflare Web Analytics — cookieless RUM (views, referrers, Core Web
+        Vitals). LIVE 2026-07-09: the account's existing Web Analytics site for
+        appliediqsolutions.com (created at launch) was switched from automatic
+        setup — whose injection never reached this Worker-served HTML — to
+        "Enable with JS Snippet installation"; this is that snippet. The token
+        is public by design (it ships to every visitor). PROD-gated so dev
+        sessions don't pollute the data. CSP-Report-Only already allows
+        static.cloudflareinsights.com + cloudflareinsights.com. */}
+    {import.meta.env.PROD && (
+      <script
+        is:inline
+        type="module"
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "f24d0907f57d4cfd970ed6e5ddd77a83"}'></script>
+    )}
+  </head>
+  <body class="min-h-screen antialiased">
+    <a href="#main" class="skip-link">Skip to content</a>
+    <slot />
+  </body>
+</html>

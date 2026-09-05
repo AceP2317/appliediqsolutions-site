@@ -1,0 +1,22 @@
+---
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import ProductionPlanChurn from '../../components/demos/production-plan-churn.jsx';
+/* The demand & planning band letters labels condensed; Oswald is not one of
+   the site-wide faces, so it loads per route as the shelf tools do. */
+import '@fontsource-variable/oswald';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'production-plan-churn')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} tagline={demo.tagline} problem={demo.problem} does={demo.blurb}
+  plain={demo.plain} />
+  <ProductionPlanChurn client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </ProductionPlanChurn>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

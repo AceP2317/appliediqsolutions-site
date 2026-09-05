@@ -1,0 +1,101 @@
+---
+/**
+ * Breadth — the problem-shape grid.
+ *
+ * Two callers with different jobs, one component:
+ *   /bio  — "the job is bigger than supply chain", four across, capability chips.
+ *   /     — the D29 spine: same shape at two scales, two across, no chips.
+ *
+ * Every prop DEFAULTS to what /bio already rendered, so that page is unchanged
+ * by the home page opting in. `showScales` gates the atShop / atScale lines:
+ * they make a card noticeably taller, which is fine at two columns and cramped
+ * at four.
+ */
+import Section from '../Section.astro';
+import Capability from '../Capability.astro';
+import { capabilities, capabilityAreas } from '../../data/home';
+import { demos } from '../../data/demos';
+
+interface Props {
+  id?: string;
+  tone?: 'canvas' | 'surface';
+  index?: string;
+  eyebrow?: string;
+  title?: string;
+  lede?: string;
+  /** The capability-area chip row + its "moat is the depth" line. */
+  showAreas?: boolean;
+  /** Render each card's "At your size" line and its at-scale link. */
+  showScales?: boolean;
+  columns?: 2 | 4;
+}
+const {
+  id = 'breadth',
+  tone = 'surface',
+  index = '/ 02',
+  eyebrow = 'Beyond the moat',
+  title = 'Supply chain is the moat. The work is bigger than supply chain.',
+  lede = 'Strip the domain away and what’s left is a repeatable move: take a hard, specific, one-off problem nobody will build a product for — and deliver the exact fix, whether that’s a tool, a full implementation, or root-cause problem-solving. These are the shapes I keep solving.',
+  showAreas = true,
+  showScales = false,
+  columns = 4,
+} = Astro.props;
+
+// A problem-shape card cites the live tool that demonstrates it (proofSlug in
+// home.ts) — the claim wall doubles as an evidence index.
+const proofFor = (slug?: string) => {
+  const demo = slug ? demos.find((d) => d.slug === slug) : undefined;
+  return demo ? { href: `/work/${demo.slug}/`, label: demo.name } : undefined;
+};
+---
+<Section id={id} tone={tone}>
+  <div class="max-w-3xl">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">{index}</span>
+      <span class="mono-label">{eyebrow}</span>
+    </p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      {title}
+    </h2>
+    <p class="mt-4 text-lg leading-relaxed text-ink-muted">
+      {lede}
+    </p>
+  </div>
+
+  <div class:list={['mt-12 grid gap-4 sm:grid-cols-2', columns === 4 && 'lg:grid-cols-4']}>
+    {capabilities.map((c) => (
+      <Capability
+        icon={c.icon}
+        title={c.title}
+        body={c.body}
+        proof={proofFor(c.proofSlug)}
+        atShop={showScales ? c.atShop : undefined}
+        atScale={showScales ? c.atScale : undefined}
+      />
+    ))}
+  </div>
+
+  {/* Foot slot — the home page hangs the /work/ doorway here rather than paying
+      for a whole extra section to say the same thing. /bio passes nothing. */}
+  <slot />
+
+  {showAreas && (
+    <div class="mt-10 flex flex-col gap-5 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
+      <p class="max-w-xl leading-relaxed text-ink-muted">
+        {/* WAS A SELF-ASSESSMENT — "my competencies scale and transfer fast",
+            which is a claim about himself that the reader has to take on
+            faith. D33 made the career the argument, so the trades say it
+            instead and the reader draws the conclusion. */}
+        Five trades, and none of them was supply chain to start with — if your hard problem isn’t either, that’s fine.{' '}
+        <span class="text-ink">The work travelled every time.</span>
+      </p>
+      <ul class="flex flex-wrap gap-2">
+        {capabilityAreas.map((area) => (
+          <li class="rounded-md border border-line bg-surface px-2.5 py-1 font-mono text-xs text-ink-muted">
+            {area}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</Section>
