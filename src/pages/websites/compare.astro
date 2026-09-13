@@ -1,0 +1,285 @@
+---
+/**
+ * /websites/compare/ — the whole field, not the four rows.
+ *
+ * WHY IT IS A SECOND PAGE RATHER THAN A LONGER /websites/. That page sells; this
+ * one explains. Widening the four-row comparison block would have pushed the
+ * six-item argument for the floor below three screens of nuance, and the reader
+ * who arrives on /websites/ has already decided to consider a build. The reader
+ * who arrives HERE typed "Wix vs hiring someone" into a search box and has
+ * decided nothing.
+ *
+ * THE ARITHMETIC ON THIS PAGE ARGUES AGAINST THE SALE AND THAT IS DELIBERATE.
+ * Every comparison written by somebody selling custom websites reaches for "a
+ * subscription costs more in the long run". At these prices it is false: five
+ * years of Wix Light is about $1,066 against the build floor, and renting stays
+ * cheaper for roughly twenty-one years. src/lib/platform-cost.js therefore
+ * computes the CROSSOVER rather than a five-year total, and this page prints it.
+ * A reader who works that out for himself after reading a page that hid it never
+ * believes the page again — and on the one site whose whole product is an
+ * honesty contract, that is the only failure mode that actually matters.
+ *
+ * EVERY PLATFORM MUST KEEP ITS `doesBetter` ROW AND A GATE ENFORCES IT.
+ * scripts/verify-compare.mjs fails if any platform's text is missing from the
+ * rendered page. Nobody deletes that row on purpose; it gets softened in a copy
+ * pass until it says nothing, and a comparison with no losing rows is an
+ * advertisement wearing a table.
+ *
+ * THE FIGURE COMES FROM src/data/services.ts AND IS NEVER TYPED HERE.
+ * check-dist.mjs refuses the website floor typed as a literal beside website
+ * wording in any scanned source file — and it caught the first draft of THIS
+ * COMMENT, which had spelled the number out while explaining that it must not
+ * be. The scanner reads source rather than rendered text, so a comment arguing
+ * for the rule breaks the rule exactly like a paragraph selling something would.
+ */
+import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import WhatIBuild from '../../components/WhatIBuild.astro';
+import { websitePrice } from '../../data/services';
+import { platforms, rows, READ_ON } from '../../data/platform-comparison.js';
+import { costShape } from '../../lib/platform-cost.js';
+import { WEBSITE_USD } from '../../lib/pricing.js';
+import { ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+const usd = (n: number) =>
+  n === 0
+    ? '$0'
+    : n.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+      });
+
+/* Computed once, here, so no arithmetic happens inside a template. The rented
+   ones are the only rows the crossover means anything for — a free product and a
+   one-off purchase both return null from monthsToParity, and printing "cheaper
+   for null years" is exactly the failure that null exists to force a decision
+   about. */
+const priced = platforms
+  .filter((p) => p.monthlyUsd > 0)
+  .map((p) => ({ ...p, cost: costShape(p.monthlyUsd) }))
+  .sort((a, b) => a.monthlyUsd - b.monthlyUsd);
+
+const cheapestRented = priced[0];
+const dearestRented = priced[priced.length - 1];
+
+const schema = [
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Websites', item: `${origin}/websites/` },
+      { '@type': 'ListItem', position: 3, name: 'Compare', item: `${origin}/websites/compare/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="Wix, Squarespace, or a site you own"
+  description="Every option a small business actually has for a website, what each one costs, what you own when you leave, and the row most comparisons leave out: where each one genuinely beats hiring me."
+  image="/og/websites.png"
+>
+  {/* ── Hero ─────────────────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">Every option, read off their own pricing pages on {READ_ON}</p>
+      <h1 class="mt-3 max-w-4xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        I sell one of these. Here is <span class="aiq-accent">where the others win</span>.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Most comparisons like this are written by whoever is selling the expensive option, and it
+        shows. So every platform on this page carries a row saying what it does better than I do,
+        and one of them says the honest thing about my own.
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Read the arithmetic before the cards. It does not say what you would expect it to say, and
+        it is the part that should decide this for you.
+      </p>
+    </div>
+  </section>
+
+  {/* ── The arithmetic, first, because it argues against the sale ─────────── */}
+  <section class="section-band border-b border-line">
+    <div class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+      <p class="mono-label">The arithmetic</p>
+      <h2 class="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Renting is cheaper than buying, and it stays cheaper for about twenty years.
+      </h2>
+      <p class="mt-5 max-w-2xl leading-relaxed text-ink-muted">
+        Here is the sum, in full, so you can check it. A subscription at
+        {' '}{usd(cheapestRented.monthlyUsd)} a month costs {usd(cheapestRented.cost.total)} over five
+        years. A build here starts at {usd(WEBSITE_USD)}, paid once. Divide one by the other and the
+        subscription does not catch up for {cheapestRented.cost.cheaperForYears} years.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        The dearest one on this page, {dearestRented.name} at
+        {' '}{usd(dearestRented.monthlyUsd)} a month, takes {dearestRented.cost.cheaperForYears} years.
+        That is still longer than most small businesses last.
+      </p>
+
+      <div class="panel mt-8 max-w-3xl p-7">
+        <p class="font-display text-xl font-semibold text-ink">
+          So do not buy a website from me to save money, because you will not.
+        </p>
+        <p class="mt-3 leading-relaxed text-ink-muted">
+          Buy one because of what you are holding at the end, and because of the one piece of
+          software your business actually runs on that none of these will house. If neither of those
+          matters to you, the subscription is the right call and I will say so on the phone.
+        </p>
+      </div>
+
+      <p class="mt-6 max-w-3xl text-sm leading-relaxed text-ink-faint">
+        What that sum assumes, stated plainly: today's advertised price, held flat, billed annually,
+        with no plan change and no price rise. All three of those will move. It is arithmetic on
+        published figures rather than a forecast, and the moment it needs a forecast to work it stops
+        belonging on this page.
+      </p>
+    </div>
+  </section>
+
+  {/* ── The compact table ─────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+    <p class="mono-label">Side by side</p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink">
+      What each one costs, and how long it stays the cheaper answer.
+    </h2>
+
+    {/* The table is the one element allowed past the body width, and it scrolls
+        inside its own box so the page itself never does. verify-mobile.mjs
+        measures element boxes against the viewport at 390px. */}
+    <div class="mt-8 overflow-x-auto rounded-lg border border-line">
+      <table class="w-full min-w-[34rem] border-collapse text-left text-sm">
+        <thead>
+          <tr class="border-b border-line">
+            <th class="p-4 font-display font-semibold text-ink">Option</th>
+            <th class="p-4 font-display font-semibold text-ink">A month</th>
+            <th class="p-4 font-display font-semibold text-ink">Five years</th>
+            <th class="p-4 font-display font-semibold text-ink">Cheaper than a build for</th>
+          </tr>
+        </thead>
+        <tbody>
+          {platforms.map((p) => {
+            const c = costShape(p.monthlyUsd);
+            return (
+              <tr class={`border-b border-line/60 ${p.isMine ? 'bg-accent/5' : ''}`}>
+                <td class="p-4 align-top">
+                  <span class="font-semibold text-ink">{p.name}</span>
+                  <span class="mt-1 block text-xs text-ink-faint">{p.planName}</span>
+                </td>
+                <td class="p-4 align-top text-ink-muted">{usd(p.monthlyUsd)}</td>
+                <td class="p-4 align-top text-ink-muted">{usd(c.total)}</td>
+                <td class="p-4 align-top text-ink-muted">
+                  {c.cheaperForYears === null
+                    ? p.isMine
+                      ? 'It is the build'
+                      : 'Always — it is free'
+                    : `${c.cheaperForYears} years`}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-sm leading-relaxed text-ink-faint">
+      Two of these cost nothing at all, which is why "the rent never stops" is only an argument
+      against some of the page rather than all of it.
+    </p>
+  </section>
+
+  {/* ── The cards. Same rows, same order, so a reader compares down. ──────── */}
+  <section class="section-band border-y border-line">
+    <div class="mx-auto max-w-6xl px-6 py-14 sm:py-20">
+      <p class="mono-label">One at a time</p>
+      <h2 class="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        The same {rows.length} questions, asked of every one of them.
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Including mine, and mine gets the same treatment as the rest.
+      </p>
+
+      <div class="mt-10 grid gap-6 lg:grid-cols-2">
+        {platforms.map((p) => (
+          <div class={`panel lift flex flex-col gap-4 p-7 ${p.isMine ? 'border-accent/40' : ''}`}>
+            <div>
+              <p class={`mono-label ${p.isMine ? 'text-cyan-deep' : ''}`}>{p.kind}</p>
+              <h3 class="mt-2 font-display text-xl font-semibold leading-snug text-ink">{p.name}</h3>
+              <p class="mt-1 text-sm text-ink-faint">
+                {usd(p.monthlyUsd)}{p.monthlyUsd > 0 ? ' a month' : ''} · {p.planName}
+              </p>
+            </div>
+            <dl class="flex flex-col gap-3 border-t border-line pt-4">
+              {rows.map((r) => (
+                <div>
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-ink-faint">
+                    {r.label}
+                  </dt>
+                  <dd class="mt-1 text-sm leading-relaxed text-ink-muted">{p[r.key]}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ── What this is not, matching the /websites/ and /check/ pattern ─────── */}
+  {/* ── The same three lists that end every sheet here ─────────────────────
+      SHARED WITH /getting-paid/ AND /stores/, out of src/lib/capabilities.js.
+      It sits after the comparison and before the offer, deliberately: a reader
+      who has just been told a platform does something better than I do is the
+      one who should meet the list of what I will not build at all. */}
+  <WhatIBuild sheet="websites" />
+
+  <section class="mx-auto max-w-3xl px-6 py-14 sm:py-20">
+    <p class="mono-label">What this is not</p>
+    <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+      Not a claim that these platforms are bad, because they are not.
+    </h2>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      They are well built, they are fast, and they are run by companies with more engineers than this
+      town has people. Nothing on this page argues otherwise, and if you catch me arguing otherwise
+      somewhere else, hold me to this page instead.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      It is also not a list I keep up to date by remembering to. Every figure above is registered
+      with the date it was read, it expires on its own, and this page carries that date in plain
+      sight so you can go and check rather than take my word for it. One line on this site went stale
+      exactly that way and the register is what caught it.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      And it is not the whole offer. A tool on its own, with no website around it, is a smaller job
+      and a smaller number.
+    </p>
+
+    <div class="mt-10 border-t border-line pt-10">
+      <p class="mono-label">If a build is the answer</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        Here is what the number actually buys.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        {websitePrice.line} {websitePrice.qualifier}
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/websites/" class="btn btn-primary">
+          What a build includes <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+        <a href="/contact/?intent=quote" class="btn btn-secondary">Ask what yours would cost</a>
+        {/* THE THIRD SHEET. The no-website row now carries Meta's September 2025
+            change — Instagram sends buyers to the seller's own site to pay — and
+            a reader who has just met that sentence is the one who needs the
+            sheet about where the selling itself happens. */}
+        <a href="/stores/" class="btn btn-secondary">The same reading, for selling online</a>
+      </div>
+      <p class="mt-6 text-sm leading-relaxed text-ink-faint">
+        Every price and every term on this page was read off those companies' own pricing pages on
+        {' '}{READ_ON}. Terms change without anyone announcing it, so if you are weighing this up,
+        go and read them again yourself.
+      </p>
+    </div>
+  </section>
+</MarketingLayout>

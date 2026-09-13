@@ -1,0 +1,165 @@
+---
+/**
+ * /rescue/ — a fixed-price read of software this practice did not build.
+ * THE FIFTH PAID THING ON THIS SITE, and the only one whose buyer arrives
+ * already convinced they have a problem.
+ *
+ * IT PASSED THE FOURTH-PRODUCT TEST, WHICH IS NOW THE FIFTH. src/lib/pricing.js
+ * states the rule: a new published figure is allowed only for something a
+ * visitor could buy without buying any of the others. Nobody here buys a fitted
+ * tool, a site, an assessment or a retainer first — they are trying to find out
+ * whether they own an asset or a liability. The argument is written out above
+ * RESCUE_AUDIT_USD, along with a warning that five is where a price list starts
+ * to look like the menu this site refuses, and that the next one should be
+ * turned down unless it is as obviously separate as this.
+ *
+ * THE REFUSAL IS THE PRODUCT AND IT RENDERS HIGH. A read whose author is paid
+ * only when it recommends a rebuild cannot credibly say "this is fine for
+ * another year" or "this cannot be saved and the money is gone". The fee buys
+ * those two sentences. So `alsoSays` sits beside the figure rather than in a
+ * reassurance block at the foot of the page — put it at the bottom and it reads
+ * as a disclaimer, put it beside the price and it reads as the terms.
+ *
+ * THE DAY CEILING IS NOT A DETAIL. Reading somebody else's broken software is
+ * unbounded work on an input nobody can inspect before quoting, which is exactly
+ * why no seller in the spreadsheet-migration market publishes a number. The
+ * whole category's answer is to fix the price of the READ and quote the repair
+ * after, and the ceiling is what makes that safe for both sides. A reader who
+ * meets the fee without it is being sold an open engagement.
+ *
+ * NO NEW PAPERWORK, DELIBERATELY. A repair that follows is an ordinary build —
+ * the statement of work, the 30-day warranty, the 10-business-day nonconformance
+ * window and the change order all exist and all already say the right things.
+ * The read itself signs nothing, because it has no deliverable to warrant beyond
+ * the document it produces.
+ *
+ * THE COPY NEVER SAYS "AI". Two threads on r/smallbusiness this year asked how
+ * to block posts containing the word, and the owner describing automation that
+ * actually worked wrote "it doesn't sound like AI to me". This page sells a
+ * decision about software somebody already owns. Reaching for the word here
+ * would cost the reader and buy nothing.
+ *
+ * THE META DESCRIPTION CARRIES THE FIGURE, unlike /ai-fit/ and /advisory/. It
+ * can: this qualifier's load-bearing half is a day ceiling short enough to sit
+ * beside the fee, and "$500, answered inside 2 working days" fits what a search
+ * result shows with both halves intact. THIS PARAGRAPH SAID FIVE DAYS AND QUOTED
+ * ITS OWN SENTENCE UNTIL 2026-09-11, when the ceiling moved to two -- see
+ * RESCUE_AUDIT_DAYS in src/lib/pricing.js for why. Both numbers here derive from
+ * that constant at render time, so this comment is the only place a stale figure
+ * can survive, which is the class commit 4e756e9 is about.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { rescueAudit } from '../data/services';
+import { ClipboardCheck, Timer, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/rescue/#service`,
+    name: 'Software rescue audit',
+    serviceType: 'Software assessment',
+    provider: { '@id': `${origin}/#business` },
+    description:
+      'A fixed-price written read of software you already have: what is wrong, what repair would cost, and whether repairing beats starting again.',
+  },
+];
+---
+
+<MarketingLayout
+  title="You paid for software and it half works"
+  description={`A written answer on software you already have — what is wrong, what repair would cost, and whether it is worth repairing. ${rescueAudit.amount}, inside ${rescueAudit.days} working days.`}
+  schema={schema}
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">A read of what you have · in writing · inside a week</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        You paid for software and it half works.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        {rescueAudit.whoItIsFor}
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        You have probably been told it just needs a bit more work. That may be true. It may also be
+        the most expensive sentence anyone has said to you this year, and nobody who has said it so
+        far was being paid to find out.
+      </p>
+
+      <div class="mt-8 max-w-2xl">
+        <div class="panel flex flex-col gap-2 p-6">
+          <p class="font-display text-xl font-semibold leading-snug text-ink">{rescueAudit.line}</p>
+          <p class="text-sm leading-relaxed text-ink-muted">{rescueAudit.qualifier}</p>
+        </div>
+      </div>
+
+      {/* THE REFUSAL RENDERS BESIDE THE FIGURE, NOT AT THE FOOT OF THE PAGE.
+          At the bottom it reads as a disclaimer; here it reads as the terms, and
+          it is the actual reason the read costs anything at all. */}
+      <p class="mt-5 max-w-3xl leading-relaxed text-ink-muted">{rescueAudit.alsoSays}</p>
+
+      <ul class="mt-7 grid max-w-3xl gap-2">
+        {rescueAudit.includes.map((item) => (
+          <li class="text-sm leading-relaxed text-ink-faint">— {item}</li>
+        ))}
+      </ul>
+
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <a class="btn-primary" href="/contact/?intent=consult">
+          Tell me what you have <ArrowUpRight class="size-4" />
+        </a>
+        <a class="link-sweep text-sm" href="/services/">Or see what I build from scratch →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <Timer class="size-5 text-accent" />
+          <span class="mono-label">The limit</span>
+        </div>
+        <p class="font-display text-lg font-semibold leading-snug text-ink">{rescueAudit.days} working days, and then it is written.</p>
+        <p class="text-sm leading-relaxed text-ink-muted">{rescueAudit.ceiling}</p>
+        <p class="text-sm leading-relaxed text-ink-faint">
+          That bound is what makes a fixed price honest on something neither of us can size in
+          advance. Without it you would be buying an open meter, and I would be guessing.
+        </p>
+      </div>
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <ClipboardCheck class="size-5 text-accent" />
+          <span class="mono-label">What happens after</span>
+        </div>
+        <p class="font-display text-lg font-semibold leading-snug text-ink">Repair is a separate decision, and yours.</p>
+        <p class="text-sm leading-relaxed text-ink-muted">
+          If the answer says repair is worth it, that gets scoped and quoted on its own — by me, or
+          by anybody else you like. The document is written so another developer can work from it.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-faint">
+          Nothing is signed for the read itself. There is no deliverable to warrant beyond the
+          answer, and you are not committing to anything past it.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-6 pb-14 sm:pb-20">
+    <div class="panel p-8">
+      <p class="mono-label">Why pay for this at all</p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        Because the two most valuable answers cost me money to give. "This is fine, leave it alone
+        for another year" ends the conversation. "This cannot be saved" ends it faster. Somebody
+        reading your software for free has every reason to find work in it, and you would have no way
+        of telling that apart from a real finding.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        The fee is small on purpose. It is not the engagement — it is the thing that lets the answer
+        be true.
+      </p>
+    </div>
+  </section>
+</MarketingLayout>

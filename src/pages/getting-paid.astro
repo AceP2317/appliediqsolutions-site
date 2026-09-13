@@ -1,0 +1,291 @@
+---
+/**
+ * /getting-paid/ — what it costs a small business to be paid, and by whom.
+ *
+ * WHY IT IS TOP LEVEL RATHER THAN UNDER /websites/. The website comparison sits
+ * at /websites/compare/ because /websites/ sells the thing it compares against.
+ * Nothing on this page is for sale. A business with no website at all still has
+ * to be paid, and burying this under the website product would have scoped it to
+ * people already buying one.
+ *
+ * THE AUDIENCE IS WIDER THAN THE WEBSITE SHEET'S, DELIBERATELY. Any small
+ * business, including one that only exists online and sells across a border —
+ * D29 says local is the home base and not a fence. That is what put the
+ * merchant-of-record card on the sheet and what made two worked examples
+ * necessary instead of one, because three of the nine options refuse to price
+ * one of the two and a single example would have hidden that.
+ *
+ * NOTHING HERE IS SOLD AND THE PAGE HAS TO SAY SO EARLY. The offer card exists
+ * so the sheet is honest about who wrote it, not so it can be pitched: the
+ * account opens in the reader's name, we take no cut, and connecting a payment
+ * link to something we build is separate work quoted separately. Section 3 of
+ * both website Scopes excludes taking payments and this page does not walk that
+ * back by a single word.
+ *
+ * EVERY OPTION MUST KEEP ITS `doesBetter` ROW AND A GATE ENFORCES IT.
+ * scripts/verify-getpaid.mjs fails if any option's text is missing from the
+ * rendered page and refuses one under 100 characters. Nobody deletes that row on
+ * purpose; it gets softened in a copy pass until it says nothing, and a
+ * comparison with no losing rows is an advertisement wearing a table.
+ *
+ * NO FIGURE IS TYPED IN THIS FILE. Every rate comes out of the data module and
+ * every total is computed by src/lib/payment-cost.js, so a Node gate checks the
+ * same arithmetic the page runs rather than a copy of it.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import WhatIBuild from '../components/WhatIBuild.astro';
+import { options, rows, READ_ON, EXAMPLES } from '../data/getting-paid.js';
+import { compareOptions, annualSpread, usd, pct } from '../lib/payment-cost.js';
+import { ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+/* Computed once, here, so no arithmetic happens inside a template. */
+const tables = EXAMPLES.map((example) => {
+  const table = compareOptions(options, example);
+  return { example, table, spread: annualSpread(table) };
+});
+
+const counter = tables[0];
+const online = tables[1];
+
+const schema = [
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Getting paid', item: `${origin}/getting-paid/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="What it costs your business to be paid"
+  description="Stripe, Square, PayPal, Venmo, Clover, Toast and the rest, read off their own pricing pages, with the arithmetic on your own numbers. Nothing here is for sale."
+  image="/og/websites.png"
+>
+  {/* ── Hero ─────────────────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">Every option, read off their own pricing pages on {READ_ON}</p>
+      <h1 class="mt-3 max-w-4xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        You know your headline rate. <span class="aiq-accent">You almost certainly do not know what you pay.</span>
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        A rate is not a price. 2.9% plus 30 cents and 2.6% plus 15 cents cannot be ranked without
+        knowing the size of your average sale, because on a small one the fixed part is most of the
+        cost and on a large one it rounds to nothing. So this page does the sum instead of ranking
+        them.
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        I sell none of these and I take no cut of anything you sell. That is the only reason this
+        page is worth reading rather than the {options.length} others you will find, which were mostly
+        written by one of the companies on it.
+      </p>
+    </div>
+  </section>
+
+  {/* ── The arithmetic, first, because the answer is often "change nothing" ─ */}
+  <section class="section-band border-b border-line">
+    <div class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+      <p class="mono-label">The arithmetic</p>
+      <h2 class="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Three numbers of yours, and every option below has a real price.
+      </h2>
+      <p class="mt-5 max-w-2xl leading-relaxed text-ink-muted">
+        What goes through the card in a month, what an average sale is, and how much of it happens in
+        person. That is all it takes. Two worked examples follow so you can see the shape — put your
+        own three numbers in their place and the sum is identical.
+      </p>
+
+      {tables.map(({ example, table, spread }) => (
+        <div class="mt-10">
+          <p class="mono-label">{example.title}</p>
+          <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink-faint">
+            Assumed, not measured: {example.label}. These are my numbers for the example, not a claim
+            about what your business does.
+          </p>
+
+          {/* The table is the one element allowed past the body width, and it
+              scrolls inside its own box so the page itself never does.
+              verify-mobile.mjs measures element boxes against the viewport. */}
+          <div class="mt-5 overflow-x-auto rounded-lg border border-line">
+            <table class="w-full min-w-[36rem] border-collapse text-left text-sm">
+              <thead>
+                <tr class="border-b border-line">
+                  <th class="p-4 font-display font-semibold text-ink">Option</th>
+                  <th class="p-4 font-display font-semibold text-ink">A month</th>
+                  <th class="p-4 font-display font-semibold text-ink">A year</th>
+                  <th class="p-4 font-display font-semibold text-ink">What that really is, as a rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {table.map((r) => (
+                  <tr class={`border-b border-line/60 ${r.id === 'aiq' ? 'bg-accent/5' : ''}`}>
+                    <td class="p-4 align-top">
+                      <span class="font-semibold text-ink">{r.name}</span>
+                    </td>
+                    {r.cents === null ? (
+                      <td class="p-4 align-top text-ink-faint" colspan="3">{r.problem}</td>
+                    ) : (
+                      <>
+                        <td class="p-4 align-top text-ink-muted">{usd(r.cents)}</td>
+                        <td class="p-4 align-top text-ink-muted">{usd(r.annualCents)}</td>
+                        <td class="p-4 align-top text-ink-muted">{pct(r.effectiveHundredths)}</td>
+                      </>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-4 max-w-3xl text-sm leading-relaxed text-ink-faint">
+            Cheapest to dearest, with the ones that cannot be worked out kept at the bottom rather
+            than dropped. The gap between the top and the bottom of what could be priced is
+            {' '}{usd(spread.differenceCents)} a year on those numbers.
+          </p>
+        </div>
+      ))}
+
+      <div class="panel mt-10 max-w-3xl p-7">
+        <p class="font-display text-xl font-semibold text-ink">
+          Usually the answer is to change nothing, and know your number.
+        </p>
+        <p class="mt-3 leading-relaxed text-ink-muted">
+          Moving processor costs you a weekend and loses your saved cards, so unless the gap is four
+          figures a year it is not worth doing. The reason to read this is so that nobody can quote
+          you a headline again without you knowing what it turns into.
+        </p>
+      </div>
+
+      <p class="mt-6 max-w-3xl text-sm leading-relaxed text-ink-faint">
+        What the sum assumes, stated plainly: today's advertised rates, every sale the same size, and
+        no card crossing a border. That last one is left out on purpose — currency conversion is
+        charged on top and the spread runs from one percent to four across this page, so it cannot be
+        worked out without knowing which currencies you take. It is arithmetic on published figures
+        rather than a forecast, and the moment it needs a forecast it stops belonging here.
+      </p>
+    </div>
+  </section>
+
+  {/* ── The cards. Same rows, same order, so a reader compares down. ──────── */}
+  <section class="mx-auto max-w-6xl px-6 py-14 sm:py-20">
+    <p class="mono-label">One at a time</p>
+    <h2 class="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      The same {rows.length} questions, asked of every one of them.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      Grouped by how you ended up with the rate you have, because for most businesses nobody ever
+      chose it. Mine is on the list and gets the same treatment as the rest.
+    </p>
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-2">
+      {options.map((o) => (
+        <div class={`panel lift flex flex-col gap-4 p-7 ${o.isMine ? 'border-accent/40' : ''}`}>
+          <div>
+            <p class={`mono-label ${o.isMine ? 'text-cyan-deep' : ''}`}>{o.kind}</p>
+            <h3 class="mt-2 font-display text-xl font-semibold leading-snug text-ink">{o.name}</h3>
+            <p class="mt-1 text-sm text-ink-faint">{o.how}</p>
+            <p class="mt-2 text-sm font-semibold text-ink-muted">{o.headline}</p>
+          </div>
+          <dl class="flex flex-col gap-3 border-t border-line pt-4">
+            {rows.map((r) => (
+              <div>
+                <dt class="text-xs font-semibold uppercase tracking-wide text-ink-faint">
+                  {r.label}
+                </dt>
+                <dd class="mt-1 text-sm leading-relaxed text-ink-muted">{o[r.key]}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ── The one that earns the page ───────────────────────────────────────── */}
+  <section class="section-band border-y border-line">
+    <div class="mx-auto max-w-3xl px-6 py-14 sm:py-20">
+      <p class="mono-label">Why check any of this yourself</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        The comparison you find is usually written by somebody on it.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        Intuit publishes a table comparing QuickBooks against Stripe and Square. It is stamped
+        accurate as of the thirtieth of April, and on the day I read all three pages together it
+        showed Stripe's bank transfer rate at 1.2% where Stripe's own page says 0.8% capped at five
+        dollars, and Square in person at 2.6% plus 10 cents where Square's own page says 15.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        That is staleness rather than dishonesty — they dated it and they said it shows only the
+        nearest plan. But it is four months old on a page selling you something, and it is the reason
+        every figure here carries the date I read it and a link you can check me against.
+      </p>
+    </div>
+  </section>
+
+  {/* ── The same three lists that end every sheet here ─────────────────────
+      SHARED WITH /websites/compare/ AND /stores/, out of src/lib/capabilities.js.
+      The offer card two sections up says what I do; this says what I will not,
+      and the second is the half a reader cannot get from anybody selling. */}
+  <WhatIBuild sheet="payments" />
+
+  {/* ── What this is not, matching the /websites/compare/ and /check/ pattern */}
+  <section class="mx-auto max-w-3xl px-6 py-14 sm:py-20">
+    <p class="mono-label">What this is not</p>
+    <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+      Not a recommendation, and not something I sell.
+    </h2>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      I am not a payment processor, I take no percentage of anything you sell, and I earn nothing
+      whichever of these you pick. The account opens in your name and stays yours, always. If I am
+      building you a site, one payment link connected to one page comes with it; opening a processor
+      account from scratch is quoted first, because that runs on their identity checks rather than on
+      my time. A store with a basket and stock counts is separate work with its own price, and I do
+      not build shipping by address or sales tax by state at any price.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      It is also not tax advice, and the line matters. The cards say who the merchant of record is,
+      because that decides who owes the sales tax. What they will never do is work out whether you
+      owe any. That is a question for your accountant and the answer is worth paying for.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      And it is not a list I keep current by remembering to. Every figure above is registered with
+      the date it was read, it expires on its own, and this page carries that date in plain sight.
+      One line on this site went stale exactly that way and the register is what caught it.
+    </p>
+
+    <div class="mt-10 border-t border-line pt-10">
+      <p class="mono-label">If you want the sum done on your own numbers</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        Send me the three numbers and I will send the table back.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        A month of card volume, an average sale, and roughly how much of it is taken in person. No
+        charge and no meeting — you will get the same table you see above with your figures in it,
+        and often the answer is that you are already in the right row.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=question" class="btn btn-primary">
+          Send me the three numbers <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+        <a href="/websites/compare/" class="btn btn-secondary">The same reading, for websites</a>
+        {/* THE CROSS-REFERENCE THE MERCHANT-OF-RECORD CARD ASKS FOR. That card
+            says somebody else becoming the legal seller is what moves the tax
+            liability. A marketplace does the same thing to a physical seller
+            without ever using the phrase, and the store sheet is where that is
+            answered platform by platform. Prose cannot carry a link, so the
+            card names the other sheet and this is where a reader can reach
+            it. */}
+        <a href="/stores/" class="btn btn-secondary">And for selling online</a>
+      </div>
+      <p class="mt-6 text-sm leading-relaxed text-ink-faint">
+        Every rate and every term on this page was read off those companies' own pages on
+        {' '}{READ_ON}. They change them without announcing it, so if you are weighing this up, go
+        and read them again yourself.
+      </p>
+    </div>
+  </section>
+</MarketingLayout>

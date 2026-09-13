@@ -1,0 +1,155 @@
+---
+/**
+ * /visibility/ — the sixth published figure, 2026-09-11.
+ *
+ * D93'S STANDING WARNING SAID TO REFUSE A SIXTH FIGURE UNLESS IT IS AS OBVIOUSLY
+ * SEPARATE AS THE FIFTH. The test was run and the argument is written beside
+ * VISIBILITY_MONTHLY_USD in src/lib/pricing.js. Read it before changing a number
+ * here, and do not add a seventh figure to this page.
+ *
+ * THE OPERATOR OVERRODE A RECOMMENDATION TO BUILD THIS, with the cost stated
+ * first: that the plan proposing it said to gather three months of real data before
+ * charging anybody. He chose to publish now, so THIS PAGE DESCRIBES A METHOD AND A
+ * REFUSAL AND NEVER A RESULT. Not one sentence says what has been found, because
+ * nothing has been found yet. A later pass adding "clients typically see…" would
+ * look like completing the page and would destroy the only thing being sold.
+ *
+ * THE METHOD IS PUBLISHED BECAUSE THAT IS THE WHOLE DIFFERENTIATOR. Two firms in
+ * these counties already claim this category and neither publishes one. Anybody can
+ * ask an assistant a question; what nobody in the sweep would do is say out loud
+ * that they cannot show their work caused an answer to change.
+ *
+ * THE REFUSAL LIVES IN THE ENGINE, NOT HERE. src/lib/assistant-visibility.js
+ * exports CAUSATION_REFUSAL and returns a named refusal in `problems` for every
+ * shape it cannot report on, so no surface can print the figures without the
+ * sentence. This page renders that export rather than restating it — a second copy
+ * in a sales voice drifts the moment one is softened in a copy pass, which is the
+ * defect D97 exists to prevent across the three comparison sheets.
+ *
+ * THE ENGINE REACHES NOTHING AND MUST NOT LEARN TO. The plan's stop condition was
+ * aimed at the wrong rule: REACHABLE_HOSTS governs automated claim probes, not a
+ * product's runtime, and this product's runtime is a person asking questions. D49
+ * and L-248 mean a client's own website is never fetched to see whether an
+ * assistant cited it, permanently.
+ *
+ * NO PAY BUTTON, for the reason /advisory/ and /ai-fit/ have none: the question set
+ * has to be agreed before a first reading exists, so this starts in a conversation.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { visibility } from '../data/services';
+import { CAUSATION_REFUSAL } from '../lib/assistant-visibility.js';
+import { Search, ShieldOff, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/visibility/#service`,
+    name: 'AI assistant visibility measurement',
+    serviceType: 'Measurement and reporting',
+    provider: { '@id': `${origin}/#business` },
+    description:
+      'A monthly reading of whether AI assistants name your business, with the questions published and no claim about what caused a change.',
+  },
+];
+---
+
+<MarketingLayout
+  title="Does an assistant name you?"
+  description={`A monthly reading of whether AI assistants name your business, with the questions published and no claim about what caused a change. ${visibility.amount} a month.`}
+  schema={schema}
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">Measured monthly · questions published · no minimum</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Does an assistant name you?
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        {visibility.whoItIsFor}
+      </p>
+
+      <div class="mt-8 max-w-2xl">
+        <div class="panel flex flex-col gap-2 p-6">
+          <p class="font-display text-xl font-semibold leading-snug text-ink">{visibility.line}</p>
+          <p class="text-sm leading-relaxed text-ink-muted">{visibility.qualifier}</p>
+        </div>
+      </div>
+
+      {/* THE REFUSAL RENDERS BESIDE THE FIGURE AND COMES FROM THE ENGINE. Below
+          the fold it reads as a disclaimer; here it reads as the terms, and it is
+          the actual reason this costs anything rather than being a free opinion. */}
+      <p class="mt-5 max-w-3xl leading-relaxed text-ink-muted">{CAUSATION_REFUSAL}</p>
+
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <a class="btn-primary" href="/contact/?intent=consult">
+          Ask what you would be measured on <ArrowUpRight class="size-4" />
+        </a>
+        <a class="link-sweep text-sm" href="/check/">Or try the free check first →</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── The method, published ──────────────────────────────────────────────── */}
+  <section class="section-band">
+    <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 01</span>
+        <span class="mono-label">How it is measured</span>
+      </p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        The method, in full, before you buy it.
+      </h2>
+      <p class="mt-4 max-w-3xl leading-relaxed text-ink-muted">
+        Two firms near here sell something like this and neither says how they do it. Here is how,
+        and you can check every step of it against the report you get.
+      </p>
+
+      <ol class="mt-8 grid max-w-3xl gap-3">
+        {visibility.method.map((step, i) => (
+          <li class="flex items-start gap-3 text-sm leading-relaxed text-ink-muted">
+            <span class="mono-label mt-0.5 shrink-0 text-cyan-deep">{String(i + 1).padStart(2, '0')}</span>
+            <span>{step}</span>
+          </li>
+        ))}
+      </ol>
+
+      <p class="mt-7 max-w-3xl text-sm leading-relaxed text-ink-faint">{visibility.firstMonth}</p>
+    </div>
+  </section>
+
+  {/* ── What it refuses to do ─────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 02</span>
+      <span class="mono-label">What it will not tell you</span>
+    </p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      The part nobody else writes down.
+    </h2>
+
+    <div class="mt-8 grid gap-4 sm:grid-cols-2">
+      {visibility.refuses.map((r) => (
+        <div class="panel flex items-start gap-3 p-6">
+          <ShieldOff class="mt-0.5 size-5 shrink-0 text-accent" aria-hidden="true" />
+          <p class="text-sm leading-relaxed text-ink-muted">{r}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="panel mt-8 flex flex-col gap-3 p-7">
+      <div class="flex items-center gap-3">
+        <Search class="size-5 text-secondary" />
+        <span class="mono-label">Why that is worth paying for</span>
+      </div>
+      <p class="text-sm leading-relaxed text-ink-muted">
+        A report that claimed credit would be worth more to me and less to you. Every month this
+        tells you what moved and hands you the questions, so you can judge it yourself rather than
+        take my word for it — and if nothing is moving, you find that out from me rather than after
+        a year of invoices.
+      </p>
+    </div>
+  </section>
+</MarketingLayout>

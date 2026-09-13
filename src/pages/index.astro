@@ -1,0 +1,127 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { homeSchema } from '../data/demos';
+import Opener from '../components/sections/Opener.astro';
+import LeadOffer from '../components/sections/LeadOffer.astro';
+import CheckBand from '../components/sections/CheckBand.astro';
+import Objection from '../components/sections/Objection.astro';
+import AssessmentBand from '../components/sections/AssessmentBand.astro';
+import Breadth from '../components/sections/Breadth.astro';
+import ToolsDoorway from '../components/sections/ToolsDoorway.astro';
+import Cta from '../components/sections/Cta.astro';
+import { shapesHead } from '../data/home';
+
+const origin = new URL(Astro.site!).origin;
+---
+<MarketingLayout
+  title="AppliedIQ Solutions"
+  description="Custom software for small local business: a real website you own, your spreadsheets turned into a live tool, and finished tools that run in your own browser. Yours to own, not rented."
+  schema={homeSchema(origin)}
+>
+  {/* THE PITCH, not a navigation hub (D29). A visitor arriving from Google, a
+      business card, or Nextdoor lands on the offer — not on a menu asking them
+      to pick a door.
+
+      ──────────────────────────────────────────────────────────────────────────
+      THIS PAGE'S JOB IS GETTING A HAND ON A TOOL. Operator's answer 2026-09-11
+      on a fork put to him explicitly: D36 says the shelf is the offer, D34 says
+      the free check is the lead offer, both cannot lead. He chose the tool.
+
+      ── D113: THE SHAPE, 2026-09-12 ───────────────────────────────────────────
+
+      He compared five treatments of this same copy and chose the combined one.
+      What changed is the SHAPE of the bands and the ORDER they run in. What did
+      NOT change is the palette, the typefaces, the motif or the section
+      spacing — he ruled all four out, and spacing he ruled explicitly fine.
+
+      THE FIX IS THIS REPO'S OWN PRECEDENT. src/components/kit/industrial.js,
+      under WHY THREE AND NOT SEVEN, records nine shelf tools distinguished by
+      accent hue reading as "still copies of one thing with the color changed",
+      and being fixed by varying GROUND LIGHTNESS, GROUND WARMTH, TYPE PAIRING,
+      DENSITY and RULE WEIGHT — "a hue is the lightest signal on a page". These
+      pages varied none of the five. Now they do:
+
+        Opener      canvas · widest column · display XL · loose
+        LeadOffer   surface · standard · the ask on a brass rule
+        CheckBand   DEEP ground · TIGHT · a 3px rule and tabular figures
+        Objection   canvas · POPOUT column · type-led, no eyebrow, no numeral
+        Assessment  surface · the split row, now the ONLY band using it
+        Breadth     INSTRUMENT — the dark chassis, read from industrial.js
+        Cta         canvas · centered · narrow
+
+      TWO BANDS USED TO BE THE SAME MARKUP WITH DIFFERENT WORDS. CheckBand and
+      AssessmentBand were identical split rows sitting back to back, each
+      leaving its middle third empty. That pair was most of the complaint.
+
+      THE ORDER ANSWERS THE COMPETITIVE SWEEP. Every rival in these counties
+      asks to be believed — logos, testimonials, counts, one site's counts
+      contradicting each other. This practice can ask to be TESTED, and nobody
+      local or national claims to have personally run the operation the software
+      is for. Those two are the unclaimed ground and they are now the first
+      screen: the run of trades on the left, a finished tool on the right.
+
+      THE SIX-TRADE HEADLINE STAYED, against the mockup he approved, which had
+      demoted it. D33 is the positioning and PICKUP records twice that he
+      declined reopening that headline; approving a whole-page mockup is not the
+      same act. Opener.astro carries the full reasoning and the size change that
+      solved the phone problem instead.
+
+      TWO PLACEHOLDERS ARE IN HERE AND BOTH ARE MARKED AT THEIR SOURCE: the
+      photograph is a 2020 capture he took knowingly as a stand-in, and the
+      Objection band's copy was drafted by Claude and he has not passed it. See
+      home.ts's `objection` comment. Neither is settled.
+
+      NO SECTION COUNT IS WRITTEN HERE, and the last one was wrong.
+      `node scripts/print-home-order.mjs` prints what the built page actually
+      paints, heading by heading. Read it before writing anything that describes
+      this page: a component name can outlive its content, and one of the names
+      below already has.
+
+      Copy lives in src/data/home.ts. */}
+  <Opener />
+
+  {/* `LeadOffer` IS THE TOOLS BAND. The export name belongs to the previous
+      occupant; home.ts's THE EXPORT NAME STAYS comment records why keeping it
+      was right for the code and wrong for a reader. It carries the screenshot
+      on a PHONE only — the Opener has it on desktop — so the shot renders
+      exactly once at every width. */}
+  <LeadOffer />
+
+  {/* Still the lead offer, still free, still ungated, still the only thing here
+      a stranger with no software can act on (D34 untouched). It is now set as
+      the arithmetic it sells rather than as one more paragraph with a button. */}
+  <CheckBand />
+
+  {/* The objection band. The one sentence on the page that could lose a
+      customer, which is the move every well-made site in the research shares
+      and the one thing a template cannot generate. */}
+  <Objection />
+
+  {/* The assessment sits below the free things and nowhere higher. A paid item
+      above the only thing a stranger can act on pulls the reader out of the
+      funnel at the point it is meant to draw them in. It names no figure, which
+      keeps it one band tall — the price and the credit are one statement and
+      verify-assessment.mjs requires them within 400 characters of each other. */}
+  <AssessmentBand />
+
+  {/* PROOF AT SCALE, ON THE DARK CHASSIS. Dark already means industrial here
+      and light already means yours (themes.js), so this band is the hard cut
+      and the cut is the argument. No new color: industrial.js's values are
+      measured at 81 pairs against the WCAG floor and re-checked on every build.
+      No numeral is passed — see Breadth.astro. */}
+  <Breadth
+    id="shapes"
+    tone="instrument"
+    index=""
+    eyebrow="Proven at scale · the same arithmetic"
+    title={shapesHead.title}
+    lede={shapesHead.lede}
+    columns={2}
+    showAreas={false}
+    showScales={true}
+  >
+    <ToolsDoorway />
+  </Breadth>
+
+  <Cta />
+</MarketingLayout>

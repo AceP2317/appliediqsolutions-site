@@ -1,0 +1,583 @@
+---
+/**
+ * SiteHeader — grouped primary nav (lg+). The mobile bar takes over below lg.
+ *
+ * Why grouped: the site outgrew a flat bar. Ten flat links leave EXACTLY 0px of
+ * slack at the lg breakpoint (1024px) — measured — and visibly break there: the
+ * wordmark collides with the first link and three items wrap. Grouping Bio /
+ * Approach / Projects under "About" and Blog / AI News under "Writing" takes it
+ * to seven roomy top-level items, and the space that frees is what lets
+ * Confirmation Outlook (a hosted service with no /work/ row) and Review
+ * Autopilot (the lead offer) both have a nav home. Nothing was demoted to get
+ * here, and the top-level count must stay at seven.
+ *
+ * WORK AND SERVICES BECAME ONE SEAT ON 2026-09-11, at the operator's direction,
+ * and the freed seat became "Compare". THE ROW HAS NO EIGHTH SEAT AND THAT IS
+ * MEASURED, NOT ASSUMED: at 1024px the container is 976px, seven seats use
+ * 924px, and 52px is not enough for an eighth. A clone of an existing seat was
+ * appended to the live row with six candidate labels — Reading, Compare,
+ * Comparisons, What it costs, Costs, Readings — and every one of them wrapped,
+ * including the five-letter one. So the three comparison sheets could only get
+ * a nav home by a seat being given up, which is what happened.
+ *
+ * WHY THOSE TWO AND NOT ANOTHER PAIR. Work held three children that PROVE and
+ * Services held two that SELL, and a visitor deciding between them was being
+ * asked to know which of those two words meant "the things he makes". They are
+ * one menu now, selling pages first. The merged seat keeps Work's label and
+ * Work's position, because "Work" is the shorter word — which is what pays for
+ * the new seat — and because D29's ordering note below still governs.
+ *
+ * Top-level ORDER is unchanged by D29 on purpose. Main Street is now the LOCAL
+ * page — a narrower audience than before, not a wider one — so promoting it
+ * above Work would bury the demo every visitor should try behind a page most
+ * of them are not in the market for.
+ *
+ * THE CONTACT SEAT WAS GIVEN UP ON 2026-09-12 TO PAY FOR THE FULL MENU, at the
+ * operator's direction, and the row is SIX seats plus a menu control. Everything
+ * above about there being no eighth seat held exactly as written: the control
+ * went in, `npm run measure:nav` reported WRAPPED at 1024px, and the header's own
+ * rule — a top-level seat is only ever available by giving one up — was the
+ * answer rather than a paragraph about it.
+ *
+ * THE THREE WAYS OUT WERE MEASURED, NOT ARGUED, and the numbers are the record
+ * because they are what ruled the other two out. Slack in the HEADER CONTAINER
+ * at 1024px, where the container is 976px:
+ *
+ *     seven seats, symbol-only control, button shaved to px-3      9px
+ *     six seats, symbol-only control, everything else full size   64px
+ *     six seats, the control carries the word "Menu"              16px   ← this
+ *
+ * THOSE SIXTEEN PIXELS ARE GONE AND THE ROW IS AT 9px, because the seats changed
+ * again later the same day: "Compare" became the longer "Resources", About was
+ * dissolved, and AI News took a seat. The reading above is kept because it is
+ * what the Contact decision was made against — a superseded measurement is a
+ * record of a choice, where a silently updated one is a rewrite of it. The
+ * CURRENT number lives beside the Resources seat below, which is where the next
+ * person changing a label will actually be reading.
+ *
+ * SIXTEEN PIXELS WAS NOT TIGHT BY THIS ROW'S STANDARDS. It is about what the row
+ * carried before the menu existed, and the nine-pixel option bought its room by
+ * narrowing the primary button and shrinking a click target, which is three
+ * cosmetic compromises to buy one decision's worth of space.
+ *
+ * WHY CONTACT AND NOT ANOTHER SEAT. The "Start a project" button sits
+ * immediately beside where that seat was and points at the same page, so the row
+ * was carrying two controls for one destination — which is the duplication rule
+ * this file already states about /ai-fit/. Contact is still reachable three
+ * ways: that button, the full menu, and the phone bar's own tab.
+ *
+ * AND THE COST IS REAL, so it is written down rather than left for somebody to
+ * rediscover. "Start a project" asks for more commitment than "Contact" does. A
+ * visitor who only wants to ask a question may not press it, and if that turns
+ * out to matter the fix is the button's LABEL rather than the seat coming back.
+ *
+ * Zero JS. The panels reveal on `group-hover` AND `group-focus-within`, and they
+ * hide with `opacity-0 pointer-events-none` — NOT `invisible`. This is
+ * load-bearing: `visibility: hidden` removes the child links from the tab order,
+ * which would strand a keyboard user on a menu they can never open. Opacity keeps
+ * them focusable, so tabbing into one reveals its panel.
+ */
+import Wordmark from './Wordmark.astro';
+import NavIcon from './NavIcon.astro';
+import { ChevronDown, Menu as MenuIcon, X } from '@lucide/astro';
+import { dest, menu, assertSiteMap, cta, ctaHref } from '../data/site-map.js';
+
+assertSiteMap('SiteHeader');
+
+const path = Astro.url.pathname;
+
+/* THE BUTTON ASKS FOR WHAT THIS PAGE'S READER IS ACTUALLY DOING, since
+   2026-09-12. It said "Start a project" on every page and pointed at a bare
+   /contact/ — the same question on /bio/, where somebody is deciding whether
+   this is a real person, as on /quoted/, where they are pricing work.
+
+   THE RULE LIVES IN src/data/site-map.js AND NOT HERE. Every page is already in
+   that file, an assertion there refuses an intent ContactForm.jsx would not
+   recognize, and putting the map here would mean the one file that knows every
+   page and the one that decides what to ask for are different files.
+
+   A PAGE NOT IN THE MAP FALLS BACK RATHER THAN THROWING. `dest()` throws on an
+   unknown page because a menu row pointing nowhere is a defect; a BUTTON is
+   different — every layout renders this header, including error and utility
+   routes that are deliberately not destinations, and a 404 that fails to render
+   because its button had no rule would be a worse failure than a generic
+   button. */
+const pageCta = cta(path);
+
+type Item = { href: string; label: string; note?: string };
+/* A HEADING IS A CHILD THAT IS NOT A LINK, added 2026-09-11. The first seat now
+   carries ten children, which the operator declined as a flat list, so they sit
+   under small headings inside the one menu. A heading is a row in `children`
+   rather than a nesting level on purpose: nesting would mean a second hover
+   target, and a menu you have to hover twice to read is worse than a long one.
+
+   EVERYTHING THAT WALKS `children` MUST SKIP THESE. `groupActive` below does it
+   with a type guard rather than an optional-chain, because `isActive(undefined)`
+   returns false quietly — so a heading would have made the active underline
+   silently unreachable for a seat rather than erroring. */
+type Heading = { heading: string };
+type Child = Item | Heading;
+const isItem = (c: Child): c is Item => 'href' in c;
+type Entry = { label: string; href?: string; children?: Child[] };
+
+/* A CHILD IS NAMED BY ITS ADDRESS NOW, 2026-09-12, and its words come from
+   src/data/site-map.js. The label and the note used to be typed here AND typed
+   again in MobileTabBar.astro, where four comments promised the two were kept
+   matching by hand. They were not, three times over.
+
+   THE ARRANGEMENT STAYS HERE AND ONLY THE ARRANGEMENT. Which seat a page sits
+   under, in what order, under which heading, is this surface's own judgment and
+   nothing else reads it. What the page is CALLED is a fact about the page.
+
+   SEAT LABELS ARE STILL TYPED, deliberately. "Services", "Free check", "AI Fit"
+   and the rest are MEASURED against the row's width at 1024px — they are
+   shortenings that fit, not names for pages, and every one has its measurement
+   recorded in the comment beside it. */
+const child = (href: string): Item => {
+  const d = dest(href);
+  return { href: d.href, label: d.label, note: d.note };
+};
+
+const nav: Entry[] = [
+  {
+    label: 'Services',
+    href: '/services/',
+    children: [
+      // The most approachable demo gets a permanent nav seat without growing the top-level
+      // row, which has exactly 0px of slack at 1024px (D23, measured).
+      /* THE SHELF TAKES THE FIRST SEAT, 2026-08-25. Review Autopilot held it as
+         the lead offer; D34 moved that to /check/ and the shelf is now what a
+         local visitor is actually being sold. Inside the dropdown rather than
+         at the top level, because the row has exactly 0px of slack at 1024px
+         (D23, measured) and an eighth item would wrap. */
+      /* THESE TWO LABELS SAY WHAT EACH PAGE IS FOR, since 2026-09-09. They read
+         "Finished tools" and "All live tools" — both describing what is ON the
+         page, sitting one above the other in the same dropdown, so a reader had
+         no way to tell that the first SELLS and the second PROVES. One buys, one
+         is evidence. The notes underneath were already doing this job alone. */
+      /* THE TWO SELLING PAGES LEAD, since Work and Services merged on
+         2026-09-11. They were the whole of the Services dropdown and they are
+         what a visitor hovering this seat is most often after; the three below
+         them are the proof. Putting the proof first would open the menu on the
+         industrial work, which is the part D36 says is caliber rather than the
+         offer. */
+      /* ── HEADED GROUPS, 2026-09-11, AND THE SEAT IS RENAMED ────────────────
+         The operator's answer in the alignment session: rename this seat so the
+         top row says plainly what is for sale, hang the invisible products inside
+         it, and split the result under headings rather than leaving ten flat rows.
+         No seat was given up and none was added.
+
+         WHY FIVE PAGES WERE INVISIBLE. /advisory/ and /rescue/ were each reached
+         by ONE body link on /services/ and by nothing in any menu, while three
+         comparison sheets that sell nothing held a whole seat; /upkeep/,
+         /visibility/ and /supply-chain/ did not exist yet. A visitor could not
+         find the two most expensive things on the site.
+
+         THE LABEL IS MEASURED, NOT CHOSEN, and the measurement is recorded
+         because the numbers are what ruled the alternatives out. At 1024px the row
+         had 49px of slack carrying "Work". Re-run
+         `node scripts/measure-nav.mjs --seat=<current label> "Candidate"` and read
+         the HEADER CONTAINER, never the nav element:
+
+             "Build"         51px        "What I build"   5px
+             "Offer"         50px        "What I make"    2px
+             "For sale"      32px        "What you buy"   WRAPS
+             "Services"      26px
+
+         FOUR FIT AND "Services" IS THE ONE, which is a judgment on top of the
+         measurement rather than from it. It is the word a visitor scans for when
+         they want to know what is sold; "Build" and "Offer" describe the act
+         rather than the thing, and "For sale" reads like a yard sign. D99 merged
+         Services away because a visitor had to know which of two words meant "the
+         things he makes" — with no competing "Work" seat that confusion is gone,
+         which is what makes the word available again.
+
+         THE GROUP HEADINGS ARE THREE AND THE SPLIT IS BY COMMITMENT, not by
+         subject. What ends, what recurs every month, and what is only evidence. A
+         reader deciding whether to start something cares first whether it stops. */
+      { heading: 'Work that ends' },
+      child('/services/'),
+      child('/websites/'),
+      child('/tools/'),
+      child('/supply-chain/'),
+      child('/rescue/'),
+      { heading: 'Month after month' },
+      child('/advisory/'),
+      child('/upkeep/'),
+      child('/visibility/'),
+      { heading: 'Proof, not for sale' },
+      child('/work/'),
+      child('/confirmation-outlook/'),
+    ],
+  },
+  /* THE CHECK IS THE LEAD OFFER, so it gets the first seat after Work rather
+     than being buried in a dropdown. The row had exactly 0px of slack at 1024px
+     with ten flat links (D23, measured), which is why AI News moved down into
+     About to make room rather than an eighth item being added. */
+  { label: 'Free check', href: '/check/' },
+  { label: 'Main Street', href: '/main-street/' },
+  /* SERVICES BECAME A DROPDOWN 2026-09-03, held three children until 2026-09-06
+     when the assessment took a top-level seat, and was MERGED INTO WORK on
+     2026-09-11. Its two children moved up there and lead that menu. This seat is
+     now the three comparison sheets, which had no nav home at all and were
+     reachable only from each other.
+
+     /ai-fit/ is NOT duplicated here, and that rule survives the merge. A link at
+     the top level and again inside a dropdown is two seats for one page, and the
+     dropdown copy is the one nobody needed.
+
+     THE LABEL IS MEASURED, NOT CHOSEN, and the measurement is in the header
+     comment: six candidates were clone-tested in the live row as an EIGHTH seat
+     and all six wrapped, which is why a seat had to be given up rather than
+     added. "Compare" is what these three pages do, it is one word, and it is
+     shorter than the "Services" it replaces — so the row gains width rather than
+     losing it. Re-run `npm run measure:nav` after any change here, and measure
+     the HEADER CONTAINER rather than the nav element.
+
+     THERE IS NO `href` ON PURPOSE. The other two grouped seats point at a page
+     that summarizes their children; these three sheets have no index and writing
+     one would be a fourth surface repeating what the three already say. So this
+     seat opens a menu and nothing else, exactly like About. */
+  /* ── RENAMED "RESOURCES" ON 2026-09-12, and the rename was forced by what
+        moved in. "Compare" described three pages exactly. With the deadline list
+        and the FAQ under it, that word is now describing a third of its own
+        contents, and a seat label that is wrong about its own children is worse
+        than a vaguer one that is right.
+
+        WHAT THIS SEAT IS FOR: everything a reader opens while deciding, all of
+        it free and none of it selling. The three comparison sheets, the Craven
+        County deadline list, and the straight answers. /deadlines/ had NO seat
+        at all before this and one inbound link on the whole site.
+
+        STILL NO `href`, for the reason the Compare seat had none: these pages
+        have no index, and writing one would be a fifth surface repeating what
+        the four already say.
+
+        THE LABEL IS MEASURED AND THEN JUDGED, and both halves are recorded.
+        Slack left in the HEADER CONTAINER at 1024px, which is 976px inside its
+        padding:
+
+            "Resources"   9px   ← this
+            "Free help"  17px
+            "Answers"    21px
+            "Reading"    25px
+            "Guides"     32px
+
+        "RESOURCES" IS THE TIGHTEST AND IT IS STILL THE RIGHT ONE, which is the
+        judgment on top of the measurement. Every shorter candidate is wrong
+        about at least one child: a platform fee comparison is not a "Guide",
+        "Answers" describes the FAQ and not a list of filing dates, and
+        "Reading" describes none of them. A seat label that is false about its
+        own children costs more than eight pixels.
+
+        NINE PIXELS MEANS NO LABEL ANYWHERE CAN GROW BY A LETTER. If one has to,
+        a seat comes out — that is this row's only currency and always has been.
+
+        AND THE TOOL COULD NOT MEASURE THIS SEAT UNTIL TODAY. `measure-nav.mjs`
+        picked a seat's trigger with `querySelector('a')`, which searches the
+        whole subtree including the open dropdown panel. A seat with no `href`
+        has a <span> trigger, so it measured a panel row instead, found nothing
+        swappable on it, and reported "no seat found" — a cause that was not
+        true. "Compare" had the same shape from the day it was made, so no
+        candidate for it was ever measurable and nothing said so. Fixed
+        2026-09-12 with `:scope >`, and the two failures now name themselves
+        apart. */
+  {
+    label: 'Resources',
+    children: [
+      child('/websites/compare/'),
+      child('/getting-paid/'),
+      child('/stores/'),
+      child('/deadlines/'),
+      child('/faq/'),
+    ],
+  },
+  /* THE ASSESSMENT TOOK ITS OWN SEAT 2026-09-06, at the operator's direction,
+     and FAQ moved down into About to pay for it. The top-level count did not
+     move and cannot: the row has exactly 0px of slack at 1024px (D23, measured),
+     so a seat is only ever available by giving one up.
+
+     WHY THIS TRADE AND NOT ANOTHER. FAQ is the item a visitor reaches after
+     deciding to look into this practice; the assessment is one they can buy.
+     Since 2026-09-06 it is also the only offer whose PRICE DEPENDS on a rule
+     they have to read — two forms, and the operator picks which — so burying it
+     one click down asks somebody to find the explanation before they know there
+     is one.
+
+     THE LABEL IS MEASURED, NOT CHOSEN, and the full product name does not fit.
+     Measured 2026-09-06 by swapping the text in a live 1024px page and reading
+     the header container's remaining width, which is 976px inside its padding:
+
+         "AI Fit"             52px slack
+         "AI fit"             55px slack
+         "AI Fit check"        8px slack
+         "Where AI fits"      WRAPS to two rows
+         "AI Fit Assessment"  WRAPS to two rows
+
+     So "AI Fit" it is. "AI Fit check" fits and was refused anyway: /check/ is
+     the FREE lead offer two seats to the left, and two nav items both ending in
+     "check" is a reader working out which one costs money.
+
+     Measure again after any change here, and measure the HEADER CONTAINER, not
+     the nav element -- the nav shrink-wraps to its own content and reports 0px
+     of slack at every width, which reads exactly like the row being full. */
+  { label: 'AI Fit', href: '/ai-fit/' },
+  /* ── THE ABOUT SEAT WAS DISSOLVED ON 2026-09-12, and this is the trade that
+        paid for everything above it.
+
+        "Resources" is two characters longer than the "Compare" it replaced, and
+        AI News wanted a seat of its own. Neither fits in a row that had 16px.
+        Giving up a seat is the only way this row ever finds width — the rule
+        this file has stated since D23 — and About was the one that could go,
+        because ALL of its children are in the full menu a control away, under a
+        heading that names them better than "About" did.
+
+        AI NEWS CAME BACK UP TO THE TOP LEVEL, which is where it was until
+        2026-09-06 when it moved down to pay for the assessment's seat. It is
+        the one page on this site that is different every single day, and a
+        daily page buried two levels down is a daily page nobody returns to.
+
+        AND THE COST IS NAMED RATHER THAN DISCOVERED LATER. /bio/ no longer has
+        a route from the top row, and the bio is D33's whole differentiator —
+        five trades, four of them on a New Bern street, which no competitor here
+        can publish. A stranger deciding whether this practice is real is the
+        reader that page is for, and they now have to open the menu to find it.
+        The operator was shown that cost and chose this anyway. If it bites, the
+        fix is a seat for the bio rather than restoring a seat called About. */
+  { label: 'AI News', href: '/ai-news/' },
+];
+
+const isActive = (href: string) =>
+  path === href || path.startsWith(href.endsWith('/') ? href : href + '/');
+// A group reads as active when any of its children is the current page.
+const groupActive = (e: Entry) =>
+  (e.href ? isActive(e.href) : false)
+  || (e.children?.filter(isItem).some((c) => isActive(c.href)) ?? false);
+---
+{/* The frosted blur is DESKTOP-ONLY (`lg:`). A sticky header carrying a
+    `backdrop-filter` sits pinned over scrolling content, so the browser
+    re-rasterizes whatever is behind it on EVERY scroll frame — on a phone that is a
+    top cause of choppy scrolling. On mobile it goes near-solid instead: visually
+    near-identical at that size (the net barely reads behind a 95% bar anyway) and
+    free to composite.
+
+    The blur is a Tailwind UTILITY, so it CANNOT be turned off from @layer components
+    — v4 puts utilities in a later layer, which wins regardless of specificity. It has
+    to be made conditional here, in the markup. */}
+<header
+  class="sticky top-0 z-50 border-b border-line bg-canvas/95 lg:bg-canvas/80 lg:backdrop-blur-md lg:supports-[backdrop-filter]:bg-canvas/65"
+>
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+    <Wordmark />
+    <div class="flex items-center gap-2">
+      <nav class="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
+        {
+          nav.map((entry) => {
+            const active = groupActive(entry);
+            // `relative` anchors the active underline; the link is inline-flex so the
+            // chevron rides beside the label, which means the underline must be an
+            // absolutely-positioned child, not a block sibling.
+            const linkCls = `relative inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+              active ? 'text-ink' : 'text-ink-muted hover:text-ink'
+            }`;
+            const underline = (
+              <span
+                class="absolute bottom-1 left-1/2 h-px w-4 -translate-x-1/2 bg-accent"
+                aria-hidden="true"
+              />
+            );
+
+            if (!entry.children) {
+              return (
+                <a href={entry.href} aria-current={active ? 'page' : undefined} class={linkCls}>
+                  {entry.label}
+                  {active && underline}
+                </a>
+              );
+            }
+
+            return (
+              <div class="group relative">
+                {/* The trigger is a real link when the group has a page of its own
+                    (Work → /work/); About and Writing are labels only. */}
+                {entry.href ? (
+                  <a href={entry.href} aria-current={active ? 'page' : undefined} class={linkCls}>
+                    {entry.label}
+                    <ChevronDown
+                      size={13}
+                      class="opacity-50 transition-transform duration-200 group-hover:translate-y-0.5"
+                      aria-hidden="true"
+                    />
+                    {active && underline}
+                  </a>
+                ) : (
+                  <span class={`${linkCls} cursor-default`}>
+                    {entry.label}
+                    <ChevronDown
+                      size={13}
+                      class="opacity-50 transition-transform duration-200 group-hover:translate-y-0.5"
+                      aria-hidden="true"
+                    />
+                    {active && underline}
+                  </span>
+                )}
+
+                {/* opacity-0 + pointer-events-none, never `invisible` — the links
+                    must stay in the tab order so focus can open the panel. */}
+                <div
+                  class="pointer-events-none absolute left-0 top-full w-64 pt-2 opacity-0 transition-opacity duration-150 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100"
+                >
+                  <ul class="panel flex flex-col gap-0.5 p-2 shadow-2xl shadow-black/50">
+                    {entry.children.map((c, i) => (
+                      !isItem(c) ? (
+                        /* A HEADING, not a link. `role="presentation"` keeps it out
+                           of the list's item count for a screen reader, which would
+                           otherwise announce ten items as thirteen. The top margin is
+                           suppressed on the first row so the menu does not open on a
+                           gap. */
+                        <li role="presentation" class={i === 0 ? '' : 'mt-2'}>
+                          <span class="mono-label block px-3 pb-1 pt-1 text-cyan-deep">{c.heading}</span>
+                        </li>
+                      ) : (
+                        <li>
+                          <a
+                            href={c.href}
+                            aria-current={isActive(c.href) ? 'page' : undefined}
+                            class={`block rounded-md px-3 py-2 transition-colors ${
+                              isActive(c.href) ? 'bg-surface-2 text-ink' : 'text-ink-muted hover:bg-surface-2 hover:text-ink'
+                            }`}
+                          >
+                            <span class="block text-sm font-medium">{c.label}</span>
+                            {c.note && <span class="mt-0.5 block text-xs text-ink-faint">{c.note}</span>}
+                          </a>
+                        </li>
+                      )
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            );
+          })
+        }
+      </nav>
+      {/* ── THE FULL MENU, 2026-09-12 ──────────────────────────────────────
+          The phone has carried a complete menu since the tab bar was built —
+          MobileTabBar's sheet, headed "Everything on this site". The desktop
+          had seven seats with partial dropdowns and no full list at all, so
+          /deadlines/ was reachable from no laptop menu whatsoever.
+
+          IT SITS OUTSIDE <nav> AND THAT IS NOT A DETAIL. The seven-seat row is
+          FULL: six candidate eighth labels were clone-tested in the live row at
+          1024px on 2026-09-11 and every one wrapped, including a five-letter
+          one. This control lives in the right-hand cluster beside the button,
+          where the phone's Menu control also lives, so the measured row is
+          untouched and `npm run measure:nav` still reads the same slack.
+
+          A <details> RATHER THAN A HOVER PANEL, matching the phone. The header
+          comment above warns that `visibility: hidden` strands a keyboard user
+          on a menu they can never open, and a closed <details> hides its
+          content the same way — but the two are not the same case. There the
+          trigger was a hover with nothing focusable to press; here <summary> is
+          a real, focusable control that opens the panel when activated. That is
+          what a disclosure is, and it carries native semantics for a screen
+          reader with no script at all.
+
+          THE PANEL IS `absolute`, NEVER `fixed`. The header carries
+          `lg:backdrop-blur-md`, and a backdrop filter makes an element the
+          containing block for its `position: fixed` descendants — the same trap
+          MobileTabBar records, where the phone sheet resolved against the 64px
+          bar and opened invisibly. `absolute` resolves against the sticky
+          header, which is what this wants anyway. */}
+      <details class="group/menu hidden lg:block">
+        <summary
+          class="menu-summary flex cursor-pointer list-none items-center gap-1.5 rounded-md px-2.5 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink"
+          aria-label="Everything on this site"
+          title="Everything on this site"
+        >
+          <MenuIcon size={17} class="group-open/menu:hidden" aria-hidden="true" />
+          <X size={17} class="hidden group-open/menu:block" aria-hidden="true" />
+          <span>Menu</span>
+        </summary>
+
+        <div
+          class="absolute inset-x-0 top-full border-b border-line bg-canvas shadow-2xl shadow-black/10"
+        >
+          <div class="mx-auto max-w-6xl px-6 pb-9 pt-7">
+            <p class="mono-label text-cyan-deep">Everything on this site</p>
+
+            {/* Home leads, above the columns rather than inside one. Its group
+                carries no heading — there is no honest heading for a single
+                row, and a lone link under one of the others would be filed
+                somewhere it does not belong. */}
+            {
+              menu()
+                .filter((g) => g.title === null)
+                .flatMap((g) => g.items)
+                .map((d) => (
+                  <a
+                    href={d.href}
+                    aria-current={isActive(d.href) ? 'page' : undefined}
+                    class={`mt-4 flex items-baseline gap-3 border-b border-line pb-4 transition-colors ${
+                      isActive(d.href) ? 'text-ink' : 'text-ink-muted hover:text-ink'
+                    }`}
+                  >
+                    <span class="font-display text-sm font-semibold text-ink">{d.label}</span>
+                    <span class="text-xs text-ink-faint">{d.note}</span>
+                  </a>
+                ))
+            }
+
+            {/* CSS COLUMNS RATHER THAN A GRID, because the groups are seven,
+                three and two rows long and a grid row is as tall as its tallest
+                cell — which would open gaps of empty space under the short
+                ones. Columns pack them. `break-inside-avoid` is what stops a
+                group being split across a column boundary, and without it the
+                heading and its rows come apart. */}
+            <div class="mt-6 gap-x-10 lg:columns-3">
+              {
+                menu()
+                  .filter((g) => g.title !== null)
+                  .map((g) => (
+                    <div class="mb-7 break-inside-avoid">
+                      <p class="mono-label pb-2 text-cyan-deep">{g.title}</p>
+                      <ul class="flex flex-col gap-0.5">
+                        {g.items.map((d) => (
+                          <li>
+                            <a
+                              href={d.href}
+                              aria-current={isActive(d.href) ? 'page' : undefined}
+                              class={`flex items-start gap-3 rounded-md px-2 py-1.5 transition-colors ${
+                                isActive(d.href)
+                                  ? 'bg-surface-2 text-ink'
+                                  : 'text-ink-muted hover:bg-surface-2 hover:text-ink'
+                              }`}
+                            >
+                              <span class="mt-0.5 shrink-0 text-accent-2">
+                                <NavIcon name={d.icon} size={15} />
+                              </span>
+                              <span class="min-w-0">
+                                <span class="block text-sm font-medium">{d.label}</span>
+                                <span class="mt-0.5 block text-xs text-ink-faint">{d.note}</span>
+                              </span>
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))
+              }
+            </div>
+          </div>
+        </div>
+      </details>
+
+      {
+        pageCta && (
+          <a href={ctaHref(pageCta)} class="btn btn-primary inline-flex px-4 py-2 text-sm">
+            {pageCta.label}
+          </a>
+        )
+      }
+    </div>
+  </div>
+</header>

@@ -1,0 +1,90 @@
+---
+/**
+ * WhatIBuild — the three capability headings, rendered identically on all three
+ * comparison sheets.
+ *
+ * WHY IT IS A COMPONENT AND NOT THREE COPIES OF THE MARKUP. The sentences are
+ * already shared by src/lib/capabilities.js, so three pages writing their own
+ * markup around them would still drift — one grows a fourth column, one drops
+ * the reason line under the middle list, and each reads correctly alone. The
+ * reason line is the part that would go: it is the longest text on the page and
+ * the least like a sales sentence.
+ *
+ * THE MIDDLE LIST PRINTS ITS REASON AND NEVER ITS `basis` KEY. The two bases
+ * exist so a gate can prove both survive — a list that drifted to all-promise
+ * reads as a practice hiding behind its paperwork. A client reads the sentence,
+ * not the label on it.
+ *
+ * NOTHING IS TYPED HERE. Every string comes out of the module, so this file
+ * cannot disagree with the PDF that prints the same list.
+ */
+import { capabilityList, HEADINGS, INTROS } from '../lib/capabilities.js';
+
+interface Props {
+  /** Which sheet is asking. Throws on an unknown one rather than rendering the
+   *  shared half alone, which would look complete and be missing the part that
+   *  makes this sheet's list its own. */
+  sheet: 'websites' | 'payments' | 'stores';
+}
+
+const { sheet } = Astro.props;
+const { can, wont, scoped } = capabilityList(sheet);
+---
+<section class="section-band border-y border-line">
+  <div class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+    <p class="mono-label">Before you ask me for anything</p>
+    <h2 class="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      What I build, what I <span class="aiq-accent">will not</span>, and what has to be quoted first.
+    </h2>
+    <p class="mt-5 max-w-2xl leading-relaxed text-ink-muted">
+      The same three lists sit on every sheet I publish, because the answer does not change with the
+      subject. The middle one is the one worth your time.
+    </p>
+
+    {/* ── What I can build ─────────────────────────────────────────────── */}
+    <div class="mt-12">
+      <h3 class="font-display text-2xl font-semibold tracking-tight text-ink">{HEADINGS.can}</h3>
+      <p class="mt-3 max-w-2xl leading-relaxed text-ink-muted">{INTROS.can}</p>
+      <dl class="mt-6 grid gap-5 sm:grid-cols-2">
+        {can.map((item) => (
+          <div class="panel p-6">
+            <dt class="font-display text-base font-semibold leading-snug text-ink">{item.what}</dt>
+            <dd class="mt-2 text-sm leading-relaxed text-ink-muted">{item.detail}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    {/* ── What I will not build ────────────────────────────────────────────
+        THE REASON IS NOT OPTIONAL AND IT IS NOT SMALLER THAN THE ITEM. A
+        refusal with the reason set in a caption reads as a disclaimer; a
+        refusal with the reason beside it reads as an argument, which is what
+        it is. */}
+    <div class="mt-14">
+      <h3 class="font-display text-2xl font-semibold tracking-tight text-ink">{HEADINGS.wont}</h3>
+      <p class="mt-3 max-w-3xl leading-relaxed text-ink-muted">{INTROS.wont}</p>
+      <dl class="mt-6 flex flex-col gap-4">
+        {wont.map((item) => (
+          <div class="panel border-l-2 border-l-accent/50 p-6">
+            <dt class="font-display text-base font-semibold leading-snug text-ink">{item.what}</dt>
+            <dd class="mt-2 max-w-3xl text-sm leading-relaxed text-ink-muted">{item.why}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    {/* ── What has to be quoted first ──────────────────────────────────── */}
+    <div class="mt-14">
+      <h3 class="font-display text-2xl font-semibold tracking-tight text-ink">{HEADINGS.scoped}</h3>
+      <p class="mt-3 max-w-2xl leading-relaxed text-ink-muted">{INTROS.scoped}</p>
+      <dl class="mt-6 grid gap-5 sm:grid-cols-2">
+        {scoped.map((item) => (
+          <div class="panel p-6">
+            <dt class="font-display text-base font-semibold leading-snug text-ink">{item.what}</dt>
+            <dd class="mt-2 text-sm leading-relaxed text-ink-muted">{item.detail}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section>

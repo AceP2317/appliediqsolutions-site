@@ -1,0 +1,370 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Button from '../components/Button.astro';
+import ServiceLadder from '../components/ServiceLadder.astro';
+import { builds, projectModel, pricingNotes, startingPrice, assessmentPrice, websitePrice, rescueAudit, upkeep, type BuildIcon } from '../data/services';
+import { ladder } from '../data/services';
+
+/* Derived, never typed — see the comment beside where it renders. */
+const rungCount = ladder.flatMap((b) => b.rungs).length;
+import { Wrench, Layers, Database, Plug, Sparkles, Check, ArrowUpRight } from '@lucide/astro';
+
+const buildIcons: Record<BuildIcon, any> = {
+  wrench: Wrench,
+  layers: Layers,
+  database: Database,
+  plug: Plug,
+  sparkles: Sparkles,
+};
+
+const origin = new URL(Astro.site!).origin;
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/services/#service`,
+    name: 'Custom software & AI tooling for small business',
+    serviceType: 'Custom operational software development',
+    provider: { '@id': `${origin}/#organization` },
+    areaServed: 'US',
+    description:
+      'Custom software you own — a single tool, a connected suite, a full system, or integration into what you already run. Scales from a sole operator to an enterprise.',
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'What I build',
+      itemListElement: [
+        'A single operational tool',
+        'A connected tool suite',
+        'A full custom system you own',
+        'Integration & implementation into existing systems',
+      ].map((name) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name } })),
+    },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: `${origin}/services/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="Custom software you own"
+  description={`Custom software you own: one tool, a suite, or a full system. ${startingPrice.line} Starts with a free conversation and a fixed quote.`}
+  image="/og/services.png"
+>
+  {/* ── Hero — lead with the work, not the rate card ──────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-24">
+      <p class="mono-label">Services</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        What I build — and how we build it together.
+      </h1>
+      {/* THE QUALIFIER IS INTERPOLATED HERE, NOT RETYPED, since 2026-09-09.
+          This paragraph used to paraphrase it — "that is a floor, not a quote…
+          a fixed number agreed before any work" — while /03 below interpolated
+          the real string from the module. Two statements of one promise on one
+          page, sharing no literal, so nothing could see them drift apart. That
+          is the shape of the defect D81 exists to close, and the floor had it
+          too. Anything this paragraph says about the number now comes from
+          services.ts or it does not get said. */}
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Builds start at {startingPrice.amount}. {startingPrice.qualifier} The first conversation is
+        free, and every build ends with software that is yours outright. Most of this starts small:
+        the first rung below is a solo operator.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Worked from New Bern, North Carolina, for businesses anywhere. Inside Craven County I come
+        and watch the job being done first, because a rule nobody wrote down is the usual reason a
+        piece of software is wrong.
+      </p>
+    </div>
+  </section>
+
+  {/* ── /01 What I build ──────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 01</span>
+      <span class="mono-label">What I build</span>
+    </p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      One tool, a suite, or the whole system.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      A scope ladder, not a fixed menu — most engagements start small and specific, and grow only
+      if the problem warrants it.
+    </p>
+
+    <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {builds.map((b) => {
+        const Icon = buildIcons[b.icon];
+        return (
+          <div class="panel lift spotlight flex flex-col gap-3 p-6">
+            <span class="grid h-11 w-11 place-items-center rounded-lg border border-line bg-canvas text-accent-2">
+              <Icon size={20} aria-hidden="true" />
+            </span>
+            <h3 class="font-display text-lg font-semibold text-ink">{b.title}</h3>
+            <p class="text-sm leading-relaxed text-ink-muted">{b.body}</p>
+            {/* ONE REAL JOB, where there is one. Grafted from the home page's
+                three-shapes section on 2026-09-11, which the operator cut and whose
+                career lines he chose to move rather than its card bodies — these
+                five already cover the same ground in their own words.
+
+                THREE CARDS HAVE NO LINE AND THAT IS LEFT VISIBLE. Three real
+                instances existed and five cards wanted one; the never-invent rule
+                that came across with the field is what stops the other three being
+                filled with something plausible. See the field's own comment in
+                services.ts. */}
+            {b.instance && (
+              <p class="mt-1 text-sm leading-relaxed text-ink-faint">
+                <span class="text-accent">→</span> {b.instance}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  {/* ── /02 How we work together ──────────────────────────────────────────── */}
+  <section class="section-band">
+    <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 02</span>
+        <span class="mono-label">How we work together</span>
+      </p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Start with one build — or climb as you grow.
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        A single defined project with no commitment, or an ongoing relationship that scales with
+        you — from your first tool to a standing partnership.
+      </p>
+
+      {/* One-off: Project */}
+      <div class="panel lift spotlight mt-10 p-7 sm:flex sm:items-start sm:justify-between sm:gap-10">
+        <div class="max-w-md">
+          <p class="mono-label text-cyan-deep">One-off</p>
+          <h3 class="mt-2 font-display text-xl font-semibold text-ink sm:text-2xl">{projectModel.title}</h3>
+          <p class="mt-1 text-sm text-ink-muted">{projectModel.tagline}</p>
+        </div>
+        <ul class="mt-5 flex flex-col gap-2.5 sm:mt-0 sm:max-w-sm">
+          {projectModel.includes.map((item) => (
+            <li class="flex items-start gap-2.5 text-sm leading-relaxed text-ink-muted">
+              <Check size={16} class="mt-0.5 shrink-0 text-up" aria-hidden="true" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Ongoing: the ladder. The count is DERIVED — it said "Six rungs" while
+          rendering four, because rungs 5 and 6 were removed on 2026-08-24 and
+          the prose was not. Same class as D22's tool count, applied to rungs. */}
+      <p class="mono-label mt-12 text-cyan-deep">Ongoing — pick your altitude</p>
+      <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink-muted">
+        {rungCount} rungs, from your very first tool to a standing arrangement — climb only as far
+        as the business needs.
+      </p>
+      <div class="mt-8 max-w-3xl">
+        <ServiceLadder />
+      </div>
+    </div>
+  </section>
+
+  {/* ── /03 How pricing works (premium, quote-based, concrete) ────────────── */}
+  <section class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+    <p class="flex items-center gap-2.5">
+      <span class="section-index">/ 03</span>
+      <span class="mono-label">How pricing works</span>
+    </p>
+    {/* THE NUMBER LEADS, and the qualifier sits immediately under it.
+        Separating them by so much as a section is how a floor gets read as a
+        quote — the single failure mode of publishing one number instead of a
+        menu. Both strings come from services.ts so this page and any other
+        surface quoting the figure cannot say two different things. */}
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      {startingPrice.line}
+    </h2>
+    <p class="mt-3 max-w-2xl text-lg leading-relaxed text-ink-muted">
+      {startingPrice.qualifier}
+    </p>
+
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      {pricingNotes.map((n) => (
+        <div class="panel lift spotlight p-7">
+          <h3 class="font-display text-lg font-semibold text-ink">{n.title}</h3>
+          <p class="mt-2 leading-relaxed text-ink-muted">{n.body}</p>
+        </div>
+      ))}
+    </div>
+
+    {/* Quiet small-business / website fold-in — deliberately understated. */}
+    <div class="panel lift spotlight mt-4 border-accent/30 p-7">
+      <p class="mono-label text-cyan-deep">Just getting online?</p>
+      <p class="mt-2 max-w-3xl leading-relaxed text-ink-muted">
+        Running your business off a Facebook page — or nothing at all? I’ll build you a real
+        website you own, not a rented template or a profile on someone else’s platform. Same
+        principle as everything else here: it’s yours, and you’re not paying rent on it forever.
+        <span class="text-ink-faint"> (Ongoing upkeep is optional, on a retainer.)</span>
+      </p>
+      {/* THIS LINE BREAKS AN ANCHOR, and it is not decoration. The price headline sits two panels
+          above this one, so a reader arrives here having just read the floor and joins the two
+          without anybody claiming they go together. A website is the largest thing sold, not the
+          smallest, and the floor was sized for a fitted shelf tool — docs/engagement/reference/
+          rate-card.md, "the floor buys a fitting".
+
+          IT NOW NAMES THE FIGURE, WHICH IT REFUSED TO DO UNTIL 2026-09-03. The sentence here used
+          to read "a site is a bigger job ... so it carries its own number", which breaks the anchor
+          and puts nothing in its place: a reader leaves knowing only that a website costs more than
+          the build floor, and somebody comparing three quotes reads that as evasion. The website
+          floor is published now, so the honest fix is the number and a door to the page arguing it. */}
+      <p class="mt-3 max-w-3xl leading-relaxed text-ink-muted">
+        <span class="font-semibold text-ink">{websitePrice.line}</span> {websitePrice.qualifier}
+      </p>
+      <p class="mt-3">
+        <a href="/websites/" class="link-sweep text-sm">
+          What that buys, and why it beats renting one →
+        </a>
+      </p>
+      <p class="mt-3">
+        <a href="/main-street/" class="link-sweep text-sm">
+          More on the local small-business focus →
+        </a>
+      </p>
+    </div>
+
+    {/* THE SECOND PUBLISHED NUMBER LIVES ON ITS OWN PAGE AND IS POINTED AT FROM
+        HERE, because this is where a visitor reading about money already is.
+
+        It is a SIBLING of the floor above, never a tier of it, and the copy has
+        to keep saying so. The floor is where a build starts; this is the entire
+        cost of a finished piece of work. Two products with one price each is not
+        the menu the last pricing note above explains this practice does not
+        publish — but writing "starts at" here would make it one. */}
+    <div class="panel lift spotlight mt-4 p-7">
+      <p class="mono-label text-cyan-deep">Not sure what to build yet?</p>
+      <h3 class="mt-2 font-display text-lg font-semibold text-ink">{assessmentPrice.video.line}</h3>
+      <p class="mt-2 max-w-3xl leading-relaxed text-ink-muted">
+        For a business that wants to use AI and genuinely cannot see where it fits. I watch how the
+        work is actually done — on video, or in your business, and which one is not your choice —
+        then write you a list of what is worth building with a number beside each line. {assessmentPrice.video.qualifier} {assessmentPrice.onSite.line}
+        {assessmentPrice.onSite.qualifier}
+      </p>
+      <p class="mt-3">
+        <a href="/ai-fit/" class="link-sweep text-sm">
+          What the assessment covers →
+        </a>
+      </p>
+    </div>
+
+    {/* ── MONTHLY ADVISORY, AND IT SITS LAST ON PURPOSE ──────────────────────
+        THIS IS THE ONLY PLACE ON THE SITE THAT POINTS AT /advisory/, chosen
+        2026-09-10 over the main navigation and over /bio/. The navigation would
+        put a four-figure monthly fee in front of the local owner who came for a
+        fitted tool at the published floor, and a practice that appears to be
+        aiming past its reader loses the reader. Here it is met only by somebody
+        who has already read what gets built and what it costs, which is the
+        point at which a different kind of engagement stops looking like a
+        contradiction.
+
+        NO FIGURE IS TYPED IN THIS COMMENT, and the first draft of it typed two.
+        The hand-typed-price scan reads SOURCE and does not care that a number
+        sits in an explanation rather than in copy — correctly, because a comment
+        is where a stale figure survives longest and a reader trusts it most.
+
+        IT CARRIES NO FIGURE. Every other price on this page renders with its
+        qualifier attached because the two are one statement; this one's
+        qualifier includes a three-month minimum, and a fourth price plus a term
+        is more than this section can hold without becoming the menu that
+        pricingNotes says the site does not publish. The figure lives on its own
+        page with its own terms beside it, and this is the door rather than the
+        offer. */}
+    <div class="panel lift spotlight mt-4 p-7">
+      <p class="mono-label text-cyan-deep">Not sure you need anything built?</p>
+      <h3 class="mt-2 font-display text-lg font-semibold text-ink">Sometimes the answer is a decision, not a build.</h3>
+      <p class="mt-2 max-w-3xl leading-relaxed text-ink-muted">
+        For a company that has been asked what it is doing about AI and does not have an answer yet.
+        A monthly arrangement: a written roadmap in the first thirty days, working sessions twice or
+        three times a month, and somebody answerable in between. Nothing gets built and nothing gets
+        licensed — and where the roadmap says something IS worth building, that gets scoped and
+        quoted on its own.
+      </p>
+      <p class="mt-3">
+        <a href="/advisory/" class="link-sweep text-sm">
+          How the monthly arrangement works →
+        </a>
+      </p>
+    </div>
+
+    {/* ── THE RESCUE AUDIT, AND IT CARRIES ITS FIGURE WHERE THE OTHER TWO DO NOT
+        The advisory panel above holds no number because its qualifier includes a
+        three-month term, and a fee without its term is a smaller commitment than
+        the one being sold. This one's qualifier is a five-day ceiling, which
+        fits beside the figure in one breath, so withholding it would be coyness
+        rather than care.
+
+        IT SITS LAST BECAUSE IT IS THE ONLY ONE ABOUT SOFTWARE ALREADY BUILT.
+        Everything above this point on the page is about something that does not
+        exist yet. A reader who got this far and recognized none of it may be
+        here because what they already have is broken, and that is a different
+        conversation the page had no door for until now. */}
+    <div class="panel lift spotlight mt-4 p-7">
+      <p class="mono-label text-cyan-deep">Already have something, and it half works?</p>
+      <h3 class="mt-2 font-display text-lg font-semibold text-ink">{rescueAudit.line}</h3>
+      <p class="mt-2 max-w-3xl leading-relaxed text-ink-muted">
+        For software somebody else built, or that you built yourself and got stuck in. I read it and
+        write you the answer: what is wrong, what repair would cost, and whether repairing beats
+        starting again. {rescueAudit.qualifier}
+      </p>
+      <p class="mt-3">
+        <a href="/rescue/" class="link-sweep text-sm">
+          What the read covers →
+        </a>
+      </p>
+    </div>
+
+    {/* UPKEEP GETS A DOOR HERE, 2026-09-11, and until the header is rebuilt this
+        is the ONLY route to it on the whole site. That is the exact condition the
+        alignment session found advisory and rescue in, so it is written down
+        rather than discovered again: the renamed first nav seat is meant to carry
+        all three, and it is last in the build order because it has to point at
+        pages that did not exist yet.
+
+        IT SITS LAST IN THIS SECTION ON PURPOSE. Upkeep is the only thing on this
+        page nobody can buy first — it follows a build, so a reader meeting it
+        before the build is being sold a subscription to something they do not
+        own. The cap travels in the same breath as the figure for the reason the
+        page itself gives. */}
+    <div class="panel lift spotlight mt-4 p-7">
+      <p class="mono-label text-cyan-deep">Already had something built here?</p>
+      <h3 class="mt-2 font-display text-lg font-semibold text-ink">{upkeep.line}</h3>
+      <p class="mt-2 max-w-3xl leading-relaxed text-ink-muted">
+        Optional, and only worth it if you would rather a small change took one message than a
+        morning of your own. {upkeep.qualifier}
+      </p>
+      <p class="mt-3">
+        <a href="/upkeep/" class="link-sweep text-sm">
+          What the month includes →
+        </a>
+      </p>
+    </div>
+  </section>
+
+  {/* ── Closing CTA → quote intent ────────────────────────────────────────── */}
+  <section class="mx-auto max-w-4xl px-6 pb-20 text-center sm:pb-28">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      Tell me the problem. I’ll scope the fix.
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      Whichever shape it takes, it starts the same way: you describe the problem, I tell you
+      straight how I’d build it — and what it’ll take.
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/?intent=quote" variant="primary">Request a quote</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </section>
+</MarketingLayout>

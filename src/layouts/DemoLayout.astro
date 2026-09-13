@@ -1,0 +1,42 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Wordmark from '../components/Wordmark.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  toolName?: string;
+  /** Per-page JSON-LD nodes, forwarded to BaseLayout's site-wide @graph. */
+  schema?: Record<string, unknown>[];
+}
+const { title, description, image, toolName, schema } = Astro.props;
+---
+<BaseLayout title={title} description={description} image={image} schema={schema}>
+  <div class="flex min-h-screen flex-col">
+    <header class="sticky top-0 z-50 border-b border-line bg-canvas/85 backdrop-blur-md">
+      <div class="flex h-14 items-center justify-between gap-4 px-5">
+        <div class="flex items-center gap-4">
+          <a
+            href="/work/"
+            class="inline-flex items-center gap-1.5 text-sm text-ink-muted transition-colors hover:text-ink"
+          >
+            <span aria-hidden="true">←</span> Work
+          </a>
+          <span class="h-5 w-px bg-line-2" aria-hidden="true"></span>
+          <Wordmark showSuffix={false} />
+        </div>
+        <div class="flex items-center gap-3">
+          {toolName && <span class="hidden text-sm text-ink-muted sm:inline">{toolName}</span>}
+          <span class="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1">
+            <span class="status-dot"></span>
+            <span class="mono-label text-[0.6rem]">Live Demo</span>
+          </span>
+        </div>
+      </div>
+    </header>
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+  </div>
+</BaseLayout>

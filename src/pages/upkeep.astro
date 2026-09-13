@@ -1,0 +1,147 @@
+---
+/**
+ * /upkeep/ — the monthly fee, published for the first time on 2026-09-11.
+ *
+ * WHY THIS PAGE EXISTS AT ALL. Upkeep was the only thing this practice sells whose
+ * price appeared nowhere on the site. It had no page, and the two places that
+ * mentioned it — /services/ and /main-street/ — said "Ongoing upkeep is optional,
+ * on a retainer" in brackets and named no figure. D90 had raised it to what it is
+ * now and called it the only line in the catalog that earns while the operator is
+ * elsewhere, which made it the one product a visitor could not find and could not
+ * price.
+ *
+ * THE FIGURE IS INTERPOLATED AND MUST STAY THAT WAY. scripts/check-dist.mjs carries
+ * a rule refusing it hand-typed anywhere under src/pages, src/components or
+ * src/data, with three controls proving the rule fires on a typed fee, stays quiet
+ * on the same number as invented demo data, and stays quiet on upkeep wording
+ * carrying a different figure. Never write the number into this file.
+ *
+ * AND ONE THING ABOUT THAT RULE IS WORTH KNOWING BEFORE TRUSTING IT. The
+ * client-paper scanner in the same gate ALSO refuses this figure today, because
+ * EXTRA_PAGE_USD happens to be the same number. So two rules cover this page and
+ * only one of them is about upkeep. The day those figures stop matching, the
+ * accidental cover disappears and the upkeep rule is the only thing left — which
+ * is precisely why it was written rather than leaning on the coincidence.
+ *
+ * THE CAP RENDERS BESIDE THE FEE, NOT BELOW IT, and that placement is the decision
+ * rather than the styling. rescueAudit.alsoSays sits the same way for the same
+ * reason: under a figure a reader takes a limit for a disclaimer, beside it they
+ * take it for what they are buying. An unbounded "small fixes as they arise" at
+ * this fee is a worse deal for the practice than the same words at a third of it,
+ * because what a buyer feels entitled to spend scales with what they paid.
+ *
+ * NO PAY BUTTON, for the reason /ai-fit/ and /advisory/ have none: this starts
+ * after something has been built, so it begins in a conversation rather than at a
+ * checkout.
+ *
+ * THE PAGE SAYS STOPPING IT TURNS NOTHING OFF, and that sentence is load-bearing
+ * rather than reassurance. D37's whole delivery model is a hosted copy in the
+ * client's own account plus an offline file they keep, so a canceled retainer
+ * disables nothing. A monthly fee on a site that promises "no subscription, no
+ * lock-in" has to answer that out loud or the two read as a contradiction.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { upkeep } from '../data/services';
+import { Wrench, Timer, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/upkeep/#service`,
+    name: 'Monthly upkeep',
+    serviceType: 'Software maintenance',
+    provider: { '@id': `${origin}/#business` },
+    description:
+      'An optional monthly arrangement for software already delivered: small fixes and changes as they arise, with a stated limit, cancellable at any time.',
+  },
+];
+---
+
+<MarketingLayout
+  title="Keeping it running, after it is built"
+  description={`An optional monthly arrangement for what I have already built you — small fixes and changes as they arise, with a stated limit. ${upkeep.amount}`}
+  schema={schema}
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">Optional · after the build · stop whenever you like</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Keeping it running, after it is built.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        {upkeep.whoItIsFor}
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Nothing about a build needs this. What was made for you is yours outright and it keeps
+        working whether or not you ever send me another message. This is for the version of you who
+        would rather not be the one editing it.
+      </p>
+
+      <div class="mt-8 max-w-2xl">
+        <div class="panel flex flex-col gap-2 p-6">
+          <p class="font-display text-xl font-semibold leading-snug text-ink">{upkeep.line}</p>
+          <p class="text-sm leading-relaxed text-ink-muted">{upkeep.qualifier}</p>
+        </div>
+      </div>
+
+      {/* THE REFUSAL RENDERS BESIDE THE FIGURE. See the header: beside it this
+          reads as the terms, below it as a disclaimer, and it is the half that
+          makes the fee honest rather than open-ended. */}
+      <p class="mt-5 max-w-3xl leading-relaxed text-ink-muted">{upkeep.alsoSays}</p>
+
+      <ul class="mt-7 grid max-w-3xl gap-2">
+        {upkeep.includes.map((item) => (
+          <li class="text-sm leading-relaxed text-ink-faint">— {item}</li>
+        ))}
+      </ul>
+
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <a class="btn-primary" href="/contact/?intent=consult">
+          Ask about it <ArrowUpRight class="size-4" />
+        </a>
+        <a class="link-sweep text-sm" href="/services/">Or see what I build first →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <Timer class="size-5 text-accent" />
+          <span class="mono-label">The limit</span>
+        </div>
+        <p class="font-display text-lg font-semibold leading-snug text-ink">
+          {upkeep.minutes} minutes a month, and it says so here.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-muted">{upkeep.cap}</p>
+        <p class="text-sm leading-relaxed text-ink-faint">
+          A monthly fee with no stated limit is one of us guessing and the other hoping. Written
+          down, neither of us has to have that conversation in month four.
+        </p>
+      </div>
+
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <Wrench class="size-5 text-secondary" />
+          <span class="mono-label">What it is not</span>
+        </div>
+        <p class="font-display text-lg font-semibold leading-snug text-ink">
+          Not a license, and not a condition of anything.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-muted">
+          This buys my time, not permission to keep using what you own. Stop it and nothing is
+          switched off, nothing degrades, and nothing phones home — what was built sits in your own
+          accounts with a copy you keep offline.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-faint">
+          That is why this sits on its own page rather than inside a build price. A thing you can
+          decline is a thing that has to be described honestly enough to decline.
+        </p>
+      </div>
+    </div>
+  </section>
+</MarketingLayout>

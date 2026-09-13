@@ -1,0 +1,208 @@
+---
+/**
+ * /advisory/ — monthly AI advisory. THE FOURTH PAID THING ON THIS SITE, and the
+ * first one that delivers no artifact.
+ *
+ * WHY IT HAS ITS OWN PAGE RATHER THAN A ROW ON /services/. Every other surface
+ * here talks to a local owner who wants something built. This talks to somebody
+ * at a manufacturer who has been asked what the company is doing about AI and
+ * does not have an answer. Those are not the same reader, and a page serving
+ * both asks each of them to sort themselves out of the other's copy — which the
+ * one with a budget will not do. The ladder on /services/ stays about clients
+ * who already have a build.
+ *
+ * IT PASSED THE FOURTH-PRODUCT TEST AND THE TEST WAS RUN RATHER THAN ASSUMED.
+ * src/lib/pricing.js states it: a new published figure is allowed only for
+ * something a visitor could buy without buying any of the others. Nobody here
+ * buys a shelf tool, a site, or an assessment first. The argument is written out
+ * above ADVISORY_MONTHLY_USD.
+ *
+ * WHY IT IS NOT THE "AI READINESS AUDIT" THIS PRACTICE REFUSES. src/data/home.ts
+ * heads a column "What AI consulting usually ends with" and lists an AI
+ * readiness audit inside it. D61 refuses selling one. The distinction is not
+ * wording and it is not the roadmap — it is the three-month minimum. A roadmap
+ * nobody is around to correct after thirty days IS that document. Somebody who
+ * stays and is answerable for what they recommended is not, and the minimum is
+ * the machinery that makes the difference real rather than claimed. Which is
+ * also why the minimum renders on this page beside the figure and not in a term
+ * sheet nobody opens.
+ *
+ * THE EMPLOYER IS NOT NAMED AND WILL NOT BE. D1 and D8 hold everywhere and this
+ * page does not bend them. What it says is the SHAPE of the work — deciding
+ * which of a long list of possible AI projects are real, which are vendor
+ * theater, and what order the real ones go in. That is supportable from the
+ * résumé, it claims no span of control, and the refusal to name is itself a
+ * reason to trust the practice with somebody else's business. A draft of the
+ * LinkedIn About once read "I run supply chain at a plant" and had to be pulled
+ * back for claiming a span the title does not carry; the same line governs here.
+ *
+ * THE CONFLICT REFUSAL IS PART OF THE OFFER, NOT A DISCLAIMER AT THE BOTTOM.
+ * Advising manufacturers while employed at one is only clean if the line is
+ * drawn first and in public. It renders high on the page for that reason, and it
+ * comes from src/data/services.ts so the same sentence reaches the retainer
+ * agreement rather than being re-typed into it.
+ *
+ * NO PAY BUTTON, for the reason /ai-fit/ has none: this cannot be bought from a
+ * page. It starts with a conversation, the retainer agreement is signed, and the
+ * billing is set up inside that document — which already carries the
+ * auto-renewal consent, the same-route cancellation and the annual reminder.
+ *
+ * THE META DESCRIPTION CARRIES NO FIGURE, for the reason /ai-fit/'s does not: a
+ * monthly number without its minimum term is a smaller commitment than the one
+ * being sold, and both together do not fit in what a search result shows.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { advisoryPrice, assessmentPrice } from '../data/services';
+import { Compass, MessagesSquare, FileText, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+const steps = [
+  {
+    icon: Compass,
+    n: '01',
+    t: 'The first thirty days produce the roadmap',
+    b: 'Not a maturity score and not a readiness grade. A written list of the AI work worth doing in your business, in the order that pays, with what each one would cost and what it would return. It is the thing you put in front of a board, and it is yours whether or not you renew.',
+  },
+  {
+    icon: MessagesSquare,
+    n: '02',
+    t: 'Then two or three working sessions a month',
+    b: 'An hour each, and they are decisions rather than status updates. Which vendor is worth a pilot, whether the thing your team built should go to production, what to do about the department that started using something nobody approved.',
+  },
+  {
+    icon: FileText,
+    n: '03',
+    t: 'And you can reach me in between',
+    b: 'Answered inside 48 hours, any day of the week — weekends included, which is more than a firm keeping office hours will give you. Most of what this is actually for lives here: a place to send a proposal and get a straight answer on whether it is real, from somebody with no commission riding on it.',
+  },
+];
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/advisory/#service`,
+    name: 'Monthly AI advisory',
+    serviceType: 'AI strategy advisory',
+    provider: { '@id': `${origin}/#business` },
+    description:
+      'A monthly retainer for a company with no AI leadership: a roadmap in the first thirty days, working sessions twice or three times a month, and somebody answerable in between.',
+  },
+];
+---
+
+<MarketingLayout
+  title="Monthly AI advisory"
+  description="A monthly arrangement for a company that needs an AI direction and cannot hire someone to set one. You buy the decision, not a build."
+  schema={schema}
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">A roadmap · sessions twice a month · somebody answerable</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Somebody asked what you are doing about AI.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        You do not need another platform and you probably do not need a project yet. You need
+        somebody who has made these decisions at a scale above yours to tell you which of your
+        options is real.
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        That is what this is. Nothing gets built and nothing gets licensed.
+      </p>
+
+      {/* THE REFUSAL SITS ABOVE THE FIGURE DELIBERATELY. A reader at a
+          manufacturer works out the conflict question before they work out the
+          price, and answering it after the number reads as a disclaimer rather
+          than as a term. */}
+      <p class="mt-8 max-w-3xl leading-relaxed text-ink-muted">{advisoryPrice.conflictRule}</p>
+
+      <div class="mt-6 max-w-2xl">
+        <div class="panel flex flex-col gap-2 p-6">
+          <p class="font-display text-xl font-semibold leading-snug text-ink">{advisoryPrice.line}</p>
+          <p class="text-sm leading-relaxed text-ink-muted">{advisoryPrice.qualifier}</p>
+        </div>
+      </div>
+
+      <ul class="mt-6 grid max-w-3xl gap-2">
+        {advisoryPrice.includes.map((item) => (
+          <li class="text-sm leading-relaxed text-ink-faint">— {item}</li>
+        ))}
+      </ul>
+
+      {/* WHAT IS EXCLUDED RENDERS BESIDE WHAT IS INCLUDED, never a screen below
+          it. A retainer whose edge is stated somewhere the buyer does not reach
+          has no edge, and this is the one that decides whether a monthly
+          arrangement quietly becomes an unpaid build. */}
+      <p class="mt-5 max-w-3xl text-sm leading-relaxed text-ink-muted">
+        <span class="font-semibold text-ink">Not included:</span> {advisoryPrice.excludes}
+      </p>
+
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a class="btn-primary" href="/contact/?intent=consult">
+          Start with a conversation <ArrowUpRight class="size-4" />
+        </a>
+        <a class="link-sweep text-sm" href="/ai-fit/">Or start with a paid read of the work →</a>
+      </div>
+
+      <p class="mt-5 max-w-3xl text-sm leading-relaxed text-ink-faint">
+        {assessmentPrice.credit.line}
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+    <p class="mono-label">What a month looks like</p>
+    <div class="mt-6 grid gap-6 sm:grid-cols-3">
+      {steps.map((s) => (
+        <div class="panel flex flex-col gap-3 p-6">
+          <div class="flex items-center gap-3">
+            <s.icon class="size-5 text-accent" />
+            <span class="mono-label">{s.n}</span>
+          </div>
+          <p class="font-display text-lg font-semibold leading-snug text-ink">{s.t}</p>
+          <p class="text-sm leading-relaxed text-ink-muted">{s.b}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-6 pb-14 sm:pb-20">
+    <div class="panel p-8">
+      <p class="mono-label">Why me</p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        I do this work at scale for a manufacturer with plants across North America — shaping the
+        path, the scope and the implementations. I am not able to name them, and you would not want
+        an advisor who named their other clients anyway.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        What I can tell you is what the job actually is. Deciding which of a long list of possible
+        AI projects are real, which are vendor theater, and what order the real ones go in. That is
+        the same decision you are facing, with a larger number in front of it.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        Before any of that I ran the operations the software is supposed to improve — a restaurant
+        floor at a casino, a bank's lending division, a clinical practice's front office. I have been
+        the person whose week gets worse when somebody buys the wrong system.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-6 pb-14 sm:pb-20">
+    <div class="panel p-8">
+      <p class="mono-label">What this is not</p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        It is not an AI readiness audit. That ends in a document, and a document nobody is around to
+        correct is worth what you paid to file it. The {advisoryPrice.minimumMonths}-month minimum is
+        the difference: I am still here when the first recommendation meets reality, and I am
+        answerable for it.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        It is also not a build. Where the roadmap says something is worth doing, that gets scoped and
+        quoted on its own — by me or by anybody else you like. The roadmap is written so another
+        developer can work from it.
+      </p>
+    </div>
+  </section>
+</MarketingLayout>

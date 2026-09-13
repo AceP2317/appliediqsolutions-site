@@ -1,0 +1,24 @@
+---
+/* NO PER-ROUTE DISPLAY FACE HERE, and that is deliberate rather than an
+   omission. This tool's display face is `mono`, which resolves to IBM Plex
+   Mono — already loaded site-wide by BaseLayout as the data face, because
+   every page uses it for figures and labels. The per-route imports on the
+   other tools exist to keep a face a single tool needs off every other page;
+   there is nothing to keep off here. */
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import BookTime from '../../components/demos/book-time.jsx';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'book-time')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} instrument={demo.instrument} tagline={demo.tagline} problem={demo.problem} does={demo.blurb} plain={demo.plain} />
+  <BookTime client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </BookTime>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

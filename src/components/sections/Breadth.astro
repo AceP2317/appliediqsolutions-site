@@ -1,0 +1,145 @@
+---
+/**
+ * Breadth — the problem-shape grid.
+ *
+ * Two callers with different jobs, one component:
+ *   /bio  — "the job is bigger than supply chain", four across, capability chips.
+ *   /     — the D29 spine: same shape at two scales, two across, no chips.
+ *
+ * Every prop DEFAULTS to what /bio already rendered, so that page is unchanged
+ * by the home page opting in. `showScales` gates the atShop / atScale lines:
+ * they make a card noticeably taller, which is fine at two columns and cramped
+ * at four.
+ */
+import Section from '../Section.astro';
+import Capability from '../Capability.astro';
+import { capabilities, capabilityAreas } from '../../data/home';
+import { demos } from '../../data/demos';
+import { BANDS, BASE } from '../kit/industrial.js';
+
+/* ── THE INSTRUMENT TONE (D113) ──────────────────────────────────────────────
+   `tone="instrument"` paints this band on the DARK CHASSIS the seven
+   supply-chain demos already use. That is the right ground for it semantically
+   as well as visually: themes.js sets the line "dark means industrial, light
+   means yours", and this band is where the proof-at-scale argument lives.
+
+   THE COLORS ARE READ, NOT RETYPED. `industrial.js` is pure data with no React
+   in it, so an .astro file can import exactly what the islands render. Those
+   values are measured — 81 pairs at the WCAG AA floor, worst 3.33 — and
+   `check-contrast.mjs` re-runs that out of the same file on every build. A hex
+   copied into this component would be a second source that nothing compares.
+
+   `masterData` is the COOL chassis of the three. Against a warm oyster page it
+   is the one that reads as a different instrument rather than as the same page
+   turned down, and its own header describes it as the data-and-parameters
+   ground, which is what this band is about. */
+const ins = BANDS.masterData;
+const insVars = [
+  `--ins-bg:${ins.bg}`,
+  `--ins-surface:${ins.surface}`,
+  `--ins-border:${ins.border}`,
+  `--ins-border-strong:${ins.borderStrong}`,
+  `--ins-text:${BASE.text}`,
+  `--ins-text-sec:${BASE.textSec}`,
+  `--ins-text-muted:${BASE.textMuted}`,
+  `--ins-accent:${BASE.accent}`,
+  `--ins-info:${BASE.info}`,
+].join(';');
+
+interface Props {
+  id?: string;
+  tone?: 'canvas' | 'surface' | 'deep' | 'instrument';
+  width?: 'content' | 'popout' | 'feature' | 'full';
+  index?: string;
+  eyebrow?: string;
+  title?: string;
+  lede?: string;
+  /** The capability-area chip row + its "moat is the depth" line. */
+  showAreas?: boolean;
+  /** Render each card's "At your size" line and its at-scale link. */
+  showScales?: boolean;
+  columns?: 2 | 4;
+}
+const {
+  id = 'breadth',
+  tone = 'surface',
+  width = 'content',
+  index = '/ 02',
+  eyebrow = 'Beyond the moat',
+  title = 'Supply chain is the moat. The work is bigger than supply chain.',
+  lede = 'Strip the domain away and what’s left is a repeatable move: take a hard, specific, one-off problem nobody will build a product for — and deliver the exact fix, whether that’s a tool, a full implementation, or root-cause problem-solving. These are the shapes I keep solving.',
+  showAreas = true,
+  showScales = false,
+  columns = 4,
+} = Astro.props;
+
+// A problem-shape card cites the live tool that demonstrates it (proofSlug in
+// home.ts) — the claim wall doubles as an evidence index.
+const proofFor = (slug?: string) => {
+  const demo = slug ? demos.find((d) => d.slug === slug) : undefined;
+  return demo ? { href: `/work/${demo.slug}/`, label: demo.name } : undefined;
+};
+---
+{/* The custom properties are set ONLY on the instrument tone, so every other
+    caller emits no style attribute at all and renders byte-identically to
+    before. `.section-instrument` declares no fallback on purpose — see
+    global.css — so a band that asked for this tone without them would be
+    visibly unpainted rather than quietly nearly-right. */}
+<Section id={id} tone={tone} width={width} style={tone === 'instrument' ? insVars : undefined}>
+  <div class="max-w-3xl">
+    {/* THE NUMERAL IS OPTIONAL SINCE D113, AND OMITTING IT IS THE DEFAULT CASE
+        ON THE HOME PAGE. It read "/ 02" there while the band was sixth, which
+        is a marker stating something untrue about its own position. The
+        research this change came from scores decorative "01 / 02 / 03" markers
+        as a generated-design signal precisely because they usually number a
+        thing that is not a sequence — these problem shapes are a set, not
+        steps. /bio/ still passes one and still gets it. */}
+    <p class="flex items-center gap-2.5">
+      {index && <span class="section-index">{index}</span>}
+      <span class="mono-label">{eyebrow}</span>
+    </p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      {title}
+    </h2>
+    <p class="mt-4 text-lg leading-relaxed text-ink-muted">
+      {lede}
+    </p>
+  </div>
+
+  <div class:list={['mt-12 grid gap-4 sm:grid-cols-2', columns === 4 && 'lg:grid-cols-4']}>
+    {capabilities.map((c) => (
+      <Capability
+        icon={c.icon}
+        title={c.title}
+        body={c.body}
+        proof={proofFor(c.proofSlug)}
+        atShop={showScales ? c.atShop : undefined}
+        atScale={showScales ? c.atScale : undefined}
+      />
+    ))}
+  </div>
+
+  {/* Foot slot — the home page hangs the /work/ doorway here rather than paying
+      for a whole extra section to say the same thing. /bio passes nothing. */}
+  <slot />
+
+  {showAreas && (
+    <div class="mt-10 flex flex-col gap-5 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
+      <p class="max-w-xl leading-relaxed text-ink-muted">
+        {/* WAS A SELF-ASSESSMENT — "my competencies scale and transfer fast",
+            which is a claim about himself that the reader has to take on
+            faith. D33 made the career the argument, so the trades say it
+            instead and the reader draws the conclusion. */}
+        Five trades, and none of them was supply chain to start with — if your hard problem isn’t either, that’s fine.{' '}
+        <span class="text-ink">The work traveled every time.</span>
+      </p>
+      <ul class="flex flex-wrap gap-2">
+        {capabilityAreas.map((area) => (
+          <li class="rounded-md border border-line bg-surface px-2.5 py-1 font-mono text-xs text-ink-muted">
+            {area}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</Section>

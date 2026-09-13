@@ -1,0 +1,109 @@
+---
+/**
+ * /quoted/ — the work that carries its own price, in one place.
+ *
+ * WHY THIS PAGE EXISTS. Six things this practice sells are quoted in writing
+ * before they start, and until now every one of them appeared in exactly ONE
+ * place: the capability block on the three comparison sheets. A visitor who
+ * never opened a comparison document could not learn that a small online store
+ * is buyable here at all. They are not refusals and they are not free — they are
+ * real work with a real price, and they had no door.
+ *
+ * IT PUBLISHES NO FIGURE, and that is what keeps D94 intact. That rule says
+ * /services/ stops at five figures and any further product publishes on its own
+ * page, because a price list becomes a menu once the prices stack. Nothing here
+ * carries a number, so this page is a door rather than a sixth panel on a price
+ * list.
+ *
+ * THE SIX SHARED ITEMS ONLY, AND THE OMISSION IS DELIBERATE. The store
+ * configurator lives in EXTRA under `stores` in src/lib/capabilities.js, which
+ * is sheet-specific by design, and scripts/lib/capability-check.mjs asserts in
+ * BOTH directions that a sheet's own items are ABSENT from its sisters. Pulling
+ * the stores-only item onto a general page would not break that check — it does
+ * not read this page — but it would break what the check MEANS, which is that
+ * sheet-specific copy stays on its sheet. The page links to /stores/ for it
+ * instead, which is where it is already argued properly.
+ *
+ * EVERY SENTENCE COMES FROM src/lib/capabilities.js AND NONE IS WRITTEN HERE.
+ * That module's own header names the reason: §3 of the signed website Scope is
+ * the source under all of it, and a second copy written in a sales voice drifts
+ * the moment one of them is softened in a copy pass. A client then signs one
+ * thing having read another.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { SCOPED, HEADINGS, INTROS, assertCapabilities } from '../lib/capabilities.js';
+import { ArrowUpRight, FileText } from '@lucide/astro';
+
+assertCapabilities('quoted.astro');
+
+const origin = new URL(Astro.site!).origin;
+
+const schema = [
+  {
+    '@type': 'WebPage',
+    '@id': `${origin}/quoted/#page`,
+    name: 'Work I quote before it starts',
+    description:
+      'Six things this practice builds that are priced on their own, in writing, before any of them begins — rather than folded into a build price.',
+    isPartOf: { '@id': `${origin}/#website` },
+  },
+];
+---
+
+<MarketingLayout
+  title="Work I quote before it starts"
+  description="Six things I build that carry their own price, agreed in writing before anything begins. Not extras, not refusals — separate work, named up front."
+  schema={schema}
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">Real work · its own price · agreed before it starts</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        {HEADINGS.scoped}.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        {INTROS.scoped}
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        None of this is an extra tacked onto an invoice later. Each one is named, priced and agreed
+        before it begins, and you decide whether it happens at all. If you never ask for any of it,
+        a build costs exactly what the build costs.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-4xl px-6 py-14 sm:py-20">
+    <ul class="flex flex-col gap-5">
+      {
+        SCOPED.map((item) => (
+          <li class="panel flex flex-col gap-3 p-7">
+            <div class="flex items-start gap-3">
+              <FileText class="mt-1 size-5 shrink-0 text-accent" />
+              <h2 class="font-display text-xl font-semibold leading-snug text-ink">{item.what}</h2>
+            </div>
+            <p class="leading-relaxed text-ink-muted">{item.detail}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    {/* THE STORE CONFIGURATOR IS NAMED AND NOT REPEATED. See the header: it is
+        stores-only copy in the capability module, and the argument for it lives
+        on the page that can make it properly. A link is honest; a second copy
+        of the sentence is the drift this whole module exists to prevent. */}
+    <p class="mt-8 leading-relaxed text-ink-muted">
+      One more sits with the work it belongs to. If you sell something a customer has to configure
+      before buying — a size, a finish, a cut to length — that builder is quoted work too, and the
+      quote covers keeping it working when your platform changes.{' '}
+      <a class="link-sweep" href="/stores/">It is argued on the selling-online comparison →</a>
+    </p>
+
+    <div class="mt-10 flex flex-wrap items-center gap-3">
+      <a class="btn-primary" href="/contact/?intent=quote">
+        Ask what yours would cost <ArrowUpRight class="size-4" />
+      </a>
+      <a class="link-sweep text-sm" href="/services/">Or start with what a build includes →</a>
+    </div>
+  </section>
+</MarketingLayout>

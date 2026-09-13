@@ -1,0 +1,28 @@
+---
+/* THIS TOOL'S OWN DISPLAY FACE, loaded on its own route.
+   The package is already a dependency and reached only review-autopilot
+   before this. Loading it here rather than site-wide means a visitor who
+   never opens this tool never downloads it. Pattern proven by
+   work/review-autopilot.astro. */
+/* THE FACES THIS TOOL'S FACEPLATE ASKS FOR. Inter, Fraunces and Plex Mono come
+   site-wide from BaseLayout; everything else is a per-route import, so a tool
+   only pays for what it uses. See src/components/kit/themes.js. */
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import CommissionCheck from '../../components/demos/commission-check.jsx';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'commission-check')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} instrument={demo.instrument} tagline={demo.tagline} problem={demo.problem} does={demo.blurb} plain={demo.plain} />
+  <CommissionCheck client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </CommissionCheck>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

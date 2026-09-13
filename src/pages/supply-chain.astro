@@ -1,0 +1,186 @@
+---
+/**
+ * /supply-chain/ — the manufacturer side, published 2026-09-11.
+ *
+ * D29 DEFERRED THIS IN ITS OWN WORDS — "secondary, or a later venture as the
+ * practice grows" — so this page is that deferral ending rather than a reversal of
+ * it. The operator's answer in the alignment session was to build it properly with
+ * a page of its own rather than as a framing sentence on an existing one.
+ *
+ * NO PUBLISHED FIGURE, AND THAT IS LOAD-BEARING. Every deliverable is quoted per
+ * engagement exactly as projectModel is, so this adds nothing to the count of
+ * published prices and D93's standing warning about the next figure is untouched.
+ * If a number ever appears on this page, the warning applies and the test in
+ * src/lib/pricing.js has to be run and written down first.
+ *
+ * FIXED PRICE BY DELIVERABLE, NEVER A DAY RATE, AND THE REASON IS ARITHMETIC.
+ * Day-rate work in this field is weekday-business-hours work, and
+ * src/lib/consult-hours.js publishes weekday evenings and weekend mornings —
+ * fifteen hours a week, none of it inside a business day. A day rate would be
+ * selling hours that do not exist. THIS IS THE CONSTRAINT THE ALIGNMENT SESSION
+ * FOUND APPLIED HERE AND NOT TO ADVISORY: the same approved plan named this file
+ * by name for this offer, then shipped a product promising a reply on a working
+ * day. Advisory was repaired on 2026-09-11; this page was written with it from the
+ * start, and the page says so to the reader rather than only to the next editor.
+ *
+ * THE EMPLOYER IS NEVER NAMED AND NEITHER IS ANY PLANT. D1 and D8 hold without
+ * exception. D86 means scripts/verify-industrial.mjs reads this page's RENDERED
+ * text for stray plant codes, and body prose is the easiest place to introduce one
+ * — so no string on this page or in `supplyChain` carries a bare four-digit number.
+ *
+ * THE PROOF IS DERIVED, NEVER LISTED. The at-scale demos are read out of
+ * workGroups by band, which is the same filter /work/ and /llms.txt already use, so
+ * a new at-scale group joins this page for free and no count is typed anywhere
+ * (D22). They were proof of caliber with nothing stated under them; this is the
+ * stated thing they are proof OF.
+ *
+ * NO PAY BUTTON AND NO BOOKING LINK. This starts with somebody describing a number
+ * they do not trust, which is a conversation rather than a checkout.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { supplyChain } from '../data/services';
+import { workGroups, demos } from '../data/demos';
+import { Boxes, Ruler, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+/* DERIVED, NEVER TYPED — the same filter /work/index.astro and /llms.txt.ts use.
+   A group joining the at-scale band appears here with no edit to this file. */
+const scaleGroups = workGroups.filter((g) => g.band === 'scale');
+const bySlug = new Map(demos.map((d) => [d.slug, d]));
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/supply-chain/#service`,
+    name: 'Supply-chain and master-data audits for manufacturers',
+    serviceType: 'Supply chain consulting',
+    provider: { '@id': `${origin}/#business` },
+    description:
+      'Fixed-price audits of bill-of-materials accuracy, planning parameters against real consumption, and change-order cutover timing. Quoted per engagement.',
+  },
+];
+---
+
+<MarketingLayout
+  title="Numbers your planning system is sure about"
+  description="Fixed-price audits for manufacturers: bill-of-materials accuracy, planning parameters against real consumption, and when a change can actually be implemented."
+  schema={schema}
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">For manufacturers · fixed price per answer · never a day rate</p>
+      <h1 class="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        The numbers your planning system is sure about.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        {supplyChain.whoItIsFor}
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        I have spent the last few years on a planning floor, and before that in operations in five
+        other industries. The work below is the work I do on a weekday: not advice about it.
+      </p>
+
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <a class="btn-primary" href="/contact/?intent=consult">
+          Tell me which number you do not trust <ArrowUpRight class="size-4" />
+        </a>
+        <a class="link-sweep text-sm" href="/work/">Or see what I have built at that scale →</a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── The three deliverables ─────────────────────────────────────────────── */}
+  <section class="section-band">
+    <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 01</span>
+        <span class="mono-label">What you can buy</span>
+      </p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Three answers, each one finished.
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Each of these ends. You get a written answer you can act on or hand to somebody else, and
+        the price is agreed before it starts.
+      </p>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {supplyChain.deliverables.map((d) => (
+          <div class="panel lift spotlight flex flex-col gap-3 p-6">
+            <span class="grid h-11 w-11 place-items-center rounded-lg border border-line bg-canvas text-accent-2">
+              <Ruler size={20} aria-hidden="true" />
+            </span>
+            <h3 class="font-display text-lg font-semibold text-ink">{d.title}</h3>
+            <p class="text-sm leading-relaxed text-ink-muted">{d.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ── How it is sold, and the refusal ───────────────────────────────────── */}
+  <section class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <Boxes class="size-5 text-accent" />
+          <span class="mono-label">How it is priced</span>
+        </div>
+        <p class="font-display text-lg font-semibold leading-snug text-ink">
+          A fixed price for a finished answer.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-muted">{supplyChain.howItIsSold}</p>
+      </div>
+
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <Ruler class="size-5 text-secondary" />
+          <span class="mono-label">If you want a tool instead</span>
+        </div>
+        <p class="font-display text-lg font-semibold leading-snug text-ink">
+          Scoped when you buy it, and yours outright.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-muted">{supplyChain.toolHalf}</p>
+        <p class="text-sm leading-relaxed text-ink-faint">{supplyChain.conflictRule}</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── The proof, derived from the at-scale bands ─────────────────────────── */}
+  <section class="section-band">
+    <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <p class="flex items-center gap-2.5">
+        <span class="section-index">/ 02</span>
+        <span class="mono-label">Built, running, and openable</span>
+      </p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        This is not a proposal. Open one.
+      </h2>
+      <p class="mt-4 max-w-3xl leading-relaxed text-ink-muted">
+        Each of these runs in your browser with nothing to install and no account to make. They use
+        invented data from a fictional manufacturer, and the arithmetic in them is the arithmetic I
+        would bring to yours.
+      </p>
+
+      {scaleGroups.map((g) => (
+        <div class="mt-9">
+          <p class="mono-label text-cyan-deep">{g.label}</p>
+          <div class="mt-3 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {g.slugs.map((slug) => {
+              const d = bySlug.get(slug);
+              return d ? (
+                <a href={`/work/${slug}/`} class="panel lift spotlight flex flex-col gap-2 p-5">
+                  <h3 class="font-display text-base font-semibold text-ink">{d.name}</h3>
+                  <p class="text-sm leading-relaxed text-ink-muted">{d.blurb}</p>
+                  <span class="link-sweep mt-1 text-sm">Open it →</span>
+                </a>
+              ) : null;
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</MarketingLayout>

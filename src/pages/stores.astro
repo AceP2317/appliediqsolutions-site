@@ -1,0 +1,390 @@
+---
+/**
+ * /stores/ — what it costs to sell online, and who owns the customer afterwards.
+ *
+ * WHY IT IS TOP LEVEL, LIKE /getting-paid/ AND UNLIKE /websites/compare/. The
+ * website comparison sits under /websites/ because that section sells the thing
+ * it compares against. Nothing on this page is for sale: a business already on
+ * Etsy still has to decide whether to stay, and burying this under the website
+ * product would have scoped it to people already buying one.
+ *
+ * IT PRICES ONE TERM ON PURPOSE — what the PLATFORM takes, before any card
+ * processor's cut. src/lib/store-cost.js says why at length: a total including
+ * processing compares a bundle against a component, which is why every published
+ * store comparison disagrees with every other one. The processing half is
+ * /getting-paid/'s job and every card here points at it.
+ *
+ * THE HOURS ARE THE LARGEST COST AND ARE NEVER PRICED. Each card answers it in
+ * words, the page prints the owner's own figure beside the money rather than
+ * inside it, and store-cost.js refuses in one named sentence to convert it. That
+ * is the same refusal the free check makes about payback (L-193).
+ *
+ * THE CATALOG TABLE IS THE FINDING THE SHEET TURNS ON. Which platform a
+ * business is on decides whether the one thing I sell here can be built for them
+ * at all. It is not a ranking and the page says so — a platform refusing it is
+ * not a worse platform, it is one on which a particular thing cannot be built.
+ *
+ * EVERY CARD MUST KEEP ITS `doesBetter` ROW AND A GATE ENFORCES IT.
+ * scripts/verify-stores.mjs fails if any card's text is missing from the
+ * rendered page and refuses one under 100 characters. Nobody deletes that row on
+ * purpose; it gets softened in a copy pass until it says nothing, and a
+ * comparison with no losing rows is an advertisement wearing a table.
+ *
+ * NO FIGURE IS TYPED IN THIS FILE. Every fee comes out of the data module and
+ * every total is computed by src/lib/store-cost.js, so a Node gate checks the
+ * same arithmetic the page runs rather than a copy of it.
+ *
+ * THE TITLE IS SHORT BECAUSE THE LAYOUT APPENDS THE PRACTICE NAME, and
+ * verify-seo.mjs measures the whole rendered string rather than the half typed
+ * here. The first draft carried the customer-ownership clause as well and came
+ * out at 77 characters, past what a search result shows — so that clause moved
+ * into the description, where there is room for it and where it still reaches a
+ * reader deciding whether to click.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import WhatIBuild from '../components/WhatIBuild.astro';
+import { cards, rows, READ_ON, EXAMPLES, catalogAccess, VERDICTS } from '../data/stores.js';
+import { compareStores, annualSpread, hoursCost, usd, pct } from '../lib/store-cost.js';
+import { ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+/* Computed once, here, so no arithmetic happens inside a template. */
+const tables = EXAMPLES.map((example) => {
+  const table = compareStores(cards, example);
+  return { example, table, spread: annualSpread(table), hours: hoursCost(example) };
+});
+
+const canBuild = catalogAccess.filter((r) => r.verdict === 'yes');
+const cannotBuild = catalogAccess.filter((r) => r.verdict === 'no');
+
+const schema = [
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Selling online', item: `${origin}/stores/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="What it costs to sell online"
+  description="Who owns the customer when the sale is done, and what each platform takes before it. Shopify, Etsy, WooCommerce, BigCommerce, Ecwid, Big Cartel, Square, TikTok and Instagram, read off their own pages."
+  image="/og/websites.png"
+>
+  {/* ── Hero ─────────────────────────────────────────────────────────────── */}
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    <div class="mx-auto max-w-6xl px-6 pt-16 pb-10 sm:pt-24 sm:pb-14">
+      <p class="mono-label">Every option, read off their own pages on {READ_ON}</p>
+      <h1 class="mt-3 max-w-4xl font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        The fee is the small question. <span class="aiq-accent">Who owns the customer is the large one.</span>
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Two stores can cost you the same money this month and leave you in completely different
+        positions in two years. One has your customer list on it. The other has somebody else's, and
+        you have been renting the audience the whole time without anybody calling it rent.
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        I sell none of these and I take no cut of anything you sell. That is the only reason this
+        page is worth reading rather than the comparisons you will find, which were mostly written by
+        one of the companies on it.
+      </p>
+    </div>
+  </section>
+
+  {/* ── What this sheet prices, and what it deliberately does not ────────── */}
+  <section class="border-b border-line">
+    <div class="mx-auto max-w-3xl px-6 py-12 sm:py-16">
+      <p class="mono-label">Read this before the table</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        This prices one thing: what the platform takes.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        Its monthly fee, plus its own percentage of what you sell. Not what your card processor
+        charges, because some of these bundle that in and some leave you to pick, and a total mixing
+        the two compares a bundle against a piece of one. That is why no two store comparisons on the
+        internet agree with each other.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        The card processing half is a whole sheet of its own. Every rate on it was read the same day
+        as these, and the arithmetic there runs on your own numbers in exactly the same way.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        And the largest cost of running a store is not on either sheet, because nothing can compute
+        it. It is your hours. Every card below says what that platform does to them, and the tables
+        print your own figure beside the money rather than folding it in.
+      </p>
+      <div class="mt-7">
+        <a href="/getting-paid/" class="btn btn-secondary">
+          What it costs you to be paid <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* ── The arithmetic ───────────────────────────────────────────────────── */}
+  <section class="section-band border-b border-line">
+    <div class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+      <p class="mono-label">The arithmetic</p>
+      <h2 class="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Four numbers of yours, and the ranking changes.
+      </h2>
+      <p class="mt-5 max-w-2xl leading-relaxed text-ink-muted">
+        What goes through the store in a month, what an average order is, how many things you list,
+        and roughly how many hours a month it takes you. Two worked examples follow so you can see
+        the shape — put your own four numbers in their place and the sum is identical.
+      </p>
+
+      {tables.map(({ example, table, spread, hours }) => (
+        <div class="mt-10">
+          <p class="mono-label">{example.title}</p>
+          <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink-faint">
+            Assumed, not measured: {example.label}. These are my numbers for the example, not a claim
+            about what your business does.
+          </p>
+
+          {/* The table is the one element allowed past the body width, and it
+              scrolls inside its own box so the page itself never does.
+              verify-mobile.mjs measures element boxes against the viewport. */}
+          <div class="mt-5 overflow-x-auto rounded-lg border border-line">
+            <table class="w-full min-w-[38rem] border-collapse text-left text-sm">
+              <thead>
+                <tr class="border-b border-line">
+                  <th class="p-4 font-display font-semibold text-ink">Where you sell</th>
+                  <th class="p-4 font-display font-semibold text-ink">A month</th>
+                  <th class="p-4 font-display font-semibold text-ink">A year</th>
+                  <th class="p-4 font-display font-semibold text-ink">What that really is, as a share of sales</th>
+                </tr>
+              </thead>
+              <tbody>
+                {table.map((r) => (
+                  <tr class={`border-b border-line/60 ${r.id === 'aiq' ? 'bg-accent/5' : ''}`}>
+                    <td class="p-4 align-top">
+                      <span class="font-semibold text-ink">{r.name}</span>
+                      {r.planName ? <span class="mt-1 block text-xs text-ink-faint">{r.planName}</span> : null}
+                    </td>
+                    {r.cents === null && r.lowCents !== undefined ? (
+                      <>
+                        <td class="p-4 align-top text-ink-muted">{usd(r.lowCents)} to {usd(r.highCents)}</td>
+                        <td class="p-4 align-top text-ink-muted">{usd(r.lowAnnualCents)} to {usd(r.highAnnualCents)}</td>
+                        <td class="p-4 align-top text-sm text-ink-faint">{r.problem}</td>
+                      </>
+                    ) : r.cents === null ? (
+                      <td class="p-4 align-top text-ink-faint" colspan="3">{r.problem}</td>
+                    ) : (
+                      <>
+                        <td class="p-4 align-top text-ink-muted">{usd(r.cents)}</td>
+                        <td class="p-4 align-top text-ink-muted">{usd(r.annualCents)}</td>
+                        <td class="p-4 align-top text-ink-muted">{pct(r.takeHundredths)}</td>
+                      </>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p class="mt-4 max-w-3xl text-sm leading-relaxed text-ink-faint">
+            Cheapest to dearest, with the ones that cannot be worked out kept at the bottom rather
+            than dropped. The gap between the top and the bottom of what could be priced is
+            {' '}{usd(spread.differenceCents)} a year on those numbers — and every figure above is
+            what the platform takes, before your card processor takes anything.
+          </p>
+
+          {/* THE HOURS, BESIDE THE MONEY AND NEVER INSIDE IT. The refusal is the
+              product here: converting them needs an hourly figure for somebody
+              else's time, which is the one made-up number this page will not
+              print. */}
+          <div class="panel mt-5 max-w-3xl p-6">
+            <p class="text-sm font-semibold text-ink">
+              And {hours.hours} hours a month of your own time, which is {hours.annualHours} hours a year.
+            </p>
+            <p class="mt-2 text-sm leading-relaxed text-ink-muted">{hours.problem}</p>
+            <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+              What is worth doing instead is reading the hours row on each card below. The difference
+              between the easiest and the hardest of these to run is larger than the difference
+              between the cheapest and the dearest, and it is the one nobody puts on a pricing page.
+            </p>
+          </div>
+        </div>
+      ))}
+
+      <p class="mt-8 max-w-3xl text-sm leading-relaxed text-ink-faint">
+        What the sum assumes, stated plainly: today's advertised prices, the plan each platform's own
+        rules put you on, and no card processing of any kind. Where a figure leaves something real
+        out, the card for it says what and why. It is arithmetic on published figures rather than a
+        forecast, and the moment it needs a forecast it stops belonging here.
+      </p>
+    </div>
+  </section>
+
+  {/* ── The cards ────────────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-6xl px-6 py-14 sm:py-20">
+    <p class="mono-label">One at a time</p>
+    <h2 class="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      The same {rows.length} questions, asked of every one of them.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      Grouped by who owns the customer when the sale is done, because that is the thing you cannot
+      change your mind about later. Mine is on the list and gets the same treatment as the rest.
+    </p>
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-2">
+      {cards.map((c) => (
+        <div class={`panel lift flex flex-col gap-4 p-7 ${c.isMine ? 'border-accent/40' : ''}`}>
+          <div>
+            <p class={`mono-label ${c.isMine ? 'text-cyan-deep' : ''}`}>{c.kind}</p>
+            <h3 class="mt-2 font-display text-xl font-semibold leading-snug text-ink">{c.name}</h3>
+            <p class="mt-1 text-sm text-ink-faint">{c.how}</p>
+            <p class="mt-2 text-sm font-semibold text-ink-muted">{c.headline}</p>
+            <p class="mt-2 text-xs leading-relaxed text-ink-faint">{c.assumption}</p>
+            {/* WHAT THE FIGURE LEAVES OUT, BESIDE THE FIGURE AND NOT A SCREEN
+                BELOW IT. Same rule verify-website.mjs applies to a price and its
+                qualifier: a caveat a reader never reaches is a caveat that was
+                not made. */}
+            <p class="mt-2 text-xs leading-relaxed text-ink-faint">
+              <span class="font-semibold">What that figure leaves out:</span> {c.leavesOut}
+            </p>
+          </div>
+          <dl class="flex flex-col gap-3 border-t border-line pt-4">
+            {rows.map((r) => (
+              <div>
+                <dt class="text-xs font-semibold uppercase tracking-wide text-ink-faint">{r.label}</dt>
+                <dd class="mt-1 text-sm leading-relaxed text-ink-muted">{c[r.key]}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ── The catalog table — the finding the sheet turns on ─────────────── */}
+  <section class="section-band border-y border-line">
+    <div class="mx-auto max-w-5xl px-6 py-14 sm:py-20">
+      <p class="mono-label">The one thing I sell here</p>
+      <h2 class="mt-3 max-w-3xl font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        Whether a page I build can read your catalog depends entirely on which platform you are on.
+      </h2>
+      <p class="mt-5 max-w-3xl leading-relaxed text-ink-muted">
+        The thing worth building here is a page on your own site where a customer configures what
+        they actually want — a size, a finish, a piece of text, whatever your work varies by — and
+        then lands in your store's own checkout with it. You add a listing in your store and the page
+        follows, because it reads your catalog live rather than holding a copy I have to update.
+      </p>
+      <p class="mt-4 max-w-3xl leading-relaxed text-ink-muted">
+        {canBuild.length} of the {catalogAccess.length} platforms below let an outside page do that with a credential that
+        is safe in a browser. {cannotBuild.length} do not, and the reason is almost always the same: they require a
+        secret on every request, which would mean me running a server holding a key that can read
+        your orders. That is your customers' data and I do not hold it.
+      </p>
+      <p class="mt-4 max-w-3xl leading-relaxed text-ink-muted">
+        <span class="font-semibold text-ink">This is not a ranking and a "no" is not a mark against a platform.</span>{' '}
+        It is a fact about what I can build, not about how good they are at selling. Several of the
+        ones that refuse are the best products on this page.
+      </p>
+
+      <div class="mt-8 overflow-x-auto rounded-lg border border-line">
+        <table class="w-full min-w-[44rem] border-collapse text-left text-sm">
+          <thead>
+            <tr class="border-b border-line">
+              <th class="p-4 font-display font-semibold text-ink">Platform</th>
+              <th class="p-4 font-display font-semibold text-ink">Can a page I build read it</th>
+              <th class="p-4 font-display font-semibold text-ink">What it needs</th>
+              <th class="p-4 font-display font-semibold text-ink">Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            {catalogAccess.map((r) => (
+              <tr class="border-b border-line/60">
+                <td class="p-4 align-top font-semibold text-ink">{r.platform}</td>
+                <td class="p-4 align-top">
+                  <span class={r.verdict === 'no' ? 'text-ink-faint' : 'font-semibold text-cyan-deep'}>
+                    {VERDICTS[r.verdict].label}
+                  </span>
+                </td>
+                <td class="p-4 align-top text-ink-muted">{r.credential}</td>
+                <td class="p-4 align-top text-ink-muted">{r.detail}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel mt-8 max-w-3xl p-7">
+        <p class="font-display text-xl font-semibold text-ink">
+          There is a second version of this, and it is worse for most people.
+        </p>
+        <p class="mt-3 leading-relaxed text-ink-muted">
+          A configurator can also hold its own copy of your catalog instead of reading your store's.
+          That version works on any platform, including all the ones above that say no — and it means
+          every new thing you list, I have to add. If you want to add your own listings and have the
+          page keep up, it has to read your store, and that is what the table answers.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── The shared capability list ────────────────────────────────────────
+      SHARED WITH /websites/compare/ AND /getting-paid/, out of
+      src/lib/capabilities.js. It sits after the catalog table deliberately: a
+      reader who has just been told what can be built on their platform is the
+      one who should meet what will not be built on any of them. */}
+  <WhatIBuild sheet="stores" />
+
+  {/* ── What this is not ─────────────────────────────────────────────────── */}
+  <section class="mx-auto max-w-3xl px-6 py-14 sm:py-20">
+    <p class="mono-label">What this is not</p>
+    <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+      Not a recommendation, and not a claim that any of these are bad.
+    </h2>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      They are well built and they are run by companies with more engineers than this town has
+      people. Nothing here argues otherwise. What the sheet does is put the fee beside the question
+      nobody asks, which is what happens to your customer list if you ever want to leave.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      It is also not complete, and two gaps are worth naming rather than hiding. TikTok Shop's
+      referral fee sits behind a seller login that would not open, so it is not printed. And the
+      commerce plan prices for Wix and Squarespace were not read on this pass — their website plans
+      were, on the other sheet, and the plan that sells is a different one.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      It is not tax advice either, and the line matters. Who owes sales tax on a sale depends on who
+      the legal seller is, which differs between a marketplace and your own store. What nobody here
+      will ever do is work out whether you owe any. That is a question for your accountant.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      And it is not a list I keep current by remembering to. Every figure above is registered with
+      the date it was read, it expires on its own, and this page carries that date in plain sight.
+      One line on this site went stale exactly that way and the register is what caught it.
+    </p>
+
+    <div class="mt-10 border-t border-line pt-10">
+      <p class="mono-label">If you want the sum done on your own numbers</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-tight text-ink">
+        Send me the four numbers and I will send the table back.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        A month of store sales, an average order, how many things you list, and roughly how many
+        hours a month it takes you. No charge and no meeting. Tell me which platform you are on and
+        the catalog answer comes back with it.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=question" class="btn btn-primary">
+          Send me the four numbers <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+        <a href="/getting-paid/" class="btn btn-secondary">The same reading, for card processing</a>
+        <a href="/websites/compare/" class="btn btn-secondary">And for websites</a>
+      </div>
+      <p class="mt-6 text-sm leading-relaxed text-ink-faint">
+        Every fee and every term on this page was read off those companies' own pages on
+        {' '}{READ_ON}. They change them without announcing it, so if you are weighing this up, go
+        and read them again yourself.
+      </p>
+    </div>
+  </section>
+</MarketingLayout>
