@@ -1,0 +1,247 @@
+---
+/**
+ * /supply-chain/ — the manufacturer side, published 2026-09-11.
+ *
+ * D29 DEFERRED THIS IN ITS OWN WORDS — "secondary, or a later venture as the
+ * practice grows" — so this page is that deferral ending rather than a reversal of
+ * it. The operator's answer in the alignment session was to build it properly with
+ * a page of its own rather than as a framing sentence on an existing one.
+ *
+ * NO PUBLISHED FIGURE, AND THAT IS LOAD-BEARING. Every deliverable is quoted per
+ * engagement exactly as projectModel is, so this adds nothing to the count of
+ * published prices and D93's standing warning about the next figure is untouched.
+ * If a number ever appears on this page, the warning applies and the test in
+ * src/lib/pricing.js has to be run and written down first.
+ *
+ * FIXED PRICE BY DELIVERABLE, NEVER A DAY RATE, AND THE REASON IS ARITHMETIC.
+ * Day-rate work in this field is weekday-business-hours work, and
+ * src/lib/consult-hours.js publishes weekday evenings and weekend mornings —
+ * fifteen hours a week, none of it inside a business day. A day rate would be
+ * selling hours that do not exist. THIS IS THE CONSTRAINT THE ALIGNMENT SESSION
+ * FOUND APPLIED HERE AND NOT TO ADVISORY: the same approved plan named this file
+ * by name for this offer, then shipped a product promising a reply on a working
+ * day. Advisory was repaired on 2026-09-11; this page was written with it from the
+ * start, and the page says so to the reader rather than only to the next editor.
+ *
+ * THE EMPLOYER IS NEVER NAMED AND NEITHER IS ANY PLANT. D1 and D8 hold without
+ * exception. D86 means scripts/verify-industrial.mjs reads this page's RENDERED
+ * text for stray plant codes, and body prose is the easiest place to introduce one
+ * — so no string on this page or in `supplyChain` carries a bare four-digit number.
+ *
+ * THE PROOF IS DERIVED, NEVER LISTED. The at-scale demos are read out of
+ * workGroups by band, which is the same filter /work/ and /llms.txt already use, so
+ * a new at-scale group joins this page for free and no count is typed anywhere
+ * (D22). They were proof of caliber with nothing stated under them; this is the
+ * stated thing they are proof OF.
+ *
+ * NO PAY BUTTON AND NO BOOKING LINK. This starts with somebody describing a number
+ * they do not trust, which is a conversation rather than a checkout.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import { supplyChain } from '../data/services';
+/* BOTH COUNTS ON THIS PAGE DERIVE SINCE 2026-09-13, AND ONE OF THEM WAS TWO
+   SUBTRACTIONS AWAY FROM ITS SOURCE. "five other industries" is the career list
+   minus the beats that are the current plant work; it was typed, and correct
+   only because nobody had added a trade since. Insurance became the seventh beat
+   that same day. */
+import { countWord } from '../lib/count-words.js';
+import { priorTradeCountWord } from '../lib/trades.js';
+import { workGroups, demos } from '../data/demos';
+import { Boxes, Ruler, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+/* DERIVED, NEVER TYPED — the same filter /work/index.astro and /llms.txt.ts use.
+   A group joining the at-scale band appears here with no edit to this file. */
+const scaleGroups = workGroups.filter((g) => g.band === 'scale');
+const bySlug = new Map(demos.map((d) => [d.slug, d]));
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/supply-chain/#service`,
+    name: 'Supply-chain and master-data audits for manufacturers',
+    serviceType: 'Supply chain consulting',
+    provider: { '@id': `${origin}/#business` },
+    description:
+      'Fixed-price audits of bill-of-materials accuracy, planning parameters against real consumption, and change-order cutover timing. Quoted per engagement.',
+  },
+];
+---
+
+<MarketingLayout
+  title="Numbers your planning system is sure about"
+  description="Fixed-price audits for manufacturers: bill-of-materials accuracy, planning parameters against real consumption, and when a change can actually be implemented."
+  schema={schema}
+>
+  {/* ── Hero ────────────────────────────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran four bands at
+      max-w-6xl, 6xl, 5xl and 6xl with one vertical rhythm, and the only thing
+      that ever changed underneath them was which two carried the surface
+      ground — canvas, surface, canvas, surface, alternating on a fixed beat.
+      The at-scale pitch is the longest single argument on this site and it read
+      as one column that would not stop.
+
+      It now walks feature, content, popout, feature for the column and canvas,
+      surface, deep, canvas for the ground, with the rhythm tightening under the
+      last of them. No two neighbors share more than one heavy signal, and the
+      palette does none of the work — a hue is the lightest signal on a page,
+      which is the argument src/components/kit/industrial.js makes under WHY
+      THREE AND NOT SEVEN.
+
+      THE COLUMN NARROWS INTO THE TERMS AND OPENS BACK OUT FOR THE PROOF, which
+      is the page's own argument in shape: the claim gets the wide measure, the
+      three things you can buy get a reading column, the price and the refusal
+      get the narrowest one on the page, and the demos get the widest because a
+      gallery is the one thing here a reader scans rather than reads. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">For manufacturers · fixed price per answer · never a day rate</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        The numbers your planning system is sure about.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        {supplyChain.whoItIsFor}
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        I have spent the last few years on a planning floor, and before that in operations in {priorTradeCountWord()}
+        other industries. The work below is the work I do on a weekday: not advice about it.
+      </p>
+
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        {/* `btn` CARRIES THE SHAPE AND `btn-primary` ONLY THE PAINT, and the
+            strongest call to action on this page shipped without the first of
+            them. global.css:474 holds the padding, the inline-flex row and the
+            corner radius; :495 adds the gradient and the glow on top. Alone,
+            the second paints a hard-edged rectangle with the label pressed
+            against its sides and the arrow wrapped onto a second line. Same
+            defect, same repair, as the one found on /quoted/ on 2026-09-13 —
+            nothing here measures a control's geometry, and the color it paints
+            was never the part that was wrong. */}
+        <a class="btn btn-primary" href="/contact/?intent=consult">
+          Tell me which number you do not trust <ArrowUpRight class="size-4" />
+        </a>
+        <a class="link-sweep text-sm" href="/work/">Or see what I have built at that scale →</a>
+      </div>
+  </Section>
+
+  {/* ── The three deliverables ───────────────────────────────────────────────
+      The surface ground and the reading column are both against the hero: the
+      claim gets the wide measure, the things that earn it get a column a reader
+      holds and a ground of their own. The numeral above the label is gone —
+      PICKUP.md scores a decorative "/ 01" as a generated-design signal, and
+      these were never a sequence: nothing stops a reader arriving at the proof
+      band without having read this one. */}
+  <Section tone="surface" width="content">
+      <p class="mono-label">What you can buy</p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+        {countWord(supplyChain.deliverables.length, { capital: true })} answers, each one finished.
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Each of these ends. You get a written answer you can act on or hand to somebody else, and
+        the price is agreed before it starts.
+      </p>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {supplyChain.deliverables.map((d) => (
+          <div class="panel lift spotlight flex flex-col gap-3 p-6">
+            <span class="grid h-11 w-11 place-items-center rounded-lg border border-line bg-canvas text-accent-2">
+              <Ruler size={20} aria-hidden="true" />
+            </span>
+            <h3 class="font-display text-lg font-semibold text-ink">{d.title}</h3>
+            <p class="text-sm leading-relaxed text-ink-muted">{d.body}</p>
+          </div>
+        ))}
+      </div>
+  </Section>
+
+  {/* ── How it is sold, and the refusal ─────────────────────────────────────
+      THE DEEP GROUND IS SPENT HERE ON PURPOSE, and it is the heaviest signal
+      this page has. This is the only band that states terms rather than
+      offering something — the fixed price, the reason there is no day rate, and
+      the refusal to take this work from appliance manufacturers — so the page
+      stopping is what the ground should say. `deep` and not `instrument`: both
+      panels are sized for a light ground, which is the reading /work/ and
+      /websites/ already wrote down when they declined the dark chassis.
+
+      THE NARROWEST COLUMN ON THE PAGE, AND THE STANDARD RHYTHM UNDER IT. Two
+      panels of terms do not want the measure the grid above them needs, and
+      pulling them in is what stops this reading as one more row of cards. It
+      was written with `tall` as well and the capture taken for this pass is why
+      it is not: the makeover document warns that `tall` on a band already
+      carrying something tall pays twice, and this is the mirror of that — the
+      shortest content on the page inside the narrowest column, with the longest
+      rhythm around it, left two panels floating in an empty field. Ground and
+      column are two heavy signals and they are enough. */}
+  <Section tone="deep" width="popout">
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <Boxes class="size-5 text-accent" />
+          <span class="mono-label">How it is priced</span>
+        </div>
+        <p class="font-display text-lg font-semibold leading-snug text-ink">
+          A fixed price for a finished answer.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-muted">{supplyChain.howItIsSold}</p>
+      </div>
+
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <Ruler class="size-5 text-secondary" />
+          <span class="mono-label">If you want a tool instead</span>
+        </div>
+        <p class="font-display text-lg font-semibold leading-snug text-ink">
+          Scoped when you buy it, and yours outright.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-muted">{supplyChain.toolHalf}</p>
+        <p class="text-sm leading-relaxed text-ink-faint">{supplyChain.conflictRule}</p>
+      </div>
+    </div>
+  </Section>
+
+  {/* ── The proof, derived from the at-scale bands ───────────────────────────
+      Back to the page's own ground, out to the widest column, and tight under
+      the band above. Three signals again, and each one is doing a job: a
+      gallery of demos is scanned rather than read, so it wants the room the
+      terms band deliberately gave up, and the standard rhythm stacked on top of
+      several rows of cards read as a gap rather than as air — the same reading
+      /main-street/ wrote down over its screenshot.
+
+      THIS IS THE LAST BAND, AND IT ENDS ON CANVAS DELIBERATELY. The page has
+      just spent its heaviest ground on the refusal; carrying a second painted
+      ground past it would make the terms band one of a pair rather than the one
+      place the page stops. */}
+  <Section width="feature" density="tight">
+      <p class="mono-label">Built, running, and openable</p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+        This is not a proposal. Open one.
+      </h2>
+      <p class="mt-4 max-w-3xl leading-relaxed text-ink-muted">
+        Each of these runs in your browser with nothing to install and no account to make. They use
+        invented data from a fictional manufacturer, and the arithmetic in them is the arithmetic I
+        would bring to yours.
+      </p>
+
+      {scaleGroups.map((g) => (
+        <div class="mt-9">
+          <p class="mono-label text-cyan-deep">{g.label}</p>
+          <div class="mt-3 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {g.slugs.map((slug) => {
+              const d = bySlug.get(slug);
+              return d ? (
+                <a href={`/work/${slug}/`} class="panel lift spotlight flex flex-col gap-2 p-5">
+                  <h3 class="font-display text-base font-semibold text-ink">{d.name}</h3>
+                  <p class="text-sm leading-relaxed text-ink-muted">{d.blurb}</p>
+                  <span class="link-sweep mt-1 text-sm">Open it →</span>
+                </a>
+              ) : null;
+            })}
+          </div>
+        </div>
+      ))}
+  </Section>
+</MarketingLayout>

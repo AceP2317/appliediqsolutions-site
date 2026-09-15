@@ -1,0 +1,79 @@
+---
+import { versioned } from '../data/asset-version';
+/**
+ * DemoCard — one tool in the /work gallery grid.
+ *
+ * Extracted from work/index.astro when the gallery split into two bands (local
+ * offer vs. proof at scale, D29). Both bands render the identical card, so the
+ * markup lives here once rather than being duplicated per band.
+ *
+ * The `hero` flag renders the "Featured" pill — it marks the lead offer, and
+ * exactly one demo carries it (see demos.ts).
+ */
+import type { Demo } from '../data/demos';
+
+interface Props {
+  demo: Demo;
+}
+const { demo } = Astro.props;
+---
+<a href={`/work/${demo.slug}/`} class="panel lift group flex flex-col overflow-hidden">
+  {/* THE TITLE BAR PAINTS ITS OWN GROUND, SO IT CARRIES ITS OWN LABEL TOKEN.
+      Measured 2026-09-13 by verify-bands.mjs, the first run where a band in its
+      list contained these cards on anything but the deep ground: every card
+      name came back at 3.97:1 against a 4.5 floor. The name is `.mono-label`,
+      which reads --color-label (#8a6a2f); this strip is bg-surface-2 (#ebe4d8),
+      and that pair is the defect global.css already names and fixes twenty
+      lines under `.section-deep` — the same token, on the same ground, for the
+      same reason. brass-deep measures 6.72:1 there and keeps the warm cast.
+
+      IT IS SET HERE RATHER THAN ON THE BAND BECAUSE THE CARD PAINTS THE GROUND.
+      `.section-deep` remapping the token is why /work/'s at-scale cards passed
+      and these did not: the band happened to fix a defect that belongs to the
+      card, so the card carried it onto every light band it was ever placed on.
+      No new color and no new class — the token already exists and so does the
+      rule that chose it. */}
+  <div class="flex items-center justify-between border-b border-line bg-surface-2 px-4 py-2.5" style="--color-label: var(--color-brass-deep)">
+    <div class="flex items-center gap-2.5">
+      <span class="status-dot"></span>
+      <span class="mono-label">{demo.name}</span>
+    </div>
+    {demo.hero && (
+      <span class="mono-label rounded border border-accent/40 bg-accent/10 px-1.5 py-0.5 text-[0.55rem] text-accent-2">
+        Featured
+      </span>
+    )}
+  </div>
+  <img
+    src={versioned(`/shots/${demo.slug}.webp`)}
+    alt={`${demo.name} — screenshot of the live tool`}
+    width="1200"
+    height="630"
+    loading="lazy"
+    class="w-full border-b border-line transition-transform duration-300 group-hover:scale-[1.02]"
+  />
+  <div class="flex flex-1 flex-col gap-3 p-6">
+    {demo.forWhom && <p class="mono-label text-accent-2">{demo.forWhom}</p>}
+    <p class="text-sm font-medium text-ink">{demo.tagline}</p>
+    <p class="text-sm leading-relaxed text-ink-muted">{demo.blurb}</p>
+    {/* THE SECOND READER'S VERSION, rendered BESIDE the precise phrasing rather
+        than instead of it. The blurb above keeps every exact term, because that
+        precision is what makes the tool credible to the operations person it was
+        built for. This line is for the shop owner, who otherwise cannot tell
+        whether "separates real reschedules from MRP renumbering noise" describes
+        something hard or something trivial — and a proof that proves nothing to
+        the visitor is decoration.
+
+        Omitted on the tool built for a local business: it needs no translating,
+        and a gloss there would read as talking down. */}
+    {demo.plain && (
+      <p class="mt-auto border-t border-line pt-3 text-sm leading-relaxed text-ink">
+        <span class="text-accent">→</span> {demo.plain}
+      </p>
+    )}
+    <span class="mt-auto pt-1 text-sm font-medium text-cyan-deep">
+      Open demo{' '}
+      <span class="inline-block transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+    </span>
+  </div>
+</a>

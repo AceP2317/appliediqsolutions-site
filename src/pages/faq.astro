@@ -1,0 +1,69 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import Faq from '../components/Faq.astro';
+import Button from '../components/Button.astro';
+import IslandSkeleton from '../components/IslandSkeleton.astro';
+import { faq } from '../data/home';
+
+// FAQPage structured data (SEO). Answers may carry inline HTML (e.g. links) —
+// strip tags for the plain-text schema answer.
+const stripTags = (s: string) => s.replace(/<[^>]*>/g, '');
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: stripTags(f.a) },
+  })),
+};
+---
+<MarketingLayout
+  title="Straight answers before you start"
+  description="Straight answers before you start: what things cost, what I will not build and why, who owns the result, where it runs, and what a first engagement looks like."
+  image="/og/faq.png"
+>
+  {/* ── Intro ───────────────────────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13, fourth page of twenty-seven.
+      This page already varied its width — 4xl, 3xl, 4xl — and varied nothing
+      else: one ground, one rhythm, which is why three bands still read as one
+      scroll. The list now gets a ground of its own and the air to be read in,
+      and the bands either side of it stay on canvas so the reading column is
+      framed rather than merely followed. */}
+  <Section width="content" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">FAQ</p>
+      <h1 class="statement mt-3 max-w-[16ch]">
+        Questions before you start.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        The straight version — what things cost, what I will not build and why, who owns the
+        result, and what the first step actually looks like.
+      </p>
+  </Section>
+
+  {/* ── The questions — the reading column, framed and given room ──────── */}
+  <Section tone="surface" width="popout" density="tall">
+    <Faq items={faq} />
+  </Section>
+
+  {/* ── Light CTA — the human path ────────────────────────────────────── */}
+  <Section width="popout" density="tight" class="text-center">
+    <h2 class="font-display text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">
+      Rather ask Ian directly?
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      Ask it straight — I read every message myself, and you’ll get an honest read on the problem
+      and how I’d build it.
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/" variant="primary">Ask me directly</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </Section>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</MarketingLayout>

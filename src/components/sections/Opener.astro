@@ -1,0 +1,133 @@
+---
+/**
+ * Opener — the top of the home page, which since D29 is the PITCH, not a
+ * welcome hub, and since D113 carries BOTH halves of the claim in one screen.
+ *
+ * ── WHAT D113 CHANGED, AND THE ONE THING IT DELIBERATELY DID NOT ────────────
+ *
+ * The 2026-09-12 competitive sweep found two positions unclaimed in these
+ * counties and nationally: nobody selling software here claims to have
+ * personally RUN the operation it is for, and nobody lets a buyer USE the thing
+ * before paying. Those are not two options to choose between — they are two
+ * halves of one claim, and this band now carries both: the run of trades on the
+ * left, a finished tool on the right.
+ *
+ * ── THE HEADLINE: I GOT THIS WRONG ONCE, AND THE RECORD IS WORTH KEEPING ────
+ *
+ * The first build of D113 kept the six-trade line as the h1 and REFUSED the
+ * arrangement in the preview the operator had just approved. The reasoning was
+ * that D33 makes that headline the positioning, that `PICKUP.md` records him
+ * twice declining to reopen it, and that approving a whole-page mockup is not
+ * the same act as reversing a decision.
+ *
+ * Every one of those statements is true and the conclusion was still wrong. He
+ * answered it in one sentence: "I wanted the font, size, thickness, and
+ * verbiage to match the A+C artifact, that was a main choosing point." He had
+ * not overlooked the headline in the mockup — it was the thing he was choosing.
+ * A concern raised once and answered is his call, and the second-guessing cost
+ * him a build.
+ *
+ * SO THE ARRANGEMENT IS THE PREVIEW'S: the claim as the h1 in `.statement`
+ * (Fraunces at weight 500 with its optical-size and wonk axes driven), the six
+ * trades directly under it as the serif line that qualifies it, then the
+ * operator line. Nothing about the trades is lost; what moved is which sentence
+ * is the h1.
+ *
+ * ⚠️ THE CLAIM IS ALSO `/bio/`'s H1 WORD FOR WORD, and that duplicate is real
+ * rather than theoretical — home.ts's `visionLead` comment exists to warn about
+ * it. He asked for this verbiage HERE, so the duplicate has to break on the
+ * other page, and that is a copy decision sitting with him.
+ *
+ * THE PULL-QUOTE CAME OUT, which is what pays for the band added below. The
+ * preview did not have it and the hero was stating one claim three times.
+ *
+ * THE SCREENSHOT IS DESKTOP-ONLY, AND THAT IS MEASURED RATHER THAN TASTE. With
+ * it left in on a phone the column stacks, the shot lands under the copy, and
+ * the page came out 740px longer. Below 900px it is dropped here and the tools
+ * band one section down carries it, so it renders exactly once at every width.
+ */
+import Button from '../Button.astro';
+import Section from '../Section.astro';
+import { versioned } from '../../data/asset-version';
+import { opener, localPortal, leadOffer } from '../../data/home';
+import { Store, ArrowRight } from '@lucide/astro';
+---
+<section class="relative overflow-hidden border-b border-line">
+  <div class="accent-glow -z-10"></div>
+
+  <div class="relative mx-auto max-w-[84rem] px-6 pt-12 pb-12 sm:pt-16 sm:pb-16">
+    <p class="mono-label inline-flex items-center gap-2">
+      <span class="status-dot"></span>
+      {opener.label}
+    </p>
+
+    <div class="mt-5 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-14">
+      <div>
+        {/* THE ARRANGEMENT IS THE OPERATOR'S PICK, MATCHED TO THE PREVIEW.
+            Claim as the h1 in the statement voice, the six trades as the serif
+            line that qualifies it, then the operator line. `.statement` carries
+            the font, the size and the weight; home.ts carries the verbiage. */}
+        <h1 class="statement max-w-[17ch]">{opener.claim}</h1>
+
+        <p class="statement-sub mt-4 max-w-2xl">{opener.headline}</p>
+
+        <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+          {opener.operatorLine}
+        </p>
+
+        {/* THE PULL-QUOTE IS GONE, and it is a cut rather than an oversight.
+            The preview he chose did not have it, and the hero was stating the
+            same claim three times — headline, operator line, quote — which is
+            D102's own "cut words" with the redundancy sitting in plain view.
+            `visionLead` and `visionAccent` are NOT deleted from home.ts: they
+            are the site's clearest statement of the argument and belong
+            somewhere, which is a placement decision rather than a deletion. */}
+
+        {/* THE ORDER OF THESE TWO REVERSED AT D113. It led with the free
+            conversation — a phone call with a stranger, which the research found
+            is the highest-friction step on the site. The openable thing leads
+            now, and the conversation is still right beside it. */}
+        <div class="mt-7 flex flex-wrap items-center gap-3">
+          <Button href={leadOffer.cta.href} variant="primary">{leadOffer.cta.label}</Button>
+          <Button href="/contact/?intent=consult" variant="secondary">Start with a free conversation</Button>
+        </div>
+
+        {/* The local doorway (D29). The tile stays WARM (brass) because every
+            other accent here is cool, and the warmth is what makes it read as a
+            different KIND of thing rather than one more link. */}
+        <div class="mt-6 max-w-md">
+          <a href="/main-street/" class="tile-portal spotlight group flex items-center gap-4 p-4">
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-teal/30 bg-canvas text-brass transition-colors duration-200 group-hover:border-teal/60">
+              <Store size={20} aria-hidden="true" />
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="mono-label text-cyan-deep transition-colors duration-200 group-hover:text-cyan">{localPortal.eyebrow}</span>
+              <span class="mt-0.5 block font-display font-semibold text-ink">{localPortal.title}</span>
+            </span>
+            <ArrowRight
+              size={18}
+              class="shrink-0 text-brass transition-transform duration-200 group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
+          </a>
+        </div>
+      </div>
+
+      {/* The proof half. Hidden below 900px — see the header. */}
+      <div class="hidden lg:block">
+        <a href={leadOffer.cta.href} class="block">
+          <img
+            src={versioned(leadOffer.shot)}
+            width="1200"
+            height="630"
+            loading="eager"
+            decoding="async"
+            alt={leadOffer.shotAlt}
+            class="w-full rounded-xl border border-line shadow-2xl shadow-black/30"
+          />
+        </a>
+        <p class="mono-label mt-3">Open this one now · no login · nothing leaves your browser</p>
+      </div>
+    </div>
+  </div>
+</section>

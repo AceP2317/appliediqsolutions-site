@@ -1,0 +1,205 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import { process, comparison, fit, whoItsFor } from '../data/home';
+import { Check, X, Minus } from '@lucide/astro';
+---
+<MarketingLayout
+  title="How a problem becomes software"
+  description="Supply-chain operations understood before a line of code — then AI orchestration to ship fast. Working software that's yours to own, not a deck."
+>
+  {/* ── Intro ───────────────────────────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page was the purest
+      instance of the complaint D113 was raised on: SIX bands, every single one
+      at max-w-4xl, every single one on the same vertical rhythm, with canvas
+      and surface alternating underneath on a fixed beat. Nothing but the ground
+      ever moved, and the ground moved on a metronome.
+
+      It now walks feature, popout, content, feature, content, popout for the
+      column and canvas, deep, surface, canvas, deep, canvas for the ground,
+      with the rhythm moving under both. No two neighbors share more than one
+      heavy signal and the palette does none of the work — a hue is the lightest
+      signal on a page, which is the argument src/components/kit/industrial.js
+      makes under WHY THREE AND NOT SEVEN.
+
+      THE TWO WEIGH-UPS GET DIFFERENT GROUNDS, AND THAT IS THE POINT RATHER THAN
+      DECORATION. The difference band and the fit band are both two panels side
+      by side asking a reader to weigh one column against another, built from
+      nearly the same markup, with only a band of cards between them. Rendered
+      on one ground at one width they would read as the same argument made
+      twice, which is the defect one level down from where D113 found it — the
+      same reading /services/ wrote down over its five identical doors. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">Approach</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        Domain mastery, directing AI, into working software.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        The hard part isn’t the AI — it’s knowing exactly <span class="aiq-accent">what to build</span>, and building it so you
+        actually own it. This is how I do it, and who it’s for.
+      </p>
+      <p class="mt-6 text-sm text-ink-muted">
+        New here?{' '}
+        <a href="/bio/" class="link-sweep">
+          Start with who I am →
+        </a>
+      </p>
+  </Section>
+
+  {/* ── The method ──────────────────────────────────────────────────────────
+      THE DEEP GROUND IS HERE FOR THE LIST RATHER THAN FOR THE ARGUMENT, which
+      is the one place on this page the ground is chosen by what sits on it. The
+      steps are `bg-surface` rows separated by hairlines; on the surface band
+      they would have been surface on surface, and the rows that are meant to
+      read as raised would have read as a flat block with lines drawn in it. On
+      surface-2 they sit a step above their ground and the separators do the job
+      they were drawn for.
+
+      The reading column goes with it. A numbered method is read top to bottom
+      one step at a time, and the widest measure on the page is the last thing
+      it wants. The numerals above the labels are gone from this page — PICKUP.md
+      scores a decorative "/ 01" as a generated-design signal, and on a page
+      where four of them numbered sections a reader can arrive at in any order,
+      they were numbering something that is not a sequence. */}
+  <Section tone="deep" width="popout">
+    <p class="mono-label">The method</p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+      How a problem becomes a tool.
+    </h2>
+
+    <ol class="mt-10 flex flex-col gap-px overflow-hidden rounded-xl border border-line bg-line">
+      {process.map((step) => (
+        <li class="flex flex-col gap-4 bg-surface p-6 sm:flex-row sm:gap-6 sm:p-8">
+          <span class="process-node shrink-0">{step.n}</span>
+          <div>
+            <h3 class="font-display text-xl font-semibold text-ink">{step.title}</h3>
+            <p class="mt-2 leading-relaxed text-ink-muted">{step.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </Section>
+
+  {/* ── Working software vs. slideware ──────────────────────────────────────
+      The first of the two weigh-ups, and it takes the surface ground, the
+      widest rhythm on the page and a column wide enough that neither side of
+      the comparison is read at a different measure from the other. This is the
+      band the page is actually arguing in, so it is the band that gets the air.
+
+      `surface` AND NOT `instrument`: the right-hand panel carries
+      border-accent/40, a literal sized for a light ground that no band can
+      remap — the same reading src/pages/work/index.astro and /websites/ wrote
+      down when each declined the dark chassis for a panel of its own. */}
+  <Section tone="surface" width="content" density="tall">
+      <p class="mono-label">The difference</p>
+      <h2 class="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+        It ends at a tool people use — not a slide.
+      </h2>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-2">
+        <div class="panel lift spotlight p-7">
+          <p class="mono-label">{comparison.left.title}</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {comparison.left.items.map((item) => (
+              <li class="flex items-start gap-3 text-ink-muted">
+                <X size={18} class="mt-0.5 shrink-0 text-down" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="panel lift spotlight border-accent/40 p-7">
+          <p class="mono-label text-cyan-deep">{comparison.right.title}</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {comparison.right.items.map((item) => (
+              <li class="flex items-start gap-3 text-ink">
+                <Check size={18} class="mt-0.5 shrink-0 text-up" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+  </Section>
+
+  {/* ── Who I build for ─────────────────────────────────────────────────────
+      Back to the page's own ground, out to the widest column, and tight under
+      the tallest band on the page. Four cards at max-w-4xl were being asked to
+      hold a persona each in a quarter of 56rem; the feature measure is what
+      lets the fourth column carry a sentence rather than a stack of single
+      words, and it is the only band here with four things in a row. */}
+  <Section width="feature" density="tight">
+    <p class="mono-label">Who I help</p>
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+      Who I build for — and the problem they’re carrying.
+    </h2>
+
+    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {whoItsFor.map((p) => (
+        <div class="panel lift spotlight flex flex-col gap-3 p-6">
+          <h3 class="font-display text-lg font-semibold text-ink">{p.title}</h3>
+          <p class="text-sm leading-relaxed text-ink-muted">{p.body}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  {/* ── Fit / not a fit ─────────────────────────────────────────────────────
+      The second weigh-up, and it is on the deep ground for the reason given at
+      the top of this file: it is built from nearly the same markup as the
+      difference band and asks the reader to do the same thing with it. A
+      different ground and a column a step narrower are what stop the two
+      reading as one argument made twice. This one is the colder of the pair —
+      it is the band that talks a reader out of the work — so it sits lower than
+      the band that argues for it, and it does not get the extra air. */}
+  <Section tone="deep" width="content">
+      <p class="mono-label">Fit</p>
+      <h2 class="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+        A fit — and a not-a-fit.
+      </h2>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-2">
+        <div class="panel lift spotlight p-7">
+          <p class="mono-label text-up">A fit when</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {fit.fit.map((item) => (
+              <li class="flex items-start gap-3 text-ink">
+                <Check size={18} class="mt-0.5 shrink-0 text-up" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="panel lift spotlight p-7">
+          <p class="mono-label text-down">Not a fit if</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {fit.notFit.map((item) => (
+              <li class="flex items-start gap-3 text-ink-muted">
+                <Minus size={18} class="mt-0.5 shrink-0 text-down" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+  </Section>
+
+  {/* ── CTA ─────────────────────────────────────────────────────────────────
+      The narrowest column and the shortest rhythm on the page, back on canvas.
+      A centered ask is two lines and two buttons; giving it the same measure as
+      the argument above made the page end on an empty band rather than on a
+      question. */}
+  <Section width="popout" density="tight" class="text-center">
+    <h2 class="font-display text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">
+      Have a problem that fits?
+    </h2>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/" variant="primary">Start a project</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </Section>
+</MarketingLayout>

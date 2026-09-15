@@ -1,0 +1,110 @@
+---
+/**
+ * Objection — the customer's own words as a heading, answered with a face and a
+ * figure. New at D113.
+ *
+ * ── WHY IT EXISTS ───────────────────────────────────────────────────────────
+ *
+ * The 2026-09-12 research read fifteen well-made sites closely, and the single
+ * move every one of them shares is that somewhere it says a sentence that loses
+ * it a customer. ONCE: "That's obscene." Plausible's closing call to action:
+ * "It's time to ditch Google Analytics." Sivers: "Everything here is 100% me, no
+ * AI." Anonymous sites never refuse anything, because a refusal requires a
+ * position and a position can be wrong. It costs no color, no motion and no
+ * motif, which is why it survived a brief that rules all three out.
+ *
+ * 37signals heads a section with the buyer's objection verbatim — "But we
+ * already have Slack or Teams" — and answers it. This is that shape, aimed at
+ * the objection the operator says he actually hears.
+ *
+ * ── THE OBJECTION IS THE OPERATOR'S, AND SO ARE THE WORDS ───────────────────
+ *
+ * The first version of this band answered "but my nephew can build me a
+ * website", which was Claude's guess at the objection and Claude's wording, and
+ * it went live before he had read a word of it. He replaced both: the objection
+ * is now the price, and he chose between two drafts with the instruction
+ * "Treat this as a decision of mine before publishing."
+ *
+ * The band is stronger for it. The price box has always been in here, so the
+ * money question was already on the page with nothing answering it.
+ *
+ * ── WHY THE ANSWER CONCEDES ─────────────────────────────────────────────────
+ *
+ * Because it is true, and because an answer that conceded nothing would be the
+ * exact thing this band exists not to be. Sometimes the cheaper quote IS the
+ * right answer. Saying so first is what makes the rest of it believable, and it
+ * is why the photograph sits beside that opening line rather than above the
+ * whole argument.
+ *
+ * ⚠️ NOTHING HERE MAY READ AS FREE LIFETIME SUPPORT. Upkeep is a PAID monthly
+ * arrangement; a page promising the relationship simply continues would
+ * contradict the rate sheet a client signs. The copy claims continuity and
+ * never claims it is unpriced, and the button goes to `/upkeep/` where the cost
+ * of staying is published. That link is the honesty mechanism, not a garnish —
+ * do not repoint it at a page with no figure on it.
+ *
+ * ── WHY THE FACE AND THE FIGURE ARE IN THE SAME BAND ────────────────────────
+ *
+ * The money question and the trust question are the same question. "Why would I
+ * pay you rather than him" is answered by what you get and by who you are
+ * dealing with, and splitting those across two sections answers neither.
+ *
+ * The photograph is the site's first. Getty's VisualGPS work — 7,500 adults per
+ * survey across four surveys — puts authentic imagery at the center of trust,
+ * and the closest structural competitor found anywhere, one county over, opens
+ * his own page with his face. D26 governs what may replace it: a real capture,
+ * never a generated image.
+ *
+ * THE FIGURE IS DERIVED AND ITS QUALIFIER TRAVELS INSIDE THE SAME BOX. D5 as
+ * amended requires the two to appear together; putting them in one bordered
+ * object makes that structural rather than something a future editor remembers.
+ * Never type the number here — `npm run gate` refuses a hand-typed price, and it
+ * separately refuses a build where nothing renders one.
+ */
+import Section from '../Section.astro';
+import Button from '../Button.astro';
+import { versioned } from '../../data/asset-version';
+import { objection } from '../../data/home';
+import { FLOOR_USD, FLOOR_QUALIFIER } from '../../lib/pricing.js';
+import { money } from '../../lib/format.js';
+---
+<Section width="popout">
+  <h2 class="refusal">{objection.heading}</h2>
+
+  {/* THE FACE SITS WITH THE FIRST PARAGRAPH, NOT ABOVE THE WHOLE ANSWER. The
+      first line is the concession — the one place on the page where he agrees
+      the customer might be right — and that is the sentence a photograph should
+      be attached to. The rest of the argument runs full width beneath it. */}
+  <div class="mt-7 flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
+    <img
+      class="portrait"
+      src={versioned(objection.portrait)}
+      alt={objection.portraitAlt}
+      width="132"
+      height="132"
+      loading="lazy"
+      decoding="async"
+    />
+    <p class="text-lg leading-relaxed text-ink-muted">{objection.body[0]}</p>
+  </div>
+
+  {objection.body.slice(1).map((para) => (
+    <p class="mt-5 leading-relaxed text-ink-muted">{para}</p>
+  ))}
+
+  <div class="pricebox mt-7">
+    <div class="pricebox-head">
+      <p class="mono-label">{objection.priceLabel}</p>
+    </div>
+    <div class="pricebox-body">
+      <p class="pricebox-figure">{money(FLOOR_USD)}</p>
+      <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+        {FLOOR_QUALIFIER} The first conversation is free either way.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-7">
+    <Button href={objection.cta.href} variant="secondary">{objection.cta.label}</Button>
+  </div>
+</Section>

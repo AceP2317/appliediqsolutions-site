@@ -1,0 +1,319 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import LabSchematic from '../components/LabSchematic.astro';
+import ShipLog from '../components/ShipLog.astro';
+import { shelfCount, demos } from '../data/demos';
+import { ArrowUpRight } from '@lucide/astro';
+
+// Copy drafted from real, de-identified facts — no employer named on this page
+// (employer-name firewall). The "In motion now" tool count reads from demos.length
+// so it never goes stale as the set grows.
+//
+// SINCE D29 THIS PAGE IS CAPABILITY PROOF, NOT AN ENTERPRISE PITCH. Every
+// industrial fact below stays — it is the credential, and it is the only thing a
+// competitor can't claim. What changed is what the page ARGUES: the scale work is
+// here because it sets the ceiling on the software built for a small business,
+// not because enterprise work is the offer. Keep the facts; keep the frame.
+const inMotion = [
+  {
+    title: 'AI, applied across a manufacturing operation',
+    body:
+      'I shape where and how AI gets applied across a large manufacturer’s North America supply chain — reading the operation closely enough to point AI at the problems that actually move the needle, then seeing the build through. The tools on this site are the de-identified proof of that instinct: the same read on plan stability, inbound flow, and master-data health, turned into software people use.',
+  },
+  {
+    title: 'Growing AppliedIQ’s live toolset',
+    body:
+      `${demos.length} working tools now: ${shelfCount} built for a small local business — a night's tips, a back bar, a rate card, a call list — plus demand and planning, inbound and inventory, and master data and parameters at industrial scale. Each one is a real app on synthetic data, built for a single specific problem. The set grows as new problems prove worth solving in the open — another working app you can open and use, never a slide.`,
+  },
+  {
+    title: 'Tailoring around big systems',
+    body:
+      'The problem this is built for: an established operation moving mountains to make a big-name system do one specific thing. The platform stays — what gets built is the tool, process, or integration that makes it fit how you actually run, not the average company the software was designed for.',
+  },
+  {
+    title: 'Full-stack apps, secured and deployed',
+    body:
+      'The tools here start as single-file apps — the next step is standing them up as real software: user sign-in and access control, a Postgres database behind them, built for a whole team and deployed on the Abacus.ai platform. Production-shaped, not a prototype in a browser tab.',
+  },
+];
+
+// Lab cards are capability-level ONLY — no hostnames, providers, platform or
+// repo names that could map the personal estate (security/OSINT rule).
+const lab = [
+  {
+    title: 'A personal AI-agent stack',
+    body:
+      'Always-on agents running on a hardened private server: message-driven assistants I use from my phone, scheduled jobs that watch and report, and a private knowledge vault behind zero-trust access. Built, secured, and operated end to end — the same shape of system a business would own.',
+  },
+  {
+    title: 'An AI build system, not just a tool',
+    body:
+      'A private library of custom skills and operating doctrine that turns AI coding into a repeatable build system — the tooling behind how a pain point becomes deployed software in hours. Every project sharpens the system that builds the next one.',
+  },
+  {
+    title: 'This site — you’re inside the proof',
+    body:
+      /* THE ASSISTANT CAME OUT OF THIS SENTENCE 2026-09-13, on the operator's
+         call. It read "a live AI assistant wired to the Anthropic API" on a page
+         whose whole argument is "you are inside the proof" — and the route has
+         been commented out in worker/index.js since August. CLAUDE.md says the
+         Ask assistant is RETIRED. A page pointing at something that no longer
+         answers is the one thing this page cannot afford. The rest of the list
+         is still running and is untouched. */
+      'AppliedIQ itself is a personal full-stack build: static site, a Cloudflare Worker backend, and a digital business card that installs like an app. Everything this site claims about shipping real software, demonstrated on the surface you’re reading it on.',
+  },
+];
+
+// Ordered nearest-first. "From tool to owned system" leads because it is the
+// direction the practice actually points; the SAP rungs are real and funded by
+// the industrial work, but they are the long horizon, not the offer.
+const roadmap = [
+  {
+    title: 'From tool to owned system',
+    body:
+      'The direction the work points: a single tool today, and — when you’re ready for it — the full custom system your business runs on and owns outright. No license, no subscription, no lock-in.',
+  },
+  {
+    /* REWRITTEN 2026-08-25. This card promised a missed-call catcher, which
+       needs a phone line handled by something that is not the visitor's browser
+       — the one thing the shelf's architecture forbids. It was a public promise
+       the build could not keep. The follow-up half of that idea survives as the
+       Recall Due List, which needs no telephony at all.
+
+       No count, no date, and no mechanism that cannot be delivered. The tools
+       themselves already appear under /02 Recent builds, which maps demos.ts,
+       so this card carries the argument rather than the inventory (D22). */
+    title: 'More tools on the shelf',
+    body:
+      'The tools built for a small local business are narrow on purpose — one job each, and the rule inside each one belongs to that business rather than to its whole trade. They run entirely in your browser, which is what makes them yours to keep: nothing you type or drop into one leaves the page.',
+  },
+  {
+    /* TWO CARDS BECAME ONE, 2026-08-24. "SAP-native, not SAP-adjacent" and "AI
+       inside the SAP workflow" were both real and both funded by the industrial work —
+       and a local business owner scrolling a page called "what I'm building"
+       met two cards of enterprise platform vocabulary in a row and concluded
+       the site was not for them. The page's own code already said as much in a
+       comment. One card, labeled as the horizon it is, and the reader is not
+       asked to care about a platform they will never touch. */
+    title: 'Further out: deeper into the industrial stack',
+    body:
+      'The long horizon, and named as one rather than as an offer: extending the work onto the platform layer of the enterprise system that industrial work runs on, and putting AI assistance inside the workflows people there actually use. This is what keeps the ceiling high on everything else here. It is not what gets built for a business on Middle Street.',
+  },
+  {
+    title: 'The person behind the practice',
+    body:
+      'AppliedIQ is the practice; the builder now has his own place too. ian-provencher.com is live — a home for the builds, experiments, and ideas that reach beyond operational software, and another site built exactly the way yours would be.',
+    link: { href: 'https://ian-provencher.com', label: 'ian-provencher.com' },
+  },
+];
+---
+<MarketingLayout
+  title="What I am building now"
+  description="What I'm building now — current focus, recent operational tools you can use, and what's shipping next."
+  image="/og/projects.png"
+>
+  {/* ── Intro hero (branded well) ───────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran seven bands at
+      max-w-6xl, 5xl, 5xl, 5xl, 4xl, 4xl and 4xl — four widths across seven
+      bands, none of them more than an inch apart — with one vertical rhythm and
+      only two of the seven painting a ground at all. The lab and the roadmap
+      sat one under the other on the same ground at nearly the same width, with
+      a hairline between them and nothing else, which is the defect
+      /confirmation-outlook/ and /upkeep/ were both repaired for today.
+
+      It now walks feature, content, feature, content, popout, content, popout
+      for the column and canvas, surface, deep, canvas, surface, deep, canvas
+      for the ground, with the rhythm moving under both. Every neighbor differs
+      in at least two of the three, most in all three, and the palette does none
+      of the work — a hue is the lightest signal on a page, which is the
+      argument src/components/kit/industrial.js makes under WHY THREE AND NOT
+      SEVEN.
+
+      THE HEAVIEST GROUND IS SPENT ON THE TOOLS AND THE SHIP LOG, which is what
+      a list page should say. Everything else here is described work; those two
+      bands are the only ones a reader can check — one opens in a browser and
+      the other is timestamped by git — so they are the two the page stops on.
+
+      NOTHING MOVED AND NOTHING WAS CUT. Two blocks carry comments arguing for
+      where they sit and what they may not say: the roadmap's first card leads
+      because it is the direction the practice points, and its third is two
+      enterprise cards deliberately collapsed into one. Both are where they
+      were, in the order they were written in. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">Current projects</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        What I’m building now.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Live work, in motion — what’s on the bench, the recent builds you can already use, and
+        what’s shipping next. A lot of it runs at industrial scale, and that is exactly why it’s
+        on this page: the depth that makes a tool hold up on a factory floor is the same depth
+        behind the one built for your business.
+      </p>
+  </Section>
+
+  {/* ── In motion now ───────────────────────────────────────────────────────
+      The surface ground and the reading column against the hero. The numerals
+      are gone from this page — PICKUP.md scores a decorative "/ 01" as a
+      generated-design signal, and here five of them numbered a set of bands
+      that is not a sequence at all: recent builds do not follow from work in
+      motion, and the ship log was numbered / 05 from inside a component that
+      knew nothing about the four above it. */}
+  <Section tone="surface" width="content">
+    <p class="mono-label">In motion now</p>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      Where the depth comes from. This is the work that sets the ceiling on everything else here.
+    </p>
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      {inMotion.map((p) => (
+        <div class="panel flex flex-col gap-3 p-7">
+          <h2 class="font-display text-xl font-semibold text-ink">{p.title}</h2>
+          <p class="leading-relaxed text-ink-muted">{p.body}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  {/* ── Recent builds (the live tools, de-identified) ────────────────────────
+      THE DEEP GROUND AND THE WIDEST COLUMN, TIGHT. This is the band a reader
+      can check — every card opens a working tool in a browser — so it is one of
+      the two the page stops on, and a gallery this long is scanned rather than
+      read: the room is worth more to it than the measure. The tight rhythm is
+      for the same reason /main-street/ took it over its screenshot — the
+      standard band padding stacked on several rows of cards reads as a gap
+      rather than as air.
+
+      `deep` and not `instrument`: these are `panel lift spotlight` cards sized
+      for a light ground, which is the reading src/pages/work/index.astro wrote
+      down when it declined the dark chassis for its own flagship panel. */}
+  <Section tone="deep" width="feature" density="tight">
+      <p class="mono-label">Recent builds</p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+        Recent operational tools — live, and yours to use.
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Real tools, rebuilt as de-identified demos running on synthetic data. Open any one and
+        start clicking — no login, nothing to install.
+      </p>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {demos.map((d) => (
+          <a
+            href={`/work/${d.slug}/`}
+            class="panel group lift spotlight flex flex-col gap-3 p-6"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <h3 class="font-display text-lg font-semibold text-ink">{d.name}</h3>
+              <ArrowUpRight
+                size={18}
+                class="shrink-0 text-ink-faint transition-colors group-hover:text-accent-2"
+                aria-hidden="true"
+              />
+            </div>
+            <p class="text-sm leading-relaxed text-ink-muted">{d.tagline}</p>
+          </a>
+        ))}
+      </div>
+  </Section>
+
+  {/* ── The lab (personal builds — capability proof) ─────────────────────────
+      Back to the page's own ground, in to the reading column, and the standard
+      rhythm returns. Three signals against the band above, and the column is
+      the one doing the real work: this band is three paragraphs of prose under
+      a drawn schematic, not a gallery, and the measure the tools wanted is the
+      last thing it needs. */}
+  <Section width="content">
+    <p class="mono-label">The lab</p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+      What I build for myself.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      The fastest read on a builder is what they build when nobody’s paying. These run every day.
+    </p>
+    <div class="mt-10">
+      <LabSchematic />
+    </div>
+    <div class="mt-6 grid gap-4 md:grid-cols-3">
+      {lab.map((p) => (
+        <div class="panel lift spotlight flex flex-col gap-3 p-7">
+          <h3 class="font-display text-lg font-semibold text-ink">{p.title}</h3>
+          <p class="leading-relaxed text-ink-muted">{p.body}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  {/* ── On the roadmap ──────────────────────────────────────────────────────
+      THIS BAND AND THE ONE ABOVE IT WERE THE PAIR D113 EXISTS TO SEPARATE. Both
+      ran on canvas, at max-w-5xl and max-w-4xl — a difference of two inches —
+      with the same rhythm and nothing between them but a hairline, so the lab
+      and the roadmap read as one long block of cards in which the headings
+      happened to change. The surface ground, the narrowest column on the page
+      and the widest rhythm are three signals at once, which is deliberate: this
+      is the band where the page stops describing what exists and starts
+      describing what does not, and a reader should feel that before reading a
+      word of it.
+
+      THE ORDER OF THE CARDS IS ARGUED IN THE MODULE ABOVE AND NOTHING HERE
+      TOUCHES IT. "From tool to owned system" leads because it is the direction
+      the practice points, and the enterprise card is two cards deliberately
+      collapsed into one. Reshaping is not reordering. */}
+  <Section tone="surface" width="popout" density="tall">
+    <p class="mono-label">On the roadmap</p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+      What’s shipping next.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      Nearest first: from a single tool to the whole system a business owns, more tools built for
+      the businesses on Main Street, and — further out — AI built inside the enterprise stack
+      rather than beside it.
+    </p>
+    <div class="mt-10 grid gap-4 md:grid-cols-2">
+      {roadmap.map((p) => (
+        <div class="panel lift spotlight flex flex-col gap-3 p-7">
+          <h3 class="font-display text-lg font-semibold text-ink">{p.title}</h3>
+          <p class="leading-relaxed text-ink-muted">{p.body}</p>
+          {p.link && (
+            <a href={p.link.href} target="_blank" rel="noopener" class="mono-label link-sweep mt-1 w-fit">
+              {p.link.label} →
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  {/* ── The ship log — the velocity claim, receipted from git ───────────────
+      ITS BAND LIVES IN THE COMPONENT AND WAS RESHAPED THERE, because this is
+      the page's second checkable band and it had to answer the one above it.
+      ShipLog.astro renders on no other page, so its `section-band` and its
+      hand-written "/ 05" belonged to this walk rather than to a shared one —
+      and a lone numeral surviving in a component, on a page whose other four
+      had just come out, is the shape of stale that nobody sees because it is
+      not in the file being read. */}
+  <ShipLog />
+
+  {/* ── Light CTA ───────────────────────────────────────────────────────────
+      The narrowest column and the shortest rhythm on the page, back on canvas.
+      This band carried no vertical padding of its own at the top — only
+      pb-20 — so it was reading as the tail of whatever band preceded it rather
+      than as the page's own ask. */}
+  <Section width="popout" density="tight" class="text-center">
+    <h2 class="font-display text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">
+      Have one that belongs on this list?
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      If you’ve got a hard, specific problem worth building for, tell me about it — it might be the
+      next thing in motion.
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/" variant="primary">Start a project</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </Section>
+</MarketingLayout>

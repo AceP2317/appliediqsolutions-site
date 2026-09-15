@@ -1,0 +1,92 @@
+---
+/**
+ * NavIcon — the ONE place a navigation icon name becomes an icon.
+ *
+ * WHY IT EXISTS. src/data/site-map.js carries icons as NAME STRINGS, because a
+ * Node gate reads that file and an Astro component import would break it. So a
+ * name has to become a component somewhere, and if that mapping lived in each
+ * surface, the phone sheet and the desktop menu would each hold their own copy
+ * — which is the exact two-copies-by-hand problem site-map.js was built to end.
+ *
+ * IT THROWS ON A NAME IT DOES NOT KNOW, rather than rendering nothing. A menu
+ * row whose icon silently vanishes reads as a CSS bug and survives for weeks; a
+ * build that stops names the row and the file in one line.
+ *
+ * ADDING A DESTINATION WITH A NEW ICON means adding it here too, and the build
+ * tells you so on the first render. That is the only hand-step this design
+ * keeps, and it is one the compiler refuses to let you forget.
+ */
+import {
+  Boxes,
+  Calculator,
+  CalendarClock,
+  ClipboardCheck,
+  Compass,
+  CreditCard,
+  FileText,
+  Globe,
+  Hammer,
+  HelpCircle,
+  House,
+  Layers,
+  LayoutGrid,
+  Mail,
+  MessagesSquare,
+  Newspaper,
+  Radar,
+  Route,
+  Scale,
+  Search,
+  ShoppingBag,
+  Store,
+  Timer,
+  User,
+  Wrench,
+} from '@lucide/astro';
+
+const ICONS = {
+  Boxes,
+  Calculator,
+  CalendarClock,
+  ClipboardCheck,
+  Compass,
+  CreditCard,
+  FileText,
+  Globe,
+  Hammer,
+  HelpCircle,
+  House,
+  Layers,
+  LayoutGrid,
+  Mail,
+  MessagesSquare,
+  Newspaper,
+  Radar,
+  Route,
+  Scale,
+  Search,
+  ShoppingBag,
+  Store,
+  Timer,
+  User,
+  Wrench,
+};
+
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 18, class: cls } = Astro.props;
+
+const Icon = ICONS[name as keyof typeof ICONS];
+if (!Icon) {
+  throw new Error(
+    `NavIcon: no icon named "${name}". Import it from @lucide/astro above and add it to ICONS. ` +
+      'Every icon name in src/data/site-map.js must resolve here.',
+  );
+}
+---
+
+<Icon size={size} class={cls} aria-hidden="true" />

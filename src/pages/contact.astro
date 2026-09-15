@@ -1,0 +1,149 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import ContactForm from '../components/ContactForm.jsx';
+import { socialLinks } from '../data/links';
+import { startingPrice } from '../data/services';
+import { REPLY_TYPICAL, REPLY_OUTER } from '../lib/reply-window.js';
+
+const linkedin = socialLinks.find((s) => s.id === 'linkedin')!;
+const email = 'contact@appliediqsolutions.com';
+const next = [
+  { n: '1', t: 'I read it myself', b: 'No sales team, no funnel — your message comes straight to me.' },
+  { n: '2', t: `I reply — ${REPLY_TYPICAL}`, b: `A straight read on the problem, and how I’d build it. And ${REPLY_OUTER}, even in a busy stretch.` },
+  /* STEP 3 NAMED AN OUTCOME AND NEVER THE THING. The form below asks a stranger
+     for their availability, and until 2026-08-30 nothing on this page said what
+     they would be joining — a phone call, a link they would have to install
+     something for, or a pitch from somebody else. That is a hesitation at the
+     exact moment they decide whether to press send.
+
+     EVERY CLAIM HERE IS TRUE TODAY AND WAS EXERCISED BEFORE IT WAS WRITTEN. The
+     room is /meet/ on this domain, the camera is turned off on a pre-join screen
+     before anyone is seen, and the phone option is simply Ian ringing them.
+     WHAT IT DELIBERATELY DOES NOT CLAIM is that it works from a locked-down
+     corporate laptop. That is the strongest line available and the one this
+     site's whole culture says must be measured before it is printed — it has
+     not been, so it is not here. */
+  { n: '3', t: 'We scope it on a call', b: 'Free, and however suits you — a private video room on this site, camera off if you would rather, or I just ring you. Nothing to install and no account to make.' },
+];
+---
+<MarketingLayout
+  title="Start a project, or ask a question"
+  description="Start a project with AppliedIQ — request a quote, a consult, or send a question. Custom software for the hard, one-off problems your systems never solved."
+>
+  {/* ── Hero ──────────────────────────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran two bands at
+      max-w-6xl on one ground with one rhythm, which is the complaint D113 was
+      raised on stated in its smallest possible form: two sections, nothing
+      between them but a hairline. The hero now takes the widest measure on the
+      site and the working band narrows to today's width and tightens under it,
+      so the pair differs in column and in rhythm — the two heavy signals
+      src/components/kit/industrial.js names under WHY THREE AND NOT SEVEN that
+      cost no palette at all.
+
+      THE GROUND IS THE SIGNAL DELIBERATELY NOT SPENT, AND THAT IS A MEASUREMENT
+      RATHER THAN A PREFERENCE. Every input in ContactForm.jsx is filled
+      `bg-surface` (#f4efe6) and the boxes around them `bg-surface/40`, which is
+      what makes a field read as a field on canvas (#faf7f2). `.section-band`
+      paints that same surface at 88% down to 66% over the same canvas, so a
+      ground here would composite to within a few units of the fields sitting on
+      it and every one of them would flatten into the band. A ground that erases
+      the controls on the one page whose whole job is getting a stranger to type
+      into them is a worse trade than a page with two bands.
+
+      SO THIS PAGE STAYS AT TWO, AND THE RESTRAINT IS THE POINT. The aside is
+      beside the form because what happens next is read while deciding whether to
+      press send; pulling it into a third band would be reordering, which the
+      procedure in docs/page-makeover.md separates from reshaping by name.
+
+      NOTHING MOVED AND NOTHING WAS CUT. The argument for step 3 naming the room
+      rather than an outcome sits where it was written. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">Start a project</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        Tell me what eats your week.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        One job that takes hours and should take minutes. Whatever it is, we’ll build it and you’ll own
+        it outright. Pick how you’d like to start — a quote, a conversation, a read of where AI
+        fits, or just a question —
+        and I’ll take it from there. {startingPrice.line} {startingPrice.qualifier} The first conversation is free.
+      </p>
+  </Section>
+
+  {/* ── Engagement hub: intent-routed form + what-happens-next ────────────
+      Two signals against the hero — the column comes in from the widest measure
+      on the page to today's, and the rhythm tightens. The tight rhythm is the
+      same call /check/ and /deadlines/ made over their own islands: standard
+      band padding stacked on something already tall reads as a gap rather than
+      as air, which is the trap docs/page-makeover.md names against
+      `density="tall"` from the other direction. */}
+  <Section width="content" density="tight">
+    <div class="grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+      <div>
+        <ContactForm client:load />
+      </div>
+
+      <aside class="flex flex-col gap-10">
+        <div>
+          <p class="mono-label">What happens next</p>
+          <ol class="mt-5 flex flex-col gap-5">
+            {next.map((s) => (
+              <li class="flex gap-4">
+                <span class="process-node shrink-0">{s.n}</span>
+                <div>
+                  <h2 class="font-display text-base font-semibold text-ink">{s.t}</h2>
+                  <p class="mt-1 text-sm leading-relaxed text-ink-muted">{s.b}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* THE TWO PRICED THINGS GET A DOOR HERE, added 2026-09-03. The form
+            already carries an assessment intent — ContactForm.jsx's `assessment`
+            row — and nothing on this page explained what that intent WAS. A
+            visitor picking it was picking a label. Neither figure is named here:
+            each price travels with its own qualifier and belongs on the page
+            that can carry the pair. */}
+        <div class="panel lift spotlight p-6">
+          <p class="mono-label">Not sure which of these to pick?</p>
+          <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+            If you want a site of your own, that is
+            {' '}<a href="/websites/" class="link-sweep font-medium">a website build</a> — what it
+            includes and what it costs are both written down.
+          </p>
+          <p class="mt-3 text-sm leading-relaxed text-ink-muted">
+            If you know something is wrong but not what to build, that is the
+            {' '}<a href="/ai-fit/" class="link-sweep font-medium">AI Fit Assessment</a> — I watch
+            the work, on video or in your business, and write the list.
+          </p>
+          <p class="mt-3 text-sm leading-relaxed text-ink-faint">
+            And if you already know what you want, none of that applies. Ask for a quote.
+          </p>
+        </div>
+
+        <div class="panel lift spotlight p-6">
+          <p class="mono-label">Prefer email?</p>
+          <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+            You’re emailing me, not a sales team — and I read every message myself.
+          </p>
+          <a
+            href={`mailto:${email}`}
+            class="link-sweep group mt-3 inline-flex items-center gap-2 text-sm font-medium"
+          >
+            {email}
+            <span class="inline-block transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+          </a>
+          <p class="mt-4 text-sm leading-relaxed text-ink-muted">
+            Or connect on
+            <a href={linkedin.href} target="_blank" rel="noopener" class="link-sweep font-medium">LinkedIn</a>.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </Section>
+</MarketingLayout>

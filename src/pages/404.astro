@@ -1,0 +1,47 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+---
+<MarketingLayout
+  title="Page not found"
+  description="That page doesn't exist — here's the way back to the live tools and everything else."
+>
+  {/* ── The only band, and it stays the only band ───────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13, and this is the last page of
+      the twenty-eight. It varies nothing against a neighbor because it has no
+      neighbor: one apology, one sentence and two doors. D113's rule is that a
+      band differs from the band above it, and a page with one band satisfies it
+      by having nothing to repeat — splitting four elements into two grounds to
+      make the shape look reshaped would be the generated-design tell this whole
+      pass exists to remove, arriving as a fix for it.
+
+      SO WHAT IT TAKES IS THE MEASURE AND THE VOICE. `popout` is `max-w-3xl`,
+      which is exactly what this page already painted, so the column does not
+      move a pixel; the h1 takes `.statement` like every other page in the queue,
+      which is where the display face's optical size and axes are actually set
+      rather than approximated by a size class.
+
+      `items-start` CAME OFF THE SECTION AND THAT IS NOT COSMETIC. Section.astro
+      inserts a centering div between the section and this content, so the flex
+      utilities that used to lay out four children now lay out ONE — and
+      `align-items: start` on a single stretch-width column shrink-wraps it to
+      its widest line and pins it left, which is a different page with nothing
+      erroring. Default stretch keeps the column full-width so `mx-auto
+      max-w-3xl` inside it still centers, which is what this page looked like
+      before. `justify-center` is kept and still does its job: one child,
+      centered down the 60vh. */}
+  <Section width="popout" class="flex min-h-[60vh] flex-col justify-center">
+    <p class="mono-label">Error · 404</p>
+    <h1 class="statement mt-3">
+      That page isn’t here.
+    </h1>
+    <p class="mt-5 max-w-xl text-lg leading-relaxed text-ink-muted">
+      The link may be old or mistyped. The live tools and everything else are one click away.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <Button href="/" arrow="none">Back to home</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </Section>
+</MarketingLayout>

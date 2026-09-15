@@ -1,0 +1,254 @@
+---
+/**
+ * /ai-news — "AI Signal": the autonomous daily AI-news desk. Every story is
+ * researched, written, gated, and published end-to-end by the /ai-news
+ * pipeline (.claude/skills/ai-news/SKILL.md) — the disclaimer IS the
+ * marketing: this page is a live demo of an autonomous pipeline in
+ * production. Rolling window (standard 14d / major 21d, see
+ * src/data/news.ts) — an instrument, not an archive. No per-story pages;
+ * cards link out to their sources.
+ */
+import { getCollection } from 'astro:content';
+import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import Section from '../../components/Section.astro';
+import NewsStory from '../../components/NewsStory.astro';
+import DeskSchematic from '../../components/DeskSchematic.astro';
+import Button from '../../components/Button.astro';
+import { formatEntryDate } from '../../data/dates';
+import { visibleFilter, sortByPublished, currentSpotlight, newsSchema } from '../../data/news';
+
+const entries = (await getCollection('news', visibleFilter)).sort(sortByPublished);
+const spotlight = currentSpotlight(entries);
+const stream = spotlight ? entries.filter((e) => e.id !== spotlight.id) : entries;
+const origin = new URL(Astro.site!).origin;
+const storyCount = String(entries.length).padStart(2, '0');
+// Build timestamp — daily pipeline pushes mean this refreshes daily; if runs
+// stop, this readout self-discloses the staleness.
+const builtAt = new Date();
+// Desk facts — build-time, honest by construction: the newest visible story's
+// own date, and the day the desk went autonomous (first live sweep).
+const DESK_SINCE = new Date('2026-07-06T12:00:00-04:00');
+const lastStory = entries[0]?.data.publishedAt;
+---
+<MarketingLayout
+  title="AI News"
+  description="The AI developments that matter, summarized with implications — researched, written, and published daily by an autonomous AI pipeline. Every story links to its sources."
+  image="/og/ai-news.png"
+  schema={newsSchema(origin)}
+  rssHref="/ai-news/rss.xml"
+>
+  {/* ── Intro ───────────────────────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran four bands at
+      max-w-4xl, 3xl, 3xl and 4xl — two widths an inch apart — on one ground,
+      with one rhythm, and the spotlight and the stream separated by nothing at
+      all: the spotlight carried no bottom padding, so the strongest story of
+      the window and the list it leads flowed together as one column of cards.
+
+      It now walks feature, popout, popout, content for the column and canvas,
+      canvas, canvas, deep for the ground, with the rhythm running regular,
+      tight, regular, tight under both and a hairline closing the spotlight. The
+      palette does none of the work — a hue is the lightest signal on a page,
+      which is the argument src/components/kit/industrial.js makes under WHY
+      THREE AND NOT SEVEN.
+
+      ── NO STORY CARD GETS A PAINTED GROUND, AND THAT IS A MEASUREMENT ───────
+
+      The stream was built onto `deep` first and verify-bands.mjs failed it: the
+      "Major" tier chip measured 3.71:1 against a 4.5 floor. Chasing that turned
+      up something older and worse. NewsStory.astro sets that chip as an inline
+      literal, `color: var(--color-warn)`, and warn is #9a6b06 — which ON THIS
+      PAGE AS IT SHIPS TODAY, on plain canvas, measures 4.39:1. It is under the
+      floor already and has been, live, with nothing able to see it:
+      check-contrast.mjs reads token pairs somebody declared and an inline style
+      on a component declares no pair, and this page carried no row in
+      verify-bands.mjs at all. Every ground available here makes it worse —
+      surface composites to about 4.1 and deep to 3.71 — so the reshape does not
+      get to spend one on the cards. The chip is a palette question and the
+      palette is locked, so it is reported rather than changed.
+
+      THE SPOTLIGHT BAND COULD NOT HAVE CARRIED ONE EITHER, for a second and
+      independent reason. It renders only when the desk has flagged a story
+      `spotlight` — data/news.ts returns null otherwise — so a ground here would
+      be a band that exists on some days and not others, and the row measuring it
+      would red the build on a day the desk simply flagged nothing. That is a
+      content decision reported as a defect.
+
+      SO THE ONE GROUND GOES TO THE CLOSING ASK, the only band on this page whose
+      every word was written here rather than overnight. It always renders, it
+      carries no chip, and it is what verify-bands.mjs measures.
+
+      THE WEAKEST SEAM IS SPOTLIGHT TO STREAM, named rather than glossed. Both
+      are the same component at the same measure and the ground is spent, so the
+      separation is the rhythm plus a rule — two of the five heavy signals
+      industrial.js names, and both of them more than the nothing that was there.
+
+      NOTHING MOVED AND NOTHING WAS CUT. The readout line, the desk schematic
+      and the fragment-jump script at the foot all sit where they were written,
+      and the script's two measured reasons for existing are untouched.
+      Reshaping is not reordering. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">AI Signal — autonomous news desk</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        The signal, not the noise.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        The AI developments that actually matter — summarized, with what they mean for operators,
+        businesses, and people. Stories rotate on a two-to-three-week window; the strongest story
+        holds the spotlight.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        <span class="font-semibold text-ink">Full disclosure, as a feature:</span> every story on
+        this page was researched, written, fact-gated, and published end-to-end by an AI pipeline
+        I built — no human in the loop. Every story links to its sources.
+        <span class="text-ink">This page is the product demo.</span>
+      </p>
+      {/* Readout line */}
+      <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs tracking-wide text-ink-faint">
+        <span class="mono-label inline-flex items-center gap-2">
+          <span class="status-dot"></span>
+          Autonomous
+        </span>
+        <span aria-hidden="true">·</span>
+        <span>Stories: {storyCount}</span>
+        <span aria-hidden="true">·</span>
+        <span>Window: 14–21 days</span>
+        <span aria-hidden="true">·</span>
+        <span>Desk running since: {formatEntryDate(DESK_SINCE).split(' · ')[0]}</span>
+        {lastStory && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>Last story: {formatEntryDate(lastStory).split(' · ')[0]}</span>
+          </>
+        )}
+        <span aria-hidden="true">·</span>
+        <span>Updated: {formatEntryDate(builtAt)}</span>
+        <span aria-hidden="true">·</span>
+        <a href="/ai-news/rss.xml" class="link-sweep">Feed: RSS →</a>
+        <span aria-hidden="true">·</span>
+        {/* Blog de-listed 2026-08-24 — see SiteHeader for the reason. */}
+      </div>
+
+      {/* The Desk Readout — the pipeline itself, as an instrument panel */}
+      <div class="mt-8">
+        <DeskSchematic />
+      </div>
+  </Section>
+
+  {/* ── Spotlight ──────────────────────────────────────────────────────────
+      The reading column and the shortest rhythm, against the widest band on
+      the page. No ground, and the header above gives two separate reasons.
+
+      IT NOW HAS A BOTTOM EDGE, which is the part a reader will actually feel
+      and the rule that does half the work of separating this band from the
+      list under it. It carried `pt-16 sm:pt-20` and no bottom padding at all,
+      so the one story the page calls strongest ran straight into the rest with
+      nothing between them — not a gap, not a line, nothing. */}
+  {spotlight && (
+    <Section width="popout" density="tight" class="border-b border-line">
+      <p class="mono-label inline-flex items-center gap-2">
+        <span class="status-dot"></span>
+        Spotlight
+      </p>
+      <div class="mt-4">
+        <NewsStory entry={spotlight} featured />
+      </div>
+    </Section>
+  )}
+
+  {/* ── The stream ─────────────────────────────────────────────────────────
+      The standard rhythm returns, at the spotlight's measure deliberately: the
+      card above and every card here are the same component rendering the same
+      shape of story, and moving the column between them would say they are
+      different kinds of thing. The rule at the foot of the band above says
+      what is true instead — one of them was picked out, and these are the rest.
+
+      THE GROUND THAT BELONGS HERE IS THE ONE THIS PAGE CANNOT SPEND. A list
+      this long is what a heavier ground is for, and `deep` was measured on it
+      before it was given up: the "Major" chip came back at 3.71:1. The header
+      above carries the whole reading, including the 4.39:1 the same chip
+      measures on the canvas it is standing on right now. */}
+  <Section width="popout">
+    {/* `space-y-5` MOVED OFF THE SECTION AND ONTO THE STACK ITSELF, and it had
+        to. It used to sit beside `mx-auto max-w-3xl px-6 py-16` on the
+        <section>, where the cards were its direct children. Section.astro puts
+        a centering div between the two, so a class passed through `class`
+        lands on the section and spaces that ONE div against nothing — the
+        cards would have closed up against each other with no error anywhere.
+        One wrapper, one existing utility, no new class. */}
+    <div class="space-y-5">
+      {stream.map((entry) => <NewsStory entry={entry} />)}
+      {entries.length === 0 && (
+        <div class="panel p-8 text-center">
+          <p class="mono-label">No stories in the current window</p>
+          <p class="mx-auto mt-3 max-w-md leading-relaxed text-ink-muted">
+            The desk publishes only when something clears the bar — zero is a valid day. Check back
+            tomorrow.
+          </p>
+        </div>
+      )}
+    </div>
+  </Section>
+
+  {/* ── CTA — the page is the demo ─────────────────────────────────────────
+      THE PAGE'S ONLY PAINTED GROUND, out to a wider column, at the shortest
+      rhythm — three signals against the stream above, and the only band here
+      every word of which was written in this repo rather than overnight. It
+      carries no chip, it renders on every build, and it is the row
+      scripts/verify-bands.mjs stands on for this page.
+
+      The column opening back up is what tells a reader the list has ended. The
+      old band carried `pb-20` and no top padding at all, so it read as the tail
+      of the last story card rather than as the page's own ask. */}
+  <Section tone="deep" width="content" density="tight" class="text-center">
+    <h2 class="font-display text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">
+      This page is the demo.
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      An autonomous pipeline researched, wrote, gated, and shipped everything above — daily,
+      unattended. Want one running on your problem?
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/" variant="primary">Start a project</Button>
+      <Button href="/work/" variant="secondary">See the live tools</Button>
+    </div>
+  </Section>
+
+  {/* Deep-link support for /ai-news/#<story-id> — the links /ai-news/rss.xml
+      hands to feed readers. TWO things break a plain fragment navigation here,
+      and neither shows up in the markup or throws anything:
+
+        1. Every story is a `.reveal` target, so it sits at opacity 0 until
+           BaseLayout's IntersectionObserver catches it. A browser will scroll
+           to a fully transparent element quite happily and the reader still
+           sees a blank screen — so scrolling alone is not enough.
+        2. The native fragment scroll does not survive this page's boot.
+           MEASURED on production 2026-07-28: loading /ai-news/#<valid-id> left
+           scrollY at 0 with the target 1,948px down the page.
+
+      So reveal the target explicitly, then scroll it ourselves. `scrollIntoView`
+      honors the card's `scroll-mt-20`, which is what clears the sticky header.
+      Guarded so a bad or stale fragment (stories expire) is simply ignored and
+      the visitor lands on the page as normal. */}
+  <script is:inline>
+    (function () {
+      var jump = function () {
+        try {
+          var id = decodeURIComponent(location.hash.slice(1));
+          if (!id) return;
+          var el = document.getElementById(id);
+          if (!el) return;
+          el.classList.add('is-visible');
+          el.scrollIntoView({ behavior: 'instant', block: 'start' });
+        } catch (e) {}
+      };
+      if (location.hash) {
+        if (document.readyState === 'complete') jump();
+        else window.addEventListener('load', jump);
+      }
+      window.addEventListener('hashchange', jump);
+    })();
+  </script>
+</MarketingLayout>

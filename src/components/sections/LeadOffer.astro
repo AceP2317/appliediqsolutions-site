@@ -1,0 +1,88 @@
+---
+/**
+ * LeadOffer — THE TOOLS BAND. It sells the finished shelf: the derived count,
+ * a door to /tools/, and since D113 the ask that turns an opened tool into a
+ * conversation.
+ *
+ * THE NAME IS THE OLD OCCUPANT'S. This was the Review Autopilot band until
+ * 2026-08-25, when that product's category closed and the band was rewritten in
+ * place. home.ts's THE EXPORT NAME STAYS comment says why it kept its name —
+ * renaming it touched four files for no behavior change — and that was the
+ * right call for the code and the wrong one for a READER, which this docblock
+ * proved by describing Review Autopilot for two weeks after the swap. On
+ * 2026-09-08 a layout assessment read the component names off index.astro,
+ * called this band "the three founding builds", and built a whole argument on
+ * it. Run `node scripts/print-home-order.mjs` and quote what it prints.
+ *
+ * ── WHAT D113 CHANGED ───────────────────────────────────────────────────────
+ *
+ * THE SCREENSHOT IS PHONE-ONLY HERE, because the Opener carries it on desktop.
+ * Between the two it renders exactly once at every width, which is the thing to
+ * check if either is ever edited: two copies on one screen is the failure, and
+ * it looks like a design choice rather than a bug.
+ *
+ * THE ASK IS THE POINT OF THE CHANGE. "Save what is on this screen" has been on
+ * every shelf tool since D58 and no page has ever asked anybody to use it, while
+ * every proof surface on the site ended at "Start with a free conversation" — a
+ * phone call with a stranger, at the moment of highest intent. It sits inside
+ * this band rather than in one of its own, which is what lets the page gain a
+ * step without gaining a section.
+ */
+import Section from '../Section.astro';
+import Button from '../Button.astro';
+import { versioned } from '../../data/asset-version';
+import { leadOffer } from '../../data/home';
+
+/* The emphasized phrase is the button's own label, so the sentence and the
+   control a visitor is being sent to look for cannot drift apart. */
+const [askBefore, askAfter] = leadOffer.ask.body.split(leadOffer.ask.emphasis);
+---
+<Section id="tools-band" tone="surface">
+  <p class="mono-label inline-flex items-center gap-2">
+    <span class="status-dot"></span>
+    {leadOffer.eyebrow}
+  </p>
+  <h2 class="mt-4 font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+    {leadOffer.name}
+  </h2>
+  <p class="mt-3 text-xl leading-relaxed">
+    <span class="aiq-accent">{leadOffer.tagline}</span>
+  </p>
+  <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+    {leadOffer.body}
+  </p>
+
+  {/* Phone only — the Opener has this on desktop. */}
+  <a href={leadOffer.cta.href} class="mt-8 block lg:hidden">
+    <img
+      src={versioned(leadOffer.shot)}
+      width="1200"
+      height="630"
+      loading="lazy"
+      decoding="async"
+      alt={leadOffer.shotAlt}
+      class="w-full rounded-xl border border-line shadow-2xl shadow-black/30"
+    />
+  </a>
+
+  <dl class="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+    {leadOffer.facts.map((f) => (
+      <div class="flex flex-col gap-1">
+        <dd class="font-display text-2xl font-semibold text-ink">{f.v}</dd>
+        <dt class="mono-label text-ink-faint">{f.k}</dt>
+      </div>
+    ))}
+  </dl>
+
+  <div class="ask">
+    <strong>{leadOffer.ask.title}</strong>
+    {askBefore}<em>{leadOffer.ask.emphasis}</em>{askAfter}
+  </div>
+
+  <div class="mt-7 flex flex-wrap items-center gap-3">
+    <Button href={leadOffer.cta.href} variant="primary">{leadOffer.cta.label}</Button>
+    <a href={leadOffer.ask.cta.href} class="link-sweep text-sm font-medium text-cyan-deep">
+      {leadOffer.ask.cta.label} →
+    </a>
+  </div>
+</Section>

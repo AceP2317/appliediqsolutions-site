@@ -1,0 +1,50 @@
+---
+/**
+ * ProofBar — the strip of career statistics.
+ *
+ * UNWIRED FROM THE HOME PAGE ON 2026-09-11 AND IMPORTED BY NOTHING TODAY.
+ * The operator cut it, and it was the easiest of the three cuts offered to him:
+ * it was the page's third section, it carried NO HEADING AT ALL, and it was the
+ * one section whose purpose a reader could not work out from the page.
+ *
+ * UNWIRED RATHER THAN DELETED, because he cut a section from a page, which is not
+ * the same decision as deleting copy. THIS IS NOW THE ONLY ONE LEFT IN THAT STATE:
+ * Offers.astro was in it too and was resolved on 2026-09-11 — its career lines moved
+ * to /services/ and /websites/ and the file was deleted. Nobody has ruled on this
+ * one. Nothing gates its copy while it renders nowhere, so treat any figure in
+ * `proofStats` as unverified against today. The open question is in PICKUP.md.
+ *
+ * ONE FIGURE HERE HAS A HISTORY WORTH KEEPING. src/data/home.ts records the
+ * "100% owned & deployed" stat being deleted because D33's sweep found ownership
+ * already published by named competitors in these counties, and
+ * src/data/what-you-get.js quotes that reasoning as the rule every sentence on
+ * the printed comparison sheet obeys. That quote now points at a comment beside
+ * data nothing renders; the rule it states is unaffected.
+ */
+import Section from '../Section.astro';
+import Stat from '../Stat.astro';
+import { proofStats, proofHead } from '../../data/home';
+---
+<Section tone="surface">
+  {/* Copy lives in home.ts, per that file's own contract. proofStats[0] is
+      welded to the flagship staying OUT of demos.ts: the tool count and the
+      "open any one in your browser" claim are one unit, and folding
+      Confirmation Outlook into the count makes one of them false. */}
+  <p class="text-sm font-medium text-ink-muted sm:text-base">
+    {proofHead.lede}
+  </p>
+  <p class="mt-4 max-w-2xl font-display text-xl font-medium leading-snug text-ink sm:text-2xl">
+    {proofHead.claim}
+  </p>
+
+  {/* One column on phones, not two. At 390px a 2-col grid gives each stat a
+      155px column, and the captions below wrapped to 15+ ragged lines each.
+      Full-width single column is both readable AND shorter. */}
+  <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-4">
+    {proofStats.map((s) => (
+      <Stat value={s.value} label={s.label} caption={s.caption} valueClass={s.valueClass} link={s.link} />
+    ))}
+  </div>
+
+  {/* SLOT: when a client consents to be named, a logo / named-client row goes here. */}
+</Section>

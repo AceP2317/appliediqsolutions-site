@@ -1,0 +1,24 @@
+---
+/* THE FACES THIS TOOL'S FACEPLATE ASKS FOR. Inter, Fraunces and Plex Mono come
+   site-wide from BaseLayout; everything else is a per-route import, so a tool
+   only pays for what it uses. Rubik is BOTH the display and the reading face
+   here — see src/components/kit/themes.js — so this route loads one family and
+   the figure face is already on the page. */
+import '@fontsource-variable/rubik';
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import DrawSchedule from '../../components/demos/draw-schedule.jsx';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'draw-schedule')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} instrument={demo.instrument} tagline={demo.tagline} problem={demo.problem} does={demo.blurb} plain={demo.plain} />
+  <DrawSchedule client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </DrawSchedule>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

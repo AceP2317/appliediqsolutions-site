@@ -1,0 +1,311 @@
+---
+/**
+ * /websites/ — the website build. THE THIRD PAID THING ON THIS SITE, and the
+ * first page that argues against the thing most visitors are already using.
+ *
+ * WHY IT EXISTS AT ALL, WHICH IS A REVERSAL. D55 (2026-08-30) decided the
+ * website starting figure stays on client paper, and answered the anchor problem
+ * with one sentence on /services/ and /main-street/: a site "carries its own
+ * number, scoped and quoted before anything starts". That sentence is true and
+ * it leaves a reader knowing only that a site costs more than the build floor. Somebody
+ * comparing three quotes reads that as evasion, and the floor beside it — sized
+ * for a fitted shelf tool — is the number they carry away instead.
+ *
+ * IT CLEARS THE THIRD-NUMBER TEST WRITTEN INTO src/lib/pricing.js, which allows
+ * one only for a product a visitor could buy without buying either of the
+ * others. A business can buy a site without buying a shelf tool or an
+ * assessment, and most of them arrive wanting exactly that.
+ *
+ * THE PRICE AND ITS QUALIFIER ARE ONE OBJECT and the qualifier here is longer
+ * than the other two on purpose. The entire argument for the website floor over
+ * a monthly subscription is the six things it buys, so a page showing the
+ * figure without them has published the objection and withheld the answer.
+ *
+ * THE COMPARISON NAMES COMPANIES, AND EVERY LEFT-HAND CLAIM IS REGISTERED.
+ * `wix-no-site-export`, `squarespace-lapse-window` and `godaddy-ai-credits`
+ * live in src/data/external-claims.js — they age, they warn, and either a person
+ * or a browser run re-reads them. They cannot be probed: REACHABLE_HOSTS
+ * defaults to no, and a green tick beside a competitor's terms would be the same
+ * failure wearing a check mark.
+ *
+ * THE THIRD ONE USED TO BE `godaddy-no-app-market` AND IT WENT FALSE. GoDaddy
+ * retired Websites + Marketing for an AI builder that advertises code export, so
+ * a line on this page named a product nobody sells. It was the one claim of the
+ * three sourced from a review site rather than the vendor, and its own note said
+ * to confirm against GoDaddy's own pages before leaning harder on it. The
+ * replacement was read off GoDaddy's plans table in a browser on 2026-09-10.
+ *
+ * THE FOUR ROWS ARE THE DOOR, NOT THE ARGUMENT. /websites/compare/ carries all
+ * nine options a local business actually has, including the two that are free
+ * and the one that hands over source code — none of which four rows can hold.
+ *
+ * ONE ARGUMENT IS REFUSED ON EVIDENCE AND MUST STAY REFUSED. Builder sites are
+ * not slow — default-template mobile Core Web Vitals pass rates measured
+ * 2026-09-03 run Wix 80.7%, Squarespace 70.2%, WordPress 49.3%. A speed claim
+ * would be disprovable by any prospect with a free testing tool.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import { websitePrice, startingPrice } from '../data/services';
+import { websiteComparison } from '../data/home';
+import { WEBSITE_USD } from '../lib/pricing.js';
+/* THE SIX THINGS MOVED TO src/data/website-scope.js ON 2026-09-10 and this
+   page now reads them rather than owning them. They still come straight off
+   §1.1–§1.6 of docs/engagement/agreements/website-build-scope.md, and the
+   scope is still the argument for the number. What changed is who else can
+   see them: the printed comparison sheet is rendered by a Node script, which
+   cannot read an .astro file at all, so the one document whose job is arguing
+   what the figure buys had to answer it in a single borrowed sentence on its
+   last page. */
+import { included, countWord as scopeCountWord, forgottenWord } from '../data/website-scope.js';
+import { Check, X, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/websites/#service`,
+    name: 'Website build',
+    serviceType: 'Custom website design and development',
+    provider: { '@id': `${origin}/#organization` },
+    areaServed: 'US',
+    description:
+      'A website you own outright — your accounts, your domain, working email, a search listing, the two policy pages, and one working tool built into the site.',
+    offers: {
+      '@type': 'Offer',
+      price: WEBSITE_USD,
+      priceCurrency: 'USD',
+      description: websitePrice.qualifier,
+    },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: `${origin}/services/` },
+      { '@type': 'ListItem', position: 3, name: 'Websites', item: `${origin}/websites/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="A website you own"
+  description="A real website in your own accounts, not rented from a platform: working email, your search listing, the two policy pages the law requires, and one tool of your own built in."
+  image="/og/websites.png"
+>
+  {/* ── Hero. The figure and its qualifier are one block, never a screen apart.
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran four bands, three
+      of them at max-w-5xl or 6xl on canvas with one rhythm, and the only ground
+      it ever changed was the one under the comparison. A long argument read as
+      one column that would not stop.
+
+      It now walks feature, content, content, popout, and canvas, surface, deep,
+      canvas over the top of that — so no two neighbors share more than one heavy
+      signal, and the column narrows as the page moves from the claim to the
+      argument to the qualification. The palette does none of the work.
+
+      THE FIGURE AND ITS QUALIFIER STILL SIT IN ONE PANEL, which is the one thing
+      on this page shape may not touch: npm run verify:website measures the
+      rendered characters between them and refuses a gap of 400. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">A site in your name · yours outright · from {websitePrice.amount}</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        Renting a website is cheap. Here is what it <span class="aiq-accent">actually costs</span>.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        The monthly ones are genuinely cheap and they genuinely work. What is never on the pricing
+        page is what happens the day you want to leave, and on most of them the answer is that you
+        cannot — not with your pages, anyway.
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        This is the other option. It costs more once and nothing after that, and at the end of it you
+        are holding the thing rather than borrowing it.
+      </p>
+      {/* WHO IT IS FOR, NAMED. Moved here on 2026-09-11 from the home page's
+          three-shapes section, which the operator cut. The sentence was the
+          `instance` line on its website card — one real reader rather than a
+          category — and this page argued renting against owning at length while
+          never once saying whose problem that is. It had no home among the five
+          build shapes on /services/, because having no website is not a size of
+          build; it is the subject of this page. */}
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-faint">
+        <span class="text-accent">→</span> For a business running on a Facebook page and a phone
+        number.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Built in New Bern, North Carolina. A business in Craven County gets the kickoff in person;
+        anywhere else gets the same build over video, on the same terms.
+      </p>
+
+      <div class="panel mt-8 max-w-2xl p-6">
+        <p class="font-display text-2xl font-semibold text-ink">{websitePrice.line}</p>
+        <p class="mt-2 leading-relaxed text-ink-muted">{websitePrice.qualifier}</p>
+        <p class="mt-3 text-sm leading-relaxed text-ink-faint">
+          It is a floor because I quote the job rather than the category. I would rather be honest
+          about where it starts than advertise a number I cannot hold.
+        </p>
+      </div>
+
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=quote" class="btn btn-primary">Ask what yours would cost →</a>
+        <a href="/main-street/" class="btn btn-secondary">Three of these are free right now</a>
+      </div>
+  </Section>
+
+  {/* ── What the number buys. This section IS the justification for the figure.
+      The surface ground and the narrower column are both against the hero: the
+      claim gets the wide measure, the six things that earn it get a reading
+      column and a ground of their own. */}
+  <Section tone="surface" width="content">
+    <p class="mono-label">What the number buys</p>
+    {/* BOTH NUMBERS ARE DERIVED, 2026-09-13, AND THIS LINE IS WHY. It read
+        "Six things, and five of them are the ones people forget." above a grid
+        rendering SEVEN, because §1.7 was added to the signed scope on 09-11 and
+        the sentence was not. website-scope.js's own header had already banned
+        typing the count and said to derive it — and the count stayed typed here
+        anyway. A sentence carrying the number twice has two chances to drift. */}
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-[-0.03em] text-ink">
+      {scopeCountWord({ capital: true })} things, and {forgottenWord()} of them are the ones people forget.
+    </h2>
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      Most quotes for a website cover the pages and stop there. Then the mail goes to junk, nobody
+      can find you, and there is no policy page the day a form starts collecting names.
+    </p>
+    {/* THE DIRECTIONS STEP REACHES THE SITE, 2026-09-13, on the operator's call
+        — it has been owed by §1.1 of both website Scopes since 09-13 and was
+        sold nowhere.
+
+        HIS WORDS, AND THE EDIT HE MADE TO MINE IS A SCOPE BOUNDARY RATHER THAN
+        A PREFERENCE. My draft said the directions carry "your own words in
+        them". He struck it: the pack is for design and feel, and the client's
+        copy stays the client's responsibility rather than his debt. Both Scopes
+        already draw that line — each direction "carries the same words as the
+        others, so the only thing changing between them is the design", and copy
+        is "Text placed from the words Client supplies". The draft sentence was
+        the only place that drifted, and it never shipped.
+
+        DO NOT ADD A NUMBER HERE. §1.1 says how many directions there are
+        "depends on how much about Client's look is still open", so any count in
+        this paragraph would be a promise the Scope deliberately declines. */}
+    <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+      You see the look before I build it. Several complete designs and you pick one. Not a mood
+      board and not a template — finished pages you can click, so the choice is made on the real
+      thing rather than on a description of it.
+    </p>
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {included.map((s) => (
+        <div class="panel lift flex flex-col gap-3 p-6">
+          <span class="mono-label">{s.n}</span>
+          <h3 class="font-display text-lg font-semibold leading-snug text-ink">{s.t}</h3>
+          <p class="text-sm leading-relaxed text-ink-muted">{s.b}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  {/* ── The comparison. Every left-hand line is a registered, dated claim. ───
+      IT WAS ALREADY THE ONE BAND ON THE PAGE THAT PAINTED ITS OWN GROUND, and
+      it drops a step further to the deep one, with the rhythm opening up around
+      it. That is the page stopping to make its case rather than carrying on.
+      `deep` and not `instrument`: the right-hand panel carries border-accent/40,
+      a literal sized for a light ground that no band can remap — the same
+      reading src/pages/work/index.astro wrote down when it declined the dark
+      chassis for its flagship panel. */}
+  <Section tone="deep" density="tall">
+      <p class="mono-label">The difference</p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+        The question is not what it costs. It is what you are holding at the end.
+      </h2>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-2">
+        <div class="panel lift spotlight p-7">
+          <p class="mono-label">{websiteComparison.left.title}</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {websiteComparison.left.items.map((item) => (
+              <li class="flex items-start gap-3 text-ink-muted">
+                <X size={18} class="mt-0.5 shrink-0 text-down" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="panel lift spotlight border-accent/40 p-7">
+          <p class="mono-label text-cyan-deep">{websiteComparison.right.title}</p>
+          <ul class="mt-5 flex flex-col gap-3">
+            {websiteComparison.right.items.map((item) => (
+              <li class="flex items-start gap-3 text-ink">
+                <Check size={18} class="mt-0.5 shrink-0 text-up" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <p class="mt-6 max-w-3xl text-sm leading-relaxed text-ink-faint">
+        Every line on the left was read off those companies' own help and pricing pages, the first
+        three on 3 September 2026 and the GoDaddy one on 10 September 2026 when the product it named
+        was retired. Terms change, so if you are weighing this up, go and check them again rather
+        than taking my word for it.
+      </p>
+      {/* THE DOOR INTO THE FULL FIELD. Four rows argue against a template
+          subscription and are accurate about that; they miss the two free
+          options and the one that hands over source code entirely. */}
+      <div class="mt-7">
+        <a href="/websites/compare/" class="btn btn-secondary">
+          Every option side by side, including where they beat me
+          <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+      </div>
+  </Section>
+
+  {/* ── What this is not. The /check/ and /ai-fit/ pattern. ──────────────────
+      Back to canvas, into the narrowest column on the page, and tight. Three
+      signals at once is deliberate here: this is the page talking a reader OUT
+      of the thing it has just spent two bands arguing for, and it should not
+      look like more of the argument. */}
+  <Section width="popout" density="tight">
+    <p class="mono-label">What this is not</p>
+    <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
+      Not a reason to leave something that is working.
+    </h2>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      If you have a site you like, people find it when they search for you, and your mail arrives —
+      then you do not need me, and I will say so on the call. The businesses this is for are running
+      on a Facebook page, on nothing at all, or on a subscription they resent and cannot leave.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      It is also not a claim that those platforms are badly built, because they are not. What they
+      will not do is hand you the thing, and they have nowhere to put the one piece of software your
+      business actually runs on — which is the part you cannot buy monthly at any price.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-muted">
+      And it is not the only number here. A tool on its own is a smaller job and a smaller number:
+      {' '}{startingPrice.line.toLowerCase()} {startingPrice.qualifier}
+    </p>
+
+    <div class="mt-10 border-t border-line pt-10">
+      <p class="mono-label">Not sure a site is the thing you need</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
+        Then buy the answer before you buy the build.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        The AI Fit Assessment is a read of how your work actually runs — on video, or in your
+        business — and a written list of what is worth building with a price beside each line. If a
+        website is not the first thing on that list, it will say so, and part of the fee comes off
+        whatever you do build.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=quote" class="btn btn-primary">
+          Ask what yours would cost <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+        <a href="/ai-fit/" class="btn btn-secondary">Read about the assessment</a>
+      </div>
+    </div>
+  </Section>
+</MarketingLayout>

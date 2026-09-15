@@ -1,0 +1,97 @@
+---
+/**
+ * Section — vertical rhythm, optional band background, the scroll-reveal hook,
+ * and since D113 the WIDTH a band occupies.
+ *
+ * ── WHY WIDTH IS A PROP NOW ──────────────────────────────────────────────────
+ *
+ * Until 2026-09-12 this component painted `max-w-6xl` for every caller and
+ * offered `tone` as the only variation — two background values. That is why
+ * consecutive sections looked like the same band repeated, which is the
+ * complaint the operator made on 2026-09-11 and D102 ruled on.
+ *
+ * The fix is not a new color. `src/components/kit/industrial.js`, under its
+ * WHY THREE AND NOT SEVEN paragraph, already records this repo solving the same
+ * problem once: nine tools distinguished by accent hue read as "still copies of
+ * one thing with the color changed", and what fixed it was varying GROUND
+ * LIGHTNESS, GROUND WARMTH, TYPE PAIRING, DENSITY and RULE WEIGHT, because
+ * "a hue is the lightest signal on a page". Width is the cheapest of the heavy
+ * signals and it costs no palette at all.
+ *
+ * ── `content` IS TODAY'S WIDTH, EXACTLY, AND THAT IS DELIBERATE ──────────────
+ *
+ * Every existing caller passes no `width`, so every existing caller keeps
+ * `max-w-6xl` to the pixel. This prop is opt-in: a page changes shape only when
+ * somebody asks it to. The alternative — making `content` narrower because it
+ * reads better — would have silently re-laid out every marketing page in the
+ * repo from one edit, which is the kind of change that is impossible to review.
+ *
+ * ── DENSITY IS SEPARATE FROM WIDTH ──────────────────────────────────────────
+ *
+ * `density` moves the vertical padding only. The operator was offered section
+ * SPACING as a fourth complaint on 2026-09-11 and ruled it fine, so the default
+ * does not move; `tight` and `tall` exist for bands that earn them, and a band
+ * that uses one is making a deliberate claim rather than inheriting a default.
+ */
+interface Props {
+  id?: string;
+  tone?: 'canvas' | 'surface' | 'deep' | 'instrument';
+  /** How wide the content column runs. Omit for today's width. */
+  width?: 'content' | 'popout' | 'feature' | 'full';
+  /** Vertical rhythm. Omit for the standard rhythm, which is not to be changed. */
+  density?: 'tight' | 'regular' | 'tall';
+  /** Inline custom properties, for a tone whose values live in another module.
+      `tone="instrument"` needs this: its colors are read from industrial.js
+      rather than declared here, so they arrive as --ins-* on this element. */
+  style?: string;
+  class?: string;
+}
+const {
+  id,
+  tone = 'canvas',
+  width = 'content',
+  density = 'regular',
+  style,
+  class: className = '',
+} = Astro.props;
+
+/* `content` must resolve to what every page already renders. */
+const widths = {
+  content: 'max-w-6xl',
+  popout: 'max-w-3xl',
+  feature: 'max-w-[84rem]',
+  full: 'max-w-none',
+} as const;
+
+const tones = {
+  canvas: '',
+  surface: 'section-band',
+  deep: 'section-deep',
+  instrument: 'section-instrument',
+} as const;
+
+const densities = {
+  tight: 'section-tight',
+  regular: '',
+  tall: 'section-tall',
+} as const;
+
+// A full-bleed decorative backdrop (e.g. a ConfluenceBackdrop well) can be slotted in
+// via the `backdrop` named slot; it sits behind the centered content column.
+const hasBackdrop = Astro.slots.has('backdrop');
+---
+<section
+  id={id}
+  style={style}
+  class:list={[
+    'section', 'reveal', 'scroll-mt-20',
+    tones[tone], densities[density],
+    hasBackdrop && 'relative overflow-hidden',
+    className,
+  ]}
+>
+  {hasBackdrop && <slot name="backdrop" />}
+  <div class:list={['relative mx-auto px-6', widths[width]]}>
+    <slot />
+  </div>
+</section>
