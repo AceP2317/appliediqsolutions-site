@@ -1,0 +1,217 @@
+---
+/**
+ * /supply-chain/ — the manufacturer door. Published 2026-09-11 as a page selling
+ * three audits with the seven demos shown underneath as proof; rebuilt 2026-09-20
+ * as the page that SELLS the seven factory tools (D118, Phase 6).
+ *
+ * D29 DEFERRED THIS IN ITS OWN WORDS — "secondary, or a later venture as the
+ * practice grows" — and D118 ended the deferral outright: the manufacturer is one
+ * of the three doors on the home page, and this is what is behind it.
+ *
+ * THE TOOLS ARE THE PRODUCT, AND AN AUDIT IS A TOOL RUN ONCE. The operator
+ * reversed the old shape on 2026-09-20: each tool is built to order for one plant
+ * on its own extract, or run once for the written answer it produces, and the two
+ * audits that remain each name the tool behind them. The change-order cutover
+ * audit left because no tool stands behind it, and an audit with no tool behind
+ * it is a day of hand work sold as a product.
+ *
+ * THE FLOOR PER PLANT IS PUBLISHED (Phase 7 of D118), from src/lib/pricing.js
+ * through `industrialPrice`, with its fourth-product test written beside the
+ * constant and a render counter in check-dist.mjs. It is painted once here, in
+ * the terms panel, beside its qualifier; a hand-typed copy anywhere is what
+ * `npm run gate` refuses.
+ *
+ * FIXED PRICE PER PLANT, NEVER A DAY RATE, AND THE REASON IS ARITHMETIC. Day-rate
+ * work in this field is weekday-business-hours work, and src/lib/consult-hours.js
+ * publishes weekday evenings and weekend mornings — none of it inside a business
+ * day. A day rate would be selling hours that do not exist, and the page says so
+ * to the reader rather than only to the next editor.
+ *
+ * THE EMPLOYER IS NEVER NAMED AND NEITHER IS ANY PLANT. D1 and D8 hold without
+ * exception. scripts/verify-industrial.mjs reads this page's RENDERED text for
+ * stray plant codes since Phase 6, with P10 planted into <main> as its control —
+ * the sentence here claimed that before it was true, and the gate only opened
+ * /work/<slug>/. So no string on this page or in `supplyChain` carries a bare
+ * four-digit number.
+ *
+ * THE LIST IS DERIVED, NEVER TYPED (D22). The tools are read out of workGroups by
+ * band, the same filter /work/ and /llms.txt use, so a group joining the scale
+ * band joins this page for free.
+ *
+ * NO PAY BUTTON AND NO BOOKING LINK. This starts with somebody describing a number
+ * they do not trust, which is a conversation rather than a checkout.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import { supplyChain, industrialPrice } from '../data/services';
+import { countWord } from '../lib/count-words.js';
+import { priorTradeCountWord } from '../lib/trades.js';
+import { workGroups, demos } from '../data/demos';
+import { Boxes, Ruler, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+/* DERIVED, NEVER TYPED — the same filter /work/index.astro and /llms.txt.ts use. */
+const scaleGroups = workGroups.filter((g) => g.band === 'scale');
+const scaleCount = scaleGroups.reduce((n, g) => n + g.slugs.length, 0);
+const bySlug = new Map(demos.map((d) => [d.slug, d]));
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/supply-chain/#service`,
+    name: 'Factory planning tools for manufacturers, built to order per plant',
+    serviceType: 'Supply chain software',
+    provider: { '@id': `${origin}/#business` },
+    description:
+      'Planning, inbound and master-data tools built to order for one plant on its own extract, or run once for the written answer. Quoted per plant, agreed before anything starts.',
+  },
+];
+---
+
+<MarketingLayout
+  title="Numbers your planning system is sure about"
+  description="Factory planning tools for manufacturers, built to order for one plant on its own extract or run once for the answer. Open each one first, on invented data; quoted per plant."
+  schema={schema}
+>
+  {/* ── Hero ──────────────────────────────────────────────────────────────
+      The widest measure on the page for the claim, and the same shape D113
+      gave every hero on the site. What follows walks content, popout, popout
+      for the column and surface, canvas, deep for the ground, with the rhythm
+      tightening under the run-once band — no two neighbors share more than one
+      heavy signal, and the palette does none of the work. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">For manufacturers · built to order per plant · never a day rate</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        The numbers your planning system is sure about.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        {supplyChain.whoItIsFor}
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        I have spent the last few years on a planning floor, and before that in operations in {priorTradeCountWord()}
+        other industries. The tools below are the work I do on a weekday: not advice about it.
+      </p>
+
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        {/* `btn` CARRIES THE SHAPE AND `btn-primary` ONLY THE PAINT — the
+            strongest call to action on this page once shipped without the
+            first of them and painted a hard-edged rectangle. Same defect, same
+            repair, as /quoted/ on 2026-09-13. `quote` is the intent because a
+            manufacturer arriving here is pricing work. */}
+        <a class="btn btn-primary" href="/contact/?intent=quote">
+          Tell me which number you do not trust <ArrowUpRight class="size-4" />
+        </a>
+        <a class="link-sweep text-sm" href="#tools">Or open one first →</a>
+      </div>
+  </Section>
+
+  {/* ── The tools, which are the product ────────────────────────────────────
+      The surface ground and the reading column against the hero's canvas and
+      widest measure. The count derives; the cards read the same fields /work/
+      renders, so a tool cannot look like two products on two pages. */}
+  <Section id="tools" tone="surface" width="content">
+      <p class="mono-label">What you can buy</p>
+      <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+        {countWord(scaleCount, { capital: true })} factory tools, each built to order.
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">{supplyChain.own}</p>
+      <p class="mt-3 max-w-2xl leading-relaxed text-ink-muted">
+        Each runs here on invented data from a fictional manufacturer, with nothing to install and no
+        account to make. Open it first; the arithmetic in it is the arithmetic that would run on yours.
+      </p>
+
+      {scaleGroups.map((g) => (
+        <div class="mt-9">
+          <p class="mono-label text-cyan-deep">{g.label}</p>
+          <div class="mt-3 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {g.slugs.map((slug) => {
+              const d = bySlug.get(slug);
+              return d ? (
+                <a href={`/work/${slug}/`} class="panel lift flex flex-col gap-2 p-5">
+                  <h3 class="font-display text-base font-semibold text-ink">{d.name}</h3>
+                  <p class="text-sm leading-relaxed text-ink-muted">{d.blurb}</p>
+                  <span class="link-sweep mt-1 text-sm">Open it →</span>
+                </a>
+              ) : null;
+            })}
+          </div>
+        </div>
+      ))}
+  </Section>
+
+  {/* ── Or run once ──────────────────────────────────────────────────────────
+      Back to canvas and in to the reading column, tight under the grid. Each
+      audit names the tool behind it, because an audit with no tool behind it is
+      the shape D118 cut. */}
+  <Section width="popout" density="tight">
+      <p class="mono-label">Or run once</p>
+      <h2 class="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+        The answer, without the tool.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">{supplyChain.once}</p>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        {supplyChain.audits.map((a) => {
+          const tool = bySlug.get(a.slug);
+          return (
+            <div class="panel flex flex-col gap-3 p-6">
+              <span class="grid h-11 w-11 place-items-center rounded-lg border border-line bg-canvas text-accent-2">
+                <Ruler size={20} aria-hidden="true" />
+              </span>
+              <h3 class="font-display text-lg font-semibold text-ink">{a.title}</h3>
+              <p class="text-sm leading-relaxed text-ink-muted">{a.body}</p>
+              {tool && (
+                <p class="text-sm text-ink-faint">
+                  The tool behind it: <a href={`/work/${a.slug}/`} class="link-sweep text-ink-muted">{tool.name}</a>
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+  </Section>
+
+  {/* ── How it is sold, and the refusal ─────────────────────────────────────
+      THE DEEP GROUND IS SPENT HERE ON PURPOSE, and it is the heaviest signal
+      this page has. This is the only band that states terms rather than
+      offering something — the fixed price per plant, the reason there is no
+      day rate, and the refusal to take this work from appliance manufacturers
+      — so the page stopping is what the ground should say. `deep` and not
+      `instrument`: both panels are sized for a light ground. Phase 7 puts the
+      floor and its qualifier into the first panel, in one box. */}
+  <Section tone="deep" width="popout">
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <Boxes class="size-5 text-accent" />
+          <span class="mono-label">How it is priced</span>
+        </div>
+        {/* THE FIGURE AND ITS QUALIFIER IN ONE BOX (Phase 7 of D118), and
+            verify-industrial.mjs requires them painted within 400 characters
+            of each other here, for the reason verify-website.mjs states. */}
+        <p class="font-display text-lg font-semibold leading-snug text-ink">{industrialPrice.line}</p>
+        <p class="text-sm leading-relaxed text-ink-muted">{industrialPrice.qualifier}</p>
+        <p class="text-sm leading-relaxed text-ink-muted">{supplyChain.howItIsSold}</p>
+      </div>
+
+      <div class="panel flex flex-col gap-3 p-7">
+        <div class="flex items-center gap-3">
+          <Ruler class="size-5 text-secondary" />
+          <span class="mono-label">What is never sold</span>
+        </div>
+        <p class="font-display text-lg font-semibold leading-snug text-ink">
+          Nothing built before it is bought.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-muted">
+          No tool here is built speculatively for a plant that has not asked for it, no license is
+          sold, and the demo you can open is the demo: yours runs on your extract and nobody else's.
+        </p>
+        <p class="text-sm leading-relaxed text-ink-faint">{supplyChain.conflictRule}</p>
+      </div>
+    </div>
+  </Section>
+</MarketingLayout>

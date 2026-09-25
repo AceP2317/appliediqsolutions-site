@@ -1,0 +1,96 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import { homeSchema } from '../data/demos';
+import Opener from '../components/sections/Opener.astro';
+import Door from '../components/sections/Door.astro';
+import Cta from '../components/sections/Cta.astro';
+import { doors, leadOffer } from '../data/home';
+import { websitePrice, industrialPrice } from '../data/services';
+
+const origin = new URL(Astro.site!).origin;
+---
+<MarketingLayout
+  title="AppliedIQ Solutions"
+  description="Custom software you own: a real website, finished tools for a local business on Main Street, and factory tools built to order for a manufacturer. Yours to own, not rented."
+  schema={homeSchema(origin)}
+>
+  {/* THE PITCH, not a navigation hub (D29), AND SINCE D118 THE PITCH IS THREE
+      DOORS. The operator's words on 2026-09-20: "streamline my site and
+      eliminate all of the overwhelming noise", focusing on websites, local
+      small business and industrial tools. Seven bands became four: the opener,
+      then one door per offer, then the closing call. Nothing opens on this page
+      itself; the shelf, the free check and the founding offer are one click
+      away on Main Street, under the local door.
+
+      ── THE SHAPE IS HIS PICK, 2026-09-20 ─────────────────────────────────────
+
+      He chose arrangement 1 of a three-way shape pack — "doors stacked; Main
+      Street opens on the founding offer" — over a one-row trio (which reads as
+      a menu, the thing the last home page was cut for) and a local door
+      carrying the whole shelf (which grows with it, the length the last home
+      page was also cut for). Sign-off: ~/.claude/.shape-signed/. His rider, in
+      his words: "I don't want to lose the elegance and the twin river theme of
+      my existing site design/theme." So the oyster ground, the crape-myrtle
+      accent, Fraunces, the restraint and the two-currents backdrop are exactly
+      what they were. Arrangement changed; theme did not.
+
+      ── THE THREE GROUNDS ARE THE ARGUMENT, not decoration (D113's rule) ──────
+
+        Opener        canvas · widest column · display XL · loose
+        Websites      SURFACE · content · the figure and its qualifier in one box
+        Main Street   DEEP · popout · tight · the 3px rule · the phone-only shot
+        Manufacturers INSTRUMENT · feature · the dark chassis the demos run on
+        Cta           canvas · centered · narrow
+
+      Every neighbor pair differs on at least two of ground, column and density,
+      which is the fix src/components/kit/industrial.js records under WHY THREE
+      AND NOT SEVEN: a hue is the lightest signal on a page, so the doors are
+      told apart by ground lightness, column and rhythm rather than by color.
+
+      THE LOCAL DOOR'S PORTAL TILE LEFT THE OPENER. It was the geographic door
+      while the home page had no local band; a tile and a full band saying the
+      same sentence on one screen is the redundancy D102 cuts.
+
+      WHAT LEFT WITH D118: the tools band (now on Main Street), the free-check
+      ledger (Main Street), the objection (on /websites/ since Phase 3), the
+      assessment band (Main Street), the proof-at-scale grid and the doorway it
+      carried. Breadth.astro stays for /bio/.
+
+      NO SECTION COUNT IS WRITTEN HERE. `node scripts/print-home-order.mjs`
+      prints what the built page actually paints, heading by heading.
+
+      Copy lives in src/data/home.ts; the figure comes from services.ts. */}
+  <Opener />
+
+  {/* THE FIGURE AND ITS QUALIFIER IN ONE BOX, and verify-website.mjs measures
+      them painted within 400 characters of each other on this page too. */}
+  <Door
+    {...doors.websites}
+    tone="surface"
+    width="content"
+    density="regular"
+    panel={{ line: websitePrice.line, qualifier: websitePrice.qualifier }}
+  />
+
+  {/* The screenshot is phone-only here — the Opener carries it on desktop — so
+      it renders exactly once at every width, the rule LeadOffer set. */}
+  <Door
+    {...doors.local}
+    tone="deep"
+    width="popout"
+    density="tight"
+    shot={{ src: leadOffer.shot, alt: leadOffer.shotAlt, href: leadOffer.cta.href }}
+  />
+
+  {/* THE FLOOR PER PLANT AND ITS QUALIFIER IN ONE BOX (Phase 7 of D118), the
+      same shape the websites door gives its figure. */}
+  <Door
+    {...doors.manufacturers}
+    tone="instrument"
+    width="feature"
+    density="regular"
+    panel={{ line: industrialPrice.line, qualifier: industrialPrice.qualifier }}
+  />
+
+  <Cta />
+</MarketingLayout>

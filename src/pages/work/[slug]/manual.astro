@@ -1,0 +1,76 @@
+---
+/* THE INSTRUCTION MANUAL PAGE for each factory demo on northpoint
+   (tool-conventions § N; Ian, 2026-09-23: "both, from one source").
+
+   The tool's header button opens this in a new tab, so the manual is read beside
+   the tool rather than instead of it. The text is the tool's own MANUAL export,
+   built from its rule constants, and it is rendered by the same renderManual()
+   the in-tool panel uses — one source and one renderer, so the two copies cannot
+   drift. renderManual() refuses a manual missing any of § N's seven sections, so
+   a manual that lost "what it cannot tell you" fails this build instead of
+   shipping.
+
+   THE PAGE FOLLOWS THE TOOL'S MODE (house rule): the dark palette is written in,
+   and a two-line script swaps to light when the visitor picked light on a tool,
+   before the first paint. Every value in the swap comes from industrial.js.
+
+   ONE ROUTE FOR ALL SEVEN, and the list of pages is FACTORY: every factory
+   demo in industrial.js gets its manual page, and a tool that exports no
+   MANUAL stops the build below. */
+import DemoLayout from '../../../layouts/DemoLayout.astro';
+import { demos } from '../../../data/demos';
+import { FACTORY, northpointVars } from '../../../components/kit/industrial.js';
+import { renderManual } from '../../../components/kit/house-manual.js';
+import { HOUSE_CSS } from '../../../components/kit/house-css.js';
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/600.css';
+
+export function getStaticPaths() {
+  return [...FACTORY].map((slug) => ({ params: { slug } }));
+}
+
+/* Each tool's module, loaded for its MANUAL export. A static map rather than a
+   template string, so the bundler can see every import. */
+const LOADERS: Record<string, () => Promise<{ MANUAL: any }>> = {
+  'staging-triage-console': () => import('../../../components/demos/staging-triage-console.jsx'),
+  'asn-update-radar': () => import('../../../components/demos/asn-update-radar.jsx'),
+  'past-due-order-triage': () => import('../../../components/demos/past-due-order-triage.jsx'),
+  'production-plan-churn': () => import('../../../components/demos/production-plan-churn.jsx'),
+  'order-confirmation-command-center': () => import('../../../components/demos/order-confirmation-command-center.jsx'),
+  'bom-explorer': () => import('../../../components/demos/bom-explorer.jsx'),
+  'parameter-audit-console': () => import('../../../components/demos/parameter-audit-console.jsx'),
+};
+
+const { slug } = Astro.params as { slug: string };
+const demo = demos.find((d) => d.slug === slug)!;
+const load = LOADERS[slug];
+if (!load) throw new Error(`manual: no loader for ${slug}`);
+const { MANUAL } = await load();
+if (!MANUAL) throw new Error(`manual: ${slug} exports no MANUAL`);
+const html = renderManual(MANUAL);
+const dark = northpointVars(slug, 'dark');
+const light = northpointVars(slug, 'light');
+const style = Object.entries(dark).map(([k, v]) => `${k}:${v}`).join(';');
+/* "— Manual", not "— Instruction Manual", in the TITLE only: the longest tool
+   name (Order Confirmation Command Center) ran the full title to 76 characters
+   against the search gate's 65. The page's own heading keeps the house term. */
+---
+<DemoLayout title={`${demo.name} — Manual`} description={`How to read ${demo.name}: every rule, threshold and limit, generated from the tool's own rules. ${demo.tagline}`} image={`/og/${slug}.png`} toolName={`${demo.name} · Manual`}>
+  <style is:inline set:html={HOUSE_CSS}></style>
+  <div class="np-app" data-np-manual={slug} data-np-mode="dark" style={style}>
+    <div class="np-body">
+      <p class="np-intro" style="max-width:980px;margin:0 auto;padding-top:14px"><a href={`/work/${slug}/`}>← Back to {demo.name}</a></p>
+      <Fragment set:html={html} />
+    </div>
+  </div>
+  <script is:inline define:vars={{ slug, light }}>
+    try {
+      if (localStorage.getItem('np-mode') === 'light') {
+        const el = document.querySelector('[data-np-manual="' + slug + '"]');
+        for (const k in light) el.style.setProperty(k, light[k]);
+        el.setAttribute('data-np-mode', 'light');
+        el.style.colorScheme = 'light';
+      }
+    } catch (e) { /* storage refused: the manual stays in the default dark */ }
+  </script>
+</DemoLayout>

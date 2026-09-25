@@ -1,0 +1,233 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import { opsYears as opsYearsNow } from '../lib/career.js';
+import { versioned } from '../data/asset-version';
+import Breadth from '../components/sections/Breadth.astro';
+import Cta from '../components/sections/Cta.astro';
+import SocialIcon from '../components/SocialIcon.astro';
+import { socialLinks, cardEmail } from '../data/links';
+import { Mail, QrCode } from '@lucide/astro';
+
+/* REWRITTEN 2026-08-24 under D33. This page used to open on the manufacturer and
+   stay there, which made the whole site read as an industrial pitch — the
+   operator's own diagnosis of why it was not selling.
+
+   The career is now the pitch, and the facts and their sourcing live in
+   docs/career-record.md. Two names on this page are deliberate operator
+   decisions, not defaults:
+
+     • Jimmy Buffett's Margaritaville at Mohegan Sun is NAMED. It is his own
+       employment history, published on resumes sent externally, and it is the
+       detail that proves the scale — a casino restaurant turns more covers in a
+       night than most New Bern rooms do in a week.
+
+     • The psychiatric center is NOT named. "A clinical practice" carries the
+       entire credential — patient scheduling and records under federal privacy
+       law — without putting a mental-health facility's name on a sales page.
+       Decided 2026-08-24; do not "improve" it by adding the name back.
+
+   THE APPLIANCE PLANT IS STILL NEVER NAMED (D1, D8). Every local resolves "the
+   appliance plant in town" instantly, and it borrows nobody's branding.
+
+   NO PERCENTAGES. Nine of them exist across the resumes and every one is held,
+   because no underlying calculation exists for any of them and a number a client
+   can ask about is a number that needs working.
+
+   ── THREE CHANGES, 2026-09-13, ALL OPERATOR CALLS ──────────────────────────
+
+   1. THIS PAGE NO LONGER PRINTS A COUNT. It said "five trades" three times, in
+      the meta description, in the run's closing line, and through Breadth's
+      capability row. The home page's opening band said "Six domains that share
+      nothing" — and the navigation on EVERY page, /bio/'s own note in
+      src/data/site-map.js, said "Five trades before the software". So a reader
+      met both numbers without leaving the home page.
+
+      Underneath it the two lists were counting different things. The beats in
+      src/lib/trades.js are DOMAINS drawn from four employers; this page counts
+      EMPLOYERS. The licensed insurance practice below was in this list, in
+      docs/career-record.md, and in no beat of the line a visitor reads first.
+      Insurance was appended to that array the same day. One list counts itself
+      now; nothing else counts, and scripts/check-dist.mjs refuses a build where
+      a rendered page prints a second count.
+
+   2. THE H1 IS HIS NAME. It was "Before I built software, I ran the businesses."
+      — the home page's h1, word for word, which src/data/home.ts:160 recorded as
+      a duplicate that "has to break on the OTHER page". He chose those words for
+      the home page, so this is the page that moves. The claim they made has not
+      been thrown away: it is the sentence the whole run below argues.
+
+   3. THERE IS A PHOTOGRAPH. This page existed to prove a person is behind the
+      practice and carried no img tag at all. scripts/gen-portrait.mjs cuts it,
+      and refuses to write one with the second person still in frame.
+
+   THE BAND SHAPES ARE D113 CARRIED OFF THE HOME PAGE. Every band varies at
+   least two of the heavy signals — ground, width, density, type pairing —
+   because the complaint that started D113 was that every section looked like
+   the one before it. Hero is feature-width and two columns; the run is a narrow
+   popout on a surface ground with tall rhythm; Breadth is the dark instrument
+   cut; Connect is a deep ground at tight rhythm. The `/ 01` and `/ 03` numerals
+   are gone: PICKUP scores decorative section numerals as a generated-design
+   signal, and these are not steps in a sequence. */
+
+/* Derived, never a literal — the same rule as the tool count and for the same
+   reason: a hardcoded number is wrong every January and nothing would error.
+   IMPORTED, not re-declared. This page carried its own copy of the start date
+   and its own division for it, which is two places for one fact and no way to
+   notice when they stop agreeing. src/lib/career.js is the one copy, and the
+   share-card generator already reads the same module. */
+const opsYears = opsYearsNow();
+---
+<MarketingLayout
+  title="Ian Provencher"
+  description={`Ian Provencher — ${opsYears} years running operations across a casino restaurant floor, banking, a clinical practice, insurance and manufacturing. Now building the software every one of them needed.`}
+  image="/og/bio.png"
+>
+  {/* ── Hero: name, the run, and the standing portrait ─────────────────────
+      FEATURE WIDTH AND TWO COLUMNS. The home page's opener is the only other
+      band on the site at this width, and it puts a screenshot in the second
+      column. This one puts a person there, which is the whole difference
+      between the two pages' arguments. */}
+  {/* DENSITY IS THE DEFAULT HERE ON PURPOSE. `tall` was tried first and the band
+      paid for its height twice — the portrait is 530px on its own and already
+      sets the grid row, so the extra padding left a third of the band empty
+      under the text. The variation this band carries is feature width, two
+      columns and the grid backdrop; it does not need a fourth. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+
+    <div class="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-16">
+      <div>
+        <p class="mono-label">Bio</p>
+        <h1 class="statement mt-3">Ian Provencher</h1>
+        <p class="statement-sub mt-5 max-w-2xl">
+          A restaurant floor at a casino, a bank’s lending division, a clinic’s front office, an insurance book,
+          and now the planning floor of the appliance plant in town.
+        </p>
+        <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+          {opsYears} years of running operations before a line of code. Not advising any of them.
+          Running them.
+        </p>
+        <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+          Every one of them ran on something that almost worked, and none of them was ever going to
+          get software built for it. That’s the whole reason AppliedIQ exists.
+        </p>
+      </div>
+
+      {/* The photograph is a real capture (D26, D113) — Oct 2021, cropped by
+          scripts/gen-portrait.mjs, which re-scans its own output for the second
+          person's dress and refuses to write a file that still contains her. */}
+      {/* Centered while the columns are stacked, hard right once they are not.
+          `.portrait-tall` caps its own width, so left-aligning it on a phone
+          left it hanging off the text's measure rather than sitting with it. */}
+      <div class="flex justify-center lg:block lg:justify-self-end">
+        <img
+          class="portrait-tall"
+          src={versioned('/ian-provencher-full.webp')}
+          alt="Ian Provencher, standing outdoors in a navy waistcoat and tie"
+          width="520"
+          height="720"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+    </div>
+  </Section>
+
+  {/* ── The run — a narrow column on a surface ground, tall rhythm ────────── */}
+  <Section tone="surface" width="popout" density="tall">
+    <p class="mono-label">The run</p>
+    <div class="mt-6 flex flex-col gap-5 text-lg leading-relaxed text-ink-muted">
+      <p>
+        I started on a restaurant floor at Jimmy Buffett’s Margaritaville inside Mohegan Sun, and
+        stayed five and a half years — supervisor first, then operations manager and head of the
+        beverage department. That meant the schedule, the staffing, the inventory, the pour cost, and
+        a profit-and-loss statement I had to explain every month. A casino restaurant turns more
+        covers in a night than most rooms do in a week, and none of it was run on software built for
+        it. It was run on spreadsheets and on me.
+      </p>
+      <p>
+        From there, banking. I ran consumer lending operations at United Bank in Hartford — the
+        day-to-day, the policies, the hiring and training — then cash management at Dime Bank, where
+        the work was financial reporting and closing the books clean enough to survive an audit.
+        Different building, same shape of problem: the system covered most of it, and a person
+        covered the rest by hand.
+      </p>
+      <p>
+        Then a clinical practice, where I ran patient scheduling and treatment records under federal
+        privacy rules. If you run a dental office or a family practice, you already know that work.
+        After that a licensed insurance practice — reading policy documents to people who needed them
+        explained, and working out what someone actually needed rather than what was easiest to sell.
+      </p>
+      <p>
+        And now supply chain at the appliance plant in town. Materials planning, bills of
+        material, supplier performance, and the ordering logic that decides whether a production line
+        runs on Monday. If a part is missing, the line stops — so the whole discipline is knowing what
+        you are about to run out of, long before you run out of it.
+      </p>
+      <p class="text-ink">
+        One problem, every single time: <span class="aiq-accent">the software almost fit</span>, and
+        somebody was quietly holding the rest together.
+      </p>
+      <p>
+        That gap used to be permanent, because the software that would have closed it was priced for
+        companies a hundred times the size. That stopped being true. I build those tools now, and the
+        business that gets one owns it outright — codebase, data, accounts in its own name.
+      </p>
+      <p>
+        The AI half isn’t new either. It ran alongside the operations work the whole way, and it’s now
+        formally part of the work — shaping the path, scope and implementations of AI across the
+        company’s North America region. But it’s the leverage, not the point. The point is that a shop
+        running on a spreadsheet can now have a real tool built around exactly how it works — no
+        enterprise budget, no license, no asking permission.
+      </p>
+      <p>
+        I wasn’t born here. I chose it.
+      </p>
+      <p class="text-base">
+        See where that’s pointed —{' '}
+        <a href="/main-street/" class="link-sweep">
+          my focus on local small business →
+        </a>
+      </p>
+    </div>
+  </Section>
+
+  {/* ── Beyond the moat — the dark instrument cut ───────────────────────────
+      The hard cut between a warm page and a dark chassis is the heaviest signal
+      available, and this is the band where the proof-at-scale argument lives.
+      index="" drops the numeral; see the note at the top of this file. */}
+  <Breadth tone="instrument" index="" />
+
+  {/* ── Connect — deep ground, tight rhythm ────────────────────────────────
+      A short band of buttons does not want the standard vertical rhythm, and
+      the deep ground closes the page off from the dark band above it without
+      going back to plain canvas. */}
+  <Section tone="deep" density="tight">
+    <p class="mono-label">Connect</p>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+      The direct lines — no funnel, no gatekeeper.
+    </p>
+    <div class="mt-6 flex flex-wrap gap-3">
+      {socialLinks.map((s) => (
+        <a href={s.href} target="_blank" rel="noopener" class="btn btn-secondary">
+          <SocialIcon path={s.iconPath} size={16} />
+          {s.name}
+        </a>
+      ))}
+      <a href={`mailto:${cardEmail}`} class="btn btn-secondary">
+        <Mail size={16} aria-hidden="true" />
+        Email
+      </a>
+      <a href="/card/" class="btn btn-secondary">
+        <QrCode size={16} aria-hidden="true" />
+        Digital card
+      </a>
+    </div>
+  </Section>
+
+  {/* ── Closing CTA ───────────────────────────────────────────────────────── */}
+  <Cta />
+</MarketingLayout>

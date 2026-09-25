@@ -1,0 +1,230 @@
+---
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import { startingPrice } from '../data/services';
+/* THE MEETING-LINK EXPIRY IS A TERM OF USE AND HAD NO CONSTANT UNDER IT until
+   2026-09-13. This paragraph said "two weeks" while the real value lived as a
+   non-exported const inside worker/index.js, where nothing on the site could
+   see it. check-dist.mjs asserts the worker still agrees with this one. */
+import { MEETING_LINK_TTL_DAYS } from '../lib/house-terms.js';
+
+/* WHY THIS PAGE EXISTS.
+   These are the terms for USING THIS WEBSITE — not for an engagement. Client
+   work is governed by a signed agreement, and this page says so rather than
+   trying to be one.
+
+   THE LOAD-BEARING PART IS THE TOOLS DISCLAIMER. The tools on this site do
+   real arithmetic on numbers a visitor types, and the free check prints a
+   figure about their business. Every one of them is honest about being their
+   own inputs through printed arithmetic — but somebody could still make a
+   decision on one and then be unhappy. Saying plainly that these are
+   calculators rather than advice is the whole point of the page.
+
+   THE PRICE IS READ FROM THE DATA, never typed. startingPrice carries its own
+   qualifier in the same object so no surface can show one without the other
+   (D5 as amended). */
+
+const UPDATED = '29 August 2026';
+---
+<MarketingLayout
+  title="Terms for using this site"
+  description="Terms for using this website and the tools on it. Client work is governed by a signed agreement, not by this page."
+>
+  {/* ── The claim ───────────────────────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran two bands on one
+      ground with one rhythm and the terms themselves in a single unframed
+      column — the same shape /privacy/ arrived in, and the same fix.
+
+      NOT ONE WORD CHANGED, AND ON THIS PAGE THAT IS A RULE RATHER THAN A HABIT.
+      This is the document a visitor is told they accept by using the site, and
+      the file header above records what each part is carrying. Shaping a legal
+      document is the ground it is read on, the measure it is read at and the air
+      around it — never its sentences, and never their order.
+
+      Three bands now. The column walks content, popout, popout; the ground walks
+      canvas, deep, surface; the rhythm runs regular, tight, tall. Every neighbor
+      differs in at least two of the three and the palette does none of the work
+      — a hue is the lightest signal on a page, which is the argument
+      src/components/kit/industrial.js makes under WHY THREE AND NOT SEVEN.
+
+      THE HEAVIEST GROUND GOES TO THE DISCLAIMER, WHICH IS WHERE IT EARNS ITS
+      KEEP. "This page is not your contract" is the one statement here that
+      decides what all the rest is worth: it says a signed agreement outranks
+      everything below it. /upkeep/, /advisory/ and /rescue/ each spend `deep` on
+      exactly that kind of sentence — the one that bounds the offer — and this
+      is the site's plainest instance of it.
+
+      NO CLAUSE WAS SPLIT AND NONE WAS MOVED. The disclaimer was already a panel
+      sitting above the clause run rather than inside it, which is why it can
+      take a band of its own without dividing anything; everything from "Who runs
+      this site" to "Changes" stays in one stack, in one order, on one ground.
+      /privacy/ made the same call for the identity card at its foot, and for the
+      same reason: a band boundary dropped into a run of clauses would read as a
+      division the document never declared, and on legal text an implied division
+      is closer to editing than to shaping. */}
+  <Section width="content" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">Terms of use</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        Using this site.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        For the website and the tools on it. Last updated {UPDATED}.
+      </p>
+  </Section>
+
+  {/* ── What outranks this page ──────────────────────────────────────────────
+      The page's heaviest ground and its shortest rhythm, against the canvas hero
+      above. `.panel--flat` fills opaque `--color-surface` (#f4efe6) and
+      `.section-deep` is `--color-surface-2` (#ebe4d8), so the card sits a shade
+      ABOVE its band here and reads as raised — which is the arrangement it was
+      built for and the one it loses on `.section-band`, where the two composite
+      to within a few units of each other. The two inherited text classes travel
+      with it so every word renders exactly as it did inside the stack. */}
+  <Section tone="deep" width="popout" density="tight">
+      <div class="panel panel--flat rounded-lg p-6 leading-relaxed text-ink-muted">
+        <h2 class="font-display text-xl font-semibold text-ink">This page is not your contract</h2>
+        <p class="mt-3">
+          If I build something for you, that work is governed by an agreement we both sign, which
+          says what I owe you and what you own. <strong class="text-ink">Nothing on this page
+          changes anything in that agreement</strong>, and where the two ever disagreed, the signed
+          agreement would win.
+        </p>
+      </div>
+  </Section>
+
+  {/* ── The terms themselves, framed and given room ──────────────────────────
+      The `space-y-10` stays on the inner wrapper and is not passed through to
+      the band. Section.astro inserts a centering div between the section and
+      this content, so a spacing utility handed to `class` would space that one
+      div against nothing and close every clause against its neighbor, with
+      nothing erroring. */}
+  <Section tone="surface" width="popout" density="tall">
+    <div class="space-y-10 leading-relaxed text-ink-muted">
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Who runs this site</h2>
+        <p class="mt-3">
+          Ian David Provencher, doing business as AppliedIQ Solutions — a sole proprietorship in
+          New Bern, North Carolina. Using this site means you accept what is on this page.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">The tools are calculators, not advice</h2>
+        <p class="mt-3">
+          Every tool here works out an answer from numbers <em>you</em> type, using arithmetic it
+          prints beside the result. None of them uses a model, a forecast, a benchmark or an
+          industry average, and none of them suggests a rate, a target, a par or an interval —
+          those are the decisions you are paid to make.
+        </p>
+        <p class="mt-3">
+          <strong class="text-ink">They are provided as they are, for information.</strong> They are
+          not financial, legal, tax, accounting or employment advice, and a figure one of them
+          prints is not a recommendation to do anything. Check anything that matters before you act
+          on it. Where a tool cannot work something out, it says so rather than printing a plausible
+          number — but that is a design principle, not a guarantee against every mistake.
+        </p>
+        <p class="mt-3">
+          Nothing you type into a tool is sent anywhere, stored by anyone, or seen by me. That means
+          <strong class="text-ink">nothing is saved either</strong> — close the tab and it is gone.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">The free check</h2>
+        <p class="mt-3">
+          It multiplies out two numbers you give it and prints the working. It is the size of a
+          problem, not a promise about what software would save you. What a build would actually
+          change depends on what gets built.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Prices shown here</h2>
+        <p class="mt-3">
+          {startingPrice.line} {startingPrice.qualifier} Anything on this site about price is
+          information, not an offer capable of being accepted.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">The demonstrations</h2>
+        <p class="mt-3">
+          Every business, town, person and figure in the demonstrations is invented. They are not
+          any real client's data and they are not a claim about any real business.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">What belongs to whom</h2>
+        <p class="mt-3">
+          The design, text and code of this site are mine. You are welcome to read it, use the
+          tools, and link to any page. You may not copy the site wholesale or pass it off as
+          your own.
+        </p>
+        <p class="mt-3">
+          <strong class="text-ink">What I build for a client belongs to that client, outright</strong> —
+          that is the entire point of how I work, and it is written into every agreement.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Meeting rooms</h2>
+        <p class="mt-3">
+          A meeting link I send is for you and expires after {MEETING_LINK_TTL_DAYS} days. Please do not pass it on —
+          anyone holding it can knock at the room, and I would rather know who is at the door.
+        </p>
+        <p class="mt-3">
+          I record a call only after asking, and an indicator shows on screen whenever a recording is
+          running. Recording without every participant agreeing is not something I do, and in several
+          states it is not something anyone may do.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Availability</h2>
+        <p class="mt-3">
+          I make no promise that this site is always up or always correct. I may change or remove
+          anything on it at any time.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Limits</h2>
+        <p class="mt-3">
+          To the extent the law allows, I am not liable for indirect or consequential loss, or lost
+          profits, arising from your use of this website or the tools on it.
+          <strong class="text-ink">This limit applies to the free site only.</strong> Work I am paid
+          to do carries its own terms, agreed and signed, and nothing here reduces them.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Links out</h2>
+        <p class="mt-3">
+          Where this site links somewhere else, that place is not mine and I am not responsible for
+          what is on it.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Which law</h2>
+        <p class="mt-3">
+          North Carolina, and the courts sitting in Craven County.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="font-display text-2xl font-semibold text-ink">Changes</h2>
+        <p class="mt-3">
+          The date at the top changes when this does.
+          <a class="link-quiet" href="/privacy/">What the site collects</a> is on its own page.
+        </p>
+      </div>
+
+    </div>
+  </Section>
+</MarketingLayout>
