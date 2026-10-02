@@ -1,0 +1,36 @@
+---
+/**
+ * SectionHead — the standard section header: mono index + eyebrow, display
+ * title, optional lede, optional right-aligned action link. Mirrors the
+ * "Selected work / All work →" header already used on the home page.
+ * For richer (accent-emphasized) titles, sections build their header inline.
+ */
+interface Props {
+  index?: string;
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  action?: { href: string; label: string };
+}
+const { index, eyebrow, title, lede, action } = Astro.props;
+---
+<div class:list={[action && 'flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between']}>
+  <div class="max-w-3xl">
+    {(index || eyebrow) && (
+      <p class="flex items-center gap-2.5">
+        {index && <span class="section-index">{index}</span>}
+        {eyebrow && <span class="mono-label">{eyebrow}</span>}
+      </p>
+    )}
+    <h2 class="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      {title}
+    </h2>
+    {lede && <p class="mt-4 text-lg leading-relaxed text-ink-muted">{lede}</p>}
+  </div>
+  {action && (
+    <a href={action.href} class="link-sweep group mt-1 w-fit shrink-0 text-sm font-medium">
+      {action.label}{' '}
+      <span class="inline-block transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+    </a>
+  )}
+</div>

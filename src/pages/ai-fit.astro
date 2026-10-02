@@ -1,0 +1,323 @@
+---
+/**
+ * /ai-fit/ — the AI Fit Assessment. THE SECOND PAID THING ON THIS SITE.
+ *
+ * ONE FORM SINCE 2026-09-20 (D118). The in-business form, the rule that
+ * assigned a form, the drive that bounded it and the second figure all left
+ * with the three-door decision; what is sold is ninety minutes on video, at
+ * one flat figure, with the whole fee credited against a build. It is reached
+ * from the local door rather than a header seat. Every paragraph below about
+ * two forms and the buyer never picking is the record of 2026-09-06 to
+ * 2026-09-20 and is kept as that.
+ *
+ * WHY IT ENDS IN A PRICED BUILD LIST RATHER THAN A REPORT. src/data/home.ts's
+ * `comparison`, rendered on /approach/, heads a column "What AI consulting
+ * usually ends with" and lists `An "AI readiness" audit` inside it. Selling an
+ * assessment whose deliverable is a document would put this practice's own
+ * named failure mode on its own price list, two clicks from the page saying so.
+ *
+ * The distinction is not wording, it is the last page. A roadmap says what to
+ * think about. This says what to build, what each one costs, and which one goes
+ * first — which is a quote with its reasoning attached, and quoting is already
+ * what this practice does. That is why /approach/ needs no edit and never has to
+ * argue with itself: the difference lives here, in "What this is not".
+ *
+ * TWO FORMS SINCE 2026-09-06, AND THE VISITOR PICKS NEITHER. This page carried
+ * one price and one form until then, and the sentence it carried was "Wherever I
+ * can drive to you, that is included — there is no separate visit fee and no
+ * cheaper version without it." Both halves were false by the end: the signed
+ * agreement committed to half a day or a day while this page said an hour, and
+ * $1,000 covers the first of those and not the second.
+ *
+ * THE WHOLE SHAPE RESTS ON ONE THING: THE BUYER DOES NOT CHOOSE. D81 records
+ * this and the three measured things behind it. D61 refused a
+ * two-tier pair because a buyer cannot judge what a visit is worth before having
+ * one, so nearly all take the cheaper and the better form never sells. That is
+ * correct, and it assumes the buyer is choosing. Here the rule is PRINTED ABOVE
+ * THE FIGURES so a reader applies it to themselves before making contact, and it
+ * lives once in src/data/services.ts because the signed agreement states the
+ * same rule in prose. D5 survives for the same reason: a menu asks you to pick a
+ * version of yourself, and nobody picks here.
+ *
+ * SO NOTHING ON THIS PAGE MAY LET A VISITOR SELECT A FORM. No radio, no pair of
+ * pay buttons, no two links differing only by price. scripts/verify-assessment.mjs
+ * asserts the absence, because that is the one part of this no comment can hold.
+ * It is also why the pay button LEFT this page on 2026-09-06: two buttons is the
+ * visitor choosing, and one button cannot know which form they need. The links
+ * still live in src/lib/payments.js and the right one is sent after the form is
+ * assigned.
+ *
+ * WHY THE FEE IS CREDITED, AND WHY ONLY PART OF IT ON THE VISIT. Uncredited, an
+ * assessment ending in a priced build makes that build cost more than buying it
+ * directly — the document would argue against its own recommendation, and a
+ * buyer does that arithmetic out loud. A fixed credit erases it on the video form
+ * entirely. On the visit it leaves the buyer paying for the one thing that was
+ * never a discount waiting to happen. Full argument above ASSESSMENT_VIDEO_USD
+ * in src/lib/pricing.js.
+ *
+ * EVERY FIGURE AND ITS QUALIFIER ARE ONE OBJECT. Rendering `.amount` without
+ * `.qualifier` publishes a fee and hides the credit, which is a different and
+ * worse offer. Same rule, same reason, as startingPrice.
+ *
+ * THE META DESCRIPTION CARRIES NO FIGURE, changed 2026-09-06. There are two now,
+ * a figure without its qualifier is a worse offer than the one being sold, and
+ * neither pair fits inside the ~160 characters a search result shows.
+ *
+ * ITS OWN SHARE CARD SINCE 2026-09-03. It shared /og/default.png before, so a
+ * link posted to LinkedIn or Nextdoor showed a picture saying nothing about the
+ * assessment — on the page where a share is most likely to be somebody's first
+ * contact with this practice. The card carries NO figure, for the reason above:
+ * the price and its credit are one statement and neither fits on a card.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import { assessmentPrice, startingPrice } from '../data/services';
+import { ASSESSMENT_VIDEO_USD } from '../lib/pricing.js';
+import { Search, Footprints, ListChecks, ArrowUpRight } from '@lucide/astro';
+
+const origin = new URL(Astro.site!).origin;
+
+const steps = [
+  {
+    icon: Footprints,
+    n: '01',
+    t: 'I watch the work happen',
+    b: 'Your screen shared while you do the job, so I see the real file rather than a description of it, and where the job happens away from a screen you show me on camera. I look instead of asking, because the things costing you money are the ones nobody thinks to mention.',
+  },
+  {
+    icon: Search,
+    n: '02',
+    t: 'I go through how it actually runs today',
+    b: 'The spreadsheet somebody rebuilt, the thing that gets re-typed into two systems, the job that only one person knows how to do. I want the workarounds, not the org chart — a workaround is a business telling you exactly where its software stopped.',
+  },
+  {
+    icon: ListChecks,
+    n: '03',
+    t: 'You get it in writing, with numbers beside it',
+    b: 'A short document naming what is worth doing, what is not, what each one would cost to build, and which I would do first and why. It is yours whether or not you ever hire me, and it is written so another developer could work from it.',
+  },
+];
+
+const schema = [
+  {
+    '@type': 'Service',
+    '@id': `${origin}/ai-fit/#service`,
+    name: 'AI Fit Assessment',
+    serviceType: 'Operational assessment and build scoping',
+    provider: { '@id': `${origin}/#organization` },
+    areaServed: 'US',
+    description:
+      'A read of how the work is actually done, on video, and a written list of what is worth building, each with a price beside it. The whole fee comes off a build.',
+    offers: {
+      '@type': 'Offer',
+      name: 'AI Fit Assessment — on video',
+      price: ASSESSMENT_VIDEO_USD,
+      priceCurrency: 'USD',
+      description: assessmentPrice.video.qualifier,
+    },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Main Street', item: `${origin}/main-street/` },
+      { '@type': 'ListItem', position: 3, name: 'AI Fit Assessment', item: `${origin}/ai-fit/` },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title="AI Fit Assessment"
+  description="Where AI actually fits your business, and where it does not. Ninety minutes on video, then a written list of what is worth building with a price beside each line."
+  image="/og/ai-fit.png"
+>
+  {/* ── Hero ────────────────────────────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran three bands at
+      6xl, 5xl, 3xl on one ground and one rhythm — and the last of them held
+      THREE blocks built identically, a `border-t border-line pt-10` wrapper
+      over a mono-label over a heading over prose. That is D113's complaint one
+      level down from where D113 found it, running three times in a row on the
+      page that does the most turning-away.
+
+      Five bands now. The column walks feature, content, popout, content,
+      popout; the ground walks canvas, surface, canvas, deep, surface; the
+      rhythm moves under all of it. No two neighbors share more than one heavy
+      signal and the palette does none of the work.
+
+      NOTHING INSIDE THIS BAND MOVED, and that is not caution. The order here is
+      load-bearing and measured: verify-assessment.mjs asserts the assignment
+      rule arrives BEFORE both figures, that each figure's credit sits within
+      400 rendered characters of it, and that the second destination sits within
+      600 of the video line. The shape may change around this band; the sequence
+      inside it may not. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">A read of the work · a written answer · a price beside every line</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        Everyone says you should be using AI. Nobody says <span class="aiq-accent">where</span>.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        That is the actual problem, and it is not a knowledge gap you can read your way out of. What
+        fits depends on how your business really runs, which is why I go and look at it rather than
+        sending you a questionnaire.
+      </p>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        You end up holding a list of what is worth building, in order, with a number beside each one.
+      </p>
+
+      {/* ONE FIGURE AND ITS QUALIFIER IN ONE PANEL, since 2026-09-20 (D118). The
+          rule that used to arrive before two figures left with the second form;
+          verify-assessment.mjs still asserts the credit is painted within 400
+          rendered characters of the figure. */}
+      <div class="mt-8 max-w-2xl">
+        <div class="panel flex flex-col gap-2 p-6">
+          <p class="font-display text-xl font-semibold leading-snug text-ink">{assessmentPrice.video.line}</p>
+          <p class="text-sm leading-relaxed text-ink-muted">{assessmentPrice.video.qualifier}</p>
+          <p class="mt-1 text-sm leading-relaxed text-ink-faint">{assessmentPrice.video.whatItIs}</p>
+          <p class="text-sm leading-relaxed text-ink-faint">{assessmentPrice.video.whoItIsFor}</p>
+        </div>
+      </div>
+
+      <p class="mt-5 max-w-3xl text-sm leading-relaxed text-ink-faint">
+        {assessmentPrice.credit.line} If you never build anything, you still keep the document — and it is
+        written for any developer, not only for me.
+      </p>
+
+      {/* THERE IS NO PAY BUTTON HERE, AND THAT IS FORCED RATHER THAN CHOSEN.
+          Two buttons is the visitor picking a form, which is the one thing this
+          page cannot let them do — see the block at the top of this file. One
+          button cannot know which form they need, and a button charging the
+          wrong amount is worse than no button. The links live in
+          src/lib/payments.js and the right one is sent once the form is
+          assigned, which is a sentence in an email rather than machinery.
+          scripts/verify-payments.mjs asserts the absence. */}
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=assessment" class="btn btn-primary">Ask about an assessment →</a>
+        <a href="/check/" class="btn btn-secondary">Or run the free check first</a>
+      </div>
+  </Section>
+
+  {/* ── What happens ──────────────────────────────────────────────────────── */}
+  <Section tone="surface" width="content">
+    <p class="mono-label">What happens</p>
+    <h2 class="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-[-0.03em] text-ink">
+      Three things, and the first one is me looking rather than asking.
+    </h2>
+    <div class="mt-10 grid gap-6 sm:grid-cols-3">
+      {steps.map((s) => (
+        <div class="panel lift flex flex-col gap-3 p-6">
+          <div class="flex items-center gap-3">
+            <s.icon class="h-5 w-5 text-accent" aria-hidden="true" />
+            <span class="mono-label">{s.n}</span>
+          </div>
+          <h3 class="font-display text-lg font-semibold leading-snug text-ink">{s.t}</h3>
+          <p class="text-sm leading-relaxed text-ink-muted">{s.b}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  {/* ── What this is not — the section that keeps /approach/ honest ──────────
+       THE THREE BLOCKS THAT LIVED IN ONE SECTION ARE THREE BANDS NOW, and each
+       lost the `border-t border-line pt-10` wrapper it used to open with: every
+       band edge already paints that rule, and a second hairline forty pixels
+       under it read as a mistake rather than as structure. Nothing moved — the
+       order is the order it was written in, which is refusal, then assumption,
+       then the only claim on the page about the person doing the work. */}
+  <Section width="popout" density="tall">
+      <p class="mono-label">What this is not</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
+        Not a strategy deck, and not a readiness score.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        There is no maturity rating, no roadmap, no vendor shortlist, and no comparison against
+        companies I have never seen. Every line in the document is a thing that could be built, with
+        what it would cost to build it, because a recommendation you cannot price is just an opinion
+        with a font.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        I am not selling you AI either. If the honest answer is that a whiteboard and a changed
+        Tuesday routine would fix it, that is what the document says, and you still keep the
+        document. Plenty of the best work I have done for a business had no AI anywhere near it.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        And it is not a first conversation. That is still free, still has no assessment attached, and
+        is still the right place to start if you already know what you want built.
+        {' '}{startingPrice.line} {startingPrice.qualifier}
+      </p>
+  </Section>
+
+  {/* ── What it assumes ─────────────────────────────────────────────────────
+       Written in the voice of "What this is not" directly above, and for the
+       same reason: turning somebody away in print makes every other claim on
+       the page more believable. Each of these was a silence before 2026-09-06,
+       and a silence is what a buyer fills in optimistically.
+
+       THE DEEP GROUND IS SPENT HERE. It is the heaviest signal the page has and
+       this is the band that costs the seller something, which is the one worth
+       making a reader stop at. It is also safe on it: nothing in here is a
+       panel or a border literal sized for a light ground, which is the trap
+       that sent /work/ and /websites/ to `deep` rather than `instrument`, and
+       the definition list is dt/dd — both named in the rule that strips the
+       canvas-colored text-shadow off a deep band. The wider column is for the
+       list itself, which ran two columns inside a reading measure. */}
+  <Section tone="deep" width="content">
+      <p class="mono-label">What it assumes</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
+        Four things, so nothing is a surprise later.
+      </h2>
+      <dl class="mt-6 grid gap-5 sm:grid-cols-2">
+        <div>
+          <dt class="font-display font-semibold text-ink">One business, one place.</dt>
+          <dd class="mt-1.5 text-sm leading-relaxed text-ink-muted">
+            The price covers one location. If you run four, the other three are quoted separately,
+            because four locations is four reads and not one.
+          </dd>
+        </div>
+        <div>
+          <dt class="font-display font-semibold text-ink">It happens while the work does.</dt>
+          <dd class="mt-1.5 text-sm leading-relaxed text-ink-muted">
+            There is nothing to watch in an empty building or a closed screen, so we go when the job
+            is actually being done. That is usually your busiest hour, and that is the point.
+          </dd>
+        </div>
+        <div>
+          <dt class="font-display font-semibold text-ink">It happens in an evening, on video.</dt>
+          <dd class="mt-1.5 text-sm leading-relaxed text-ink-muted">
+            The plant's planning floor has my weekdays, so the session is an evening set ahead, and
+            most evenings work. Where the job happens away from a screen, you show me on camera.
+          </dd>
+        </div>
+        <div>
+          <dt class="font-display font-semibold text-ink">A business with no repeated job has nothing to assess.</dt>
+          <dd class="mt-1.5 text-sm leading-relaxed text-ink-muted">
+            What this finds is work that repeats and costs you time. Where there is none, there is
+            nothing to price, and I would rather say that before taking the money than after.
+          </dd>
+        </div>
+      </dl>
+  </Section>
+
+  <Section tone="surface" width="popout" density="tight">
+      <p class="mono-label">Why me</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
+        I have stood on the floor in most of these businesses.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        A restaurant floor at a casino for five and a half years. A bank's lending division, then
+        cash management at a second bank. A clinical practice's scheduling and records. A licensed
+        insurance practice. Now the planning floor of the appliance plant in town. That is not a
+        credential I am waving — it is why I can watch your work and know which part of it is unusual,
+        which is the only skill this job actually needs.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=assessment" class="btn btn-primary">
+          Ask about an assessment <ArrowUpRight class="h-4 w-4" aria-hidden="true" />
+        </a>
+        <a href="/bio/" class="btn btn-secondary">The whole run of it</a>
+      </div>
+  </Section>
+</MarketingLayout>
