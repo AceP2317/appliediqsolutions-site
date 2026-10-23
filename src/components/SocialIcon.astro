@@ -1,0 +1,20 @@
+---
+/**
+ * Brand-mark icon (Lucide dropped its brand logos) — renders a 24×24 path in
+ * currentColor. Path data lives in src/data/links.ts (`iconPath`).
+ */
+interface Props {
+  path: string;
+  size?: number;
+  class?: string;
+}
+const { path, size = 17, class: className } = Astro.props;
+---
+<svg
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  fill="currentColor"
+  aria-hidden="true"
+  class={className}
+><path d={path}></path></svg>

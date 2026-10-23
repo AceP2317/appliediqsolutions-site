@@ -1,0 +1,225 @@
+---
+import { versioned } from '../data/asset-version';
+/**
+ * Confirmation Outlook — a dedicated top-level page, on the main-street.astro
+ * pattern (MarketingLayout + page-local sections + inline schema).
+ *
+ * Since D29 this is PROOF of what gets built at scale, not an offer — the
+ * rendered word "flagship" retired. The page, its content, and its honesty
+ * contract are unchanged by that.
+ *
+ * NOT /work/<slug>/ and NOT a demos.ts row, deliberately:
+ *   - DemoLayout carries a "← Work" backlink and a "Live Demo" pill, while the
+ *     page would be absent from the /work/ gallery (which builds from demos.ts).
+ *     That reads as a bug.
+ *   - demoSchema() asserts `isAccessibleForFree` and `operatingSystem: 'Web
+ *     browser'`. Both are false of a rate-limited hosted Python service.
+ *   - proofStats[0] says "Open any one in your browser" — true of the seven,
+ *     false of this. The count and the claim are welded; adding an 8th row
+ *     would make one of them a lie.
+ *
+ * All copy reads from src/data/flagship.ts, which carries the honesty contract:
+ * the engine is measured frequencies over observed transitions — never call it
+ * ML, a model, trained, or a forecast.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import { flagship } from '../data/flagship';
+
+const origin = new URL(Astro.site!).origin;
+const schema = [
+  {
+    '@type': 'SoftwareApplication',
+    '@id': `${origin}/confirmation-outlook/#app`,
+    name: flagship.name,
+    applicationCategory: 'BusinessApplication',
+    url: flagship.cta.href,
+    author: { '@id': `${origin}/#organization` },
+    description: flagship.body,
+    // Deliberately NOT asserting isAccessibleForFree or operatingSystem — the
+    // service is rate-limited and is not a browser-local app. See the note above.
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${origin}/` },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: flagship.name,
+        item: `${origin}/confirmation-outlook/`,
+      },
+    ],
+  },
+];
+---
+<MarketingLayout
+  schema={schema}
+  title={`${flagship.name} — a live service`}
+  {/* NOT flagship.body, which is 298 characters. That copy is written to be READ
+     on the page; a search snippet is cut off well before its end, so the last
+     clause reached nobody. The page still renders the full body. */}
+  description="A supply-chain risk service built end to end and deployed: it reports measured frequencies over observed transitions, and never calls that a forecast."
+  image="/og/confirmation-outlook.png"
+>
+  {/* ── Hero — claim, CTAs, then the proof ───────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran four bands at
+      max-w-4xl — one width, to the pixel, for the whole scroll — with three of
+      the four on canvas and only the middle one painting a ground. That is the
+      complaint D113 was raised on, and the widest a page can state it: nothing
+      at all separated the hero from the fact strip under it but a hairline.
+
+      It now walks content, feature, content, popout for the column and canvas,
+      deep, surface, canvas for the ground, with the rhythm running regular,
+      tight, regular, tight under both. Every neighbor differs in all three, and
+      the palette does none of the work — a hue is the lightest signal on a
+      page, which is the argument src/components/kit/industrial.js makes under
+      WHY THREE AND NOT SEVEN.
+
+      THE HERO STOPS AT `content` BECAUSE OF THE SCREENSHOT, and this is the one
+      band on the page whose width was decided by something other than reading.
+      The console capture is a committed 1200px-wide file and it renders at
+      `w-full`, so a `feature` column (84rem, 1344px) would scale it up by an
+      eighth and soften the one image that has to look like real software.
+      `content` is 72rem — 1152px, under the source width, so the picture is
+      never asked to be bigger than it is. Regenerating it to suit a band is
+      not on the table: that needs ART_VERSION bumped and it is not what this
+      pass is for.
+
+      THE FACT STRIP IS THE BAND THAT CHANGED MOST, and it earned it. Four
+      numbers reading 2,400 materials and 53k order lines are the only thing on
+      the page a reader can weigh in a glance, and they were set in the same
+      column as the prose above and below them with a hairline at each end. It
+      is now the widest column and the only deep ground on the page, at the
+      shortest rhythm — a plinth under the hero rather than a fourth paragraph.
+
+      NOTHING MOVED AND NOTHING WAS CUT. The header above argues why this page
+      is not a demos.ts row and what the copy may never say about the engine,
+      and the CTA block carries its own argument for sitting high. Both are
+      where they were written. Reshaping is not reordering. */}
+  <Section width="content" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <p class="mono-label inline-flex items-center gap-2">
+          <span class="status-dot"></span>
+          {flagship.eyebrow}
+        </p>
+        <span class="mono-label text-ink-faint">{flagship.host}</span>
+      </div>
+
+      <h1 class="statement mt-5">
+        {flagship.name}
+      </h1>
+      <p class="mt-3 text-xl leading-relaxed">
+        <span class="aiq-accent">{flagship.tagline}</span>
+      </p>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">{flagship.body}</p>
+
+      {/* CTAs sit HIGH, directly under the pitch — the one thing this page
+          exists to drive must never fall below the fold. */}
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <Button href={flagship.cta.href} variant="primary">{flagship.cta.label}</Button>
+        <Button href={flagship.source.href} variant="secondary">{flagship.source.label}</Button>
+      </div>
+
+      {/* Static by construction: a committed screenshot, not an iframe or an
+          uptime fetch. This page must render perfectly from the edge even when
+          the demo box is dark. `.status-dot` is a pure-CSS pulse and asserts
+          nothing about uptime. */}
+      <img
+        src={versioned("/shots/confirmation-outlook.webp")}
+        width="1200"
+        height="630"
+        loading="eager"
+        decoding="async"
+        alt="The Confirmation Outlook operator console — a risk register of orders ranked by probability of missing their confirmed date."
+        class="mt-10 w-full rounded-xl border border-line shadow-2xl shadow-black/40"
+      />
+  </Section>
+
+  {/* ── Fact strip — 4-up, and now the plinth the hero stands on ──────────
+       THE OLD NOTE STILL HOLDS AND IS WHY THIS BAND CAN GO WIDER. The Opener
+       panel ran these 2-up because it was 5/12 of a grid and four mono labels
+       collided at that width; max-w-4xl freed it to four, and `feature` is the
+       same argument taken one step — the labels have room to breathe rather
+       than merely to fit.
+
+       THE DEEP GROUND AND THE SHORTEST RHYTHM ARE THE OTHER TWO SIGNALS. Four
+       measured numbers under a claim is the one place on this page a reader
+       weighs something rather than reads it, and a band it can be told apart
+       from is what makes that possible. `border-b border-line` came off with
+       the conversion: `.section-deep` paints its own hairline top and bottom as
+       inset box-shadows, so the utility was a second rule over the class's own.
+
+       `--color-ink-faint` IS REMAPPED INSIDE THIS GROUND AND THAT MATTERS HERE.
+       global.css replaces it with ink-muted on `.section-deep` because faint
+       measures 4.37:1 on this surface against a 4.5 floor — and `dt` below is
+       the first faint metadata anywhere to land on that ground, which is the
+       case the remap was written for before anything rendered it. */}
+  <Section tone="deep" width="feature" density="tight">
+    <dl class="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+      {flagship.facts.map((f) => (
+        <div class="flex flex-col gap-1">
+          <dd class="font-display text-2xl font-semibold text-ink">{f.v}</dd>
+          <dt class="mono-label text-ink-faint">{f.k}</dt>
+        </div>
+      ))}
+    </dl>
+  </Section>
+
+  {/* ── How it's built ────────────────────────────────────────────────────
+       Back up to the surface ground, in from the widest column to the reading
+       one, and the standard rhythm returns — three signals against the strip
+       above. The three panels get more room than they had, not less: max-w-4xl
+       was 896px for a `md:grid-cols-3` grid, and `content` is 1152px.
+
+       THE NUMERAL IS GONE. PICKUP.md scores a decorative "/ 01" as a
+       generated-design signal, and this one numbered a sequence of exactly
+       itself — no band on this page carried an 02. The label it sat beside is
+       untouched and now stands on its own, which is what every reshaped page
+       does with its eyebrow. */}
+  <Section tone="surface" width="content">
+      <p class="mono-label">How it’s built</p>
+      <h2 class="mt-3 font-display text-3xl font-semibold tracking-[-0.03em] text-ink sm:text-4xl">
+        The restraint is the point.
+      </h2>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Anyone can bolt a model onto a dashboard and call the output a forecast. This one only ever
+        tells you what it actually measured — and refuses to ship if the numbers don’t hold.
+      </p>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {flagship.arch.map((a) => (
+          <div class="panel flex flex-col gap-2 p-6">
+            <h3 class="font-display text-lg font-semibold text-ink">{a.title}</h3>
+            <p class="text-sm leading-relaxed text-ink-muted">{a.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <p class="mono-label mt-8 text-ink-faint">{flagship.honesty}</p>
+  </Section>
+
+  {/* ── Closing CTA ────────────────────────────────────────────────────────
+       The narrowest column and the shortest rhythm on the page, back on
+       canvas. Three signals against the band above, and the column is the one
+       doing the work: this is a heading, a paragraph and two buttons addressed
+       to one reader, and a measure they can hold is worth more to it than the
+       room the panels above needed. */}
+  <Section width="popout" density="tight" class="text-center">
+    <h2 class="font-display text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-3xl">
+      This is what I ship. Yours would be built the same way.
+    </h2>
+    <p class="mx-auto mt-4 max-w-xl leading-relaxed text-ink-muted">
+      Built end to end for a fictional manufacturer — engine, API, and console. Tell me the problem
+      your operation is actually carrying, and I’ll tell you straight how I’d build the fix.
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      <Button href="/contact/?intent=quote" variant="primary">Start a project</Button>
+      <Button href={flagship.cta.href} variant="secondary">{flagship.cta.label}</Button>
+    </div>
+  </Section>
+</MarketingLayout>

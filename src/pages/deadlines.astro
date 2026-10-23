@@ -1,0 +1,138 @@
+---
+/**
+ * /deadlines/ — the dates that catch New Bern businesses out.
+ *
+ * NOT A ROW IN demos.ts, and that is deliberate rather than an omission. D22
+ * derives every "N live tools" count on this site from demos.length, and this is
+ * not a tool: it computes nothing from the visitor's numbers and it is not
+ * something anybody buys. Putting it in that array would inflate a count with
+ * something that is not what the count claims to be.
+ *
+ * IT IS THE ONE PAGE ON THIS SITE THAT ROTS BY THE CALENDAR. Every tool computes
+ * from the visitor's own inputs and so cannot be wrong about the world. This
+ * makes claims about the world — a form is due on a date, a threshold is a
+ * number of employees — and those go quietly false when a rule changes, with
+ * nothing erroring. So every row carries its authority, a live link and the day
+ * it was last read, and `npm run gate` fails on a row missing any of the three
+ * or read longer ago than the age limit in the data file (D19).
+ *
+ * Free and ungated, like /check/. There is no form on it.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import DeadlineFinder from '../components/DeadlineFinder.jsx';
+import IslandSkeleton from '../components/IslandSkeleton.astro';
+import { DEADLINES } from '../data/deadlines';
+
+/* Derived, never typed — the same rule the tool count follows. */
+const sourceCount = new Set(DEADLINES.map((d) => d.authority)).size;
+---
+<MarketingLayout
+  title="What is due, and when — New Bern, NC"
+  description="A free list of the filing and permit dates that catch small businesses out in Craven County. Every one linked to whoever published it. No signup, nothing sent anywhere."
+  image="/og/default.png"
+>
+  {/* ── The claim ───────────────────────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran three bands at
+      max-w-6xl, 4xl and 4xl, on one ground, with the second and third at the
+      same width and the same rhythm and a hairline between them — which is the
+      pair D113 exists to separate, stated exactly as /projects/ found it in its
+      lab and its roadmap.
+
+      It now walks feature, popout, popout for the column and canvas, canvas,
+      deep for the ground, with the rhythm running regular, tight, tall under
+      both. Every neighbor differs in at least two of those three and the
+      palette does none of the work — a hue is the lightest signal on a page,
+      which is the argument src/components/kit/industrial.js makes under WHY
+      THREE AND NOT SEVEN.
+
+      THE FINDER KEEPS THE PAGE'S OWN GROUND, AND THAT IS A MEASUREMENT RATHER
+      THAN A PREFERENCE. It was built onto `deep` first, copying the shape
+      /check/ settled for a page whose middle band is a working island, and
+      verify-bands.mjs refused it: re-inking that band to the opposing palette
+      changed not one of its eight text nodes, so the check was BLIND and said
+      so. The cause is in the island rather than in the band —
+      DeadlineFinder.jsx paints no color class on anything, so every word in it
+      inherits `color` from <body>, resolved OUTSIDE the band, where a band's
+      token re-map cannot reach it. CostCheck.jsx does carry `text-ink` and
+      `text-ink-muted`, which is the whole reason /check/ can spend a ground
+      here and this page cannot. Putting the finder on a painted ground would
+      have been a ground nothing on this site can verify, and the next one
+      somebody chose might be dark.
+
+      SO THE HEAVIEST GROUND GOES TO THE SOURCES ARGUMENT, which is the better
+      home for it anyway: that band is why the list above it can be believed at
+      all, and it is the one place on the page where a word going illegible
+      costs the reader something. /upkeep/, /advisory/ and /rescue/ each spend
+      `deep` on the same kind of paragraph for the same reason.
+
+      THE LAST TWO BANDS SHARE A COLUMN ON PURPOSE. The sources argument is
+      addressed to the reader who has just finished the finder — moving the
+      measure under them would read as a new subject rather than as the reason
+      the thing above it can be trusted, which is the reading /quoted/ wrote
+      down for its own coda. Ground and rhythm carry the separation instead.
+
+      NOTHING MOVED AND NOTHING WAS CUT. The header above argues why this page
+      is not a demos.ts row and why every row carries a source; both blocks sit
+      where they were written. Reshaping is not reordering. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">Free · no signup · nothing sent anywhere</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        The dates that catch people out.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Nine questions about your business, and you get back only the filing and permit dates that
+        actually apply to it — each one linked to the office that published it. Nothing here is
+        advice and nothing here is complete. It is a list of dates with their sources attached,
+        which is more than most of us are working from.
+      </p>
+  </Section>
+
+  {/* ── The finder ──────────────────────────────────────────────────────────
+      Two signals against the hero — the column narrows from the widest measure
+      on the page to a reading one, and the rhythm tightens. The ground is the
+      signal deliberately NOT spent here; the header above says why, and it is
+      the one band on this page where the reason is a failed control rather
+      than a judgment.
+
+      The tight rhythm is the same call /check/ made over its own island: the
+      standard band padding stacked on something that is already tall reads as
+      a gap rather than as air, which is the trap docs/page-makeover.md names
+      against `density="tall"` from the other direction. */}
+  <Section width="popout" density="tight">
+    <DeadlineFinder client:only="react">
+      <IslandSkeleton slot="fallback" name="Deadline finder" variant="chat" />
+    </DeadlineFinder>
+  </Section>
+
+  {/* ── Why every line has a link on it ─────────────────────────────────────
+      The page's one painted ground and its widest rhythm, against the canvas
+      tight band above. The `border-t border-line` this band used to carry is
+      gone because `.section-deep` paints its own hairline top and bottom as
+      inset box-shadows — the class supplies the rule, so the utility was a
+      second one drawn over it. */}
+  <Section tone="deep" width="popout" density="tall">
+      <h2 class="font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
+        Why every line has a link on it
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        A page of dates with no sources is a page you have to trust, and there is no reason to
+        trust mine. Every row here names the office that publishes it and links to the page it was
+        read off, with the date I last read it. {sourceCount} different authorities are cited, and
+        where I could not find a primary source I have left the item off and said so rather than
+        quoting a company that sells filing services.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Rules change and this page does not know when they do — so a row that has not been checked
+        in six months fails my own build rather than sitting here looking confident. That is the
+        only honest way to publish something that goes out of date on a calendar instead of on a
+        code change.
+      </p>
+      <div class="mt-8">
+        <a href="/check/" class="btn btn-secondary">See what the paperwork is costing you →</a>
+      </div>
+  </Section>
+</MarketingLayout>

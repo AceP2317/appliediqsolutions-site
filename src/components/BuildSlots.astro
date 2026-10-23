@@ -1,0 +1,94 @@
+---
+/**
+ * BuildSlots — this month's website start dates, and how many are open (D126).
+ *
+ * EVERY WORD HERE IS TRUE ON THE DAY IT IS READ, and that is the whole design.
+ * The operator asked for visible, limited capacity; the only honest version of
+ * that is the rule he really keeps (two builds a month, two at a time) and the
+ * builds he is really running, listed in src/lib/build-slots.js. Nothing on this
+ * component may be typed to look busier than that list says.
+ *
+ * THE COUNT IS WORKED OUT IN THE VISITOR'S BROWSER. The site is static, so a
+ * month computed at build time would go stale between pushes. The server render
+ * carries only the rule, which is true on any day; the script below fills in the
+ * month, the boxes and the next start from BUILDS and the visitor's today. With
+ * scripts off, a reader gets the rule and nothing that could be out of date.
+ *
+ * THE BOXES REUSE THE FOUNDING BAND'S CLASSES AND ITS MEASURED BORDERS, which
+ * were measured against the page ground #faf7f2 — so this renders on that
+ * ground only, never inside a tinted panel. `compact` draws no boxes, which is
+ * what lets it sit inside the Main Street panel.
+ *
+ * scripts/check-build-slots.mjs runs the same slotState() over planted lists.
+ */
+import { BUILD_DAYS, BUILD_SLOTS, MONTHLY_STARTS } from '../lib/build-slots.js';
+import { countWord } from '../lib/count-words.js';
+
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+
+/* Every count in the rule derives, so the sentence cannot state a rule the gate
+   is not checking. */
+const rule = `I start ${countWord(MONTHLY_STARTS)} builds a month and run ${countWord(BUILD_SLOTS)} at a time, because I build every one myself. A site is delivered ${BUILD_DAYS} days after I have what I need from you: the words, the pictures and the go-ahead.`;
+---
+<div class="build-slots" data-build-slots data-compact={compact ? 'true' : 'false'}>
+  {!compact && (
+    <>
+      <p class="mono-label" data-slots-eyebrow>Start dates</p>
+      <ul class="mt-3 flex flex-wrap gap-2" data-slots-boxes hidden></ul>
+    </>
+  )}
+  <p class={compact ? 'leading-relaxed text-ink' : 'mt-3 font-display text-lg font-semibold text-ink'} data-slots-headline hidden></p>
+  <p class={compact ? 'mt-1 text-sm leading-relaxed text-ink-muted' : 'mt-2 max-w-2xl leading-relaxed text-ink-muted'}>{rule}</p>
+</div>
+
+<script>
+  import { BUILDS, MONTHLY_STARTS, slotState, problems, todayIn, monthName, shortDate } from '../lib/build-slots.js';
+  import { countWord } from '../lib/count-words.js';
+
+  const TAKEN = 'mono-label rounded-md border border-line-2 bg-surface px-3 py-1.5 text-ink-faint line-through decoration-1';
+  const OPEN = 'mono-label rounded-md border border-accent bg-accent/[0.09] px-3.5 py-1.5 font-semibold text-accent-deep';
+
+  /* A broken list renders the rule alone rather than a count computed from it.
+     The gate refuses such a list before it ships; this is the second line. */
+  if (problems(BUILDS).length === 0) {
+    const today = todayIn();
+    const s = slotState(today, BUILDS);
+    const month = monthName(today);
+    const total = countWord(MONTHLY_STARTS);
+    const nextLater = s.nextStart > today;
+
+    let headline;
+    if (s.open === MONTHLY_STARTS) {
+      headline = nextLater
+        ? `Both of ${month}'s start dates are open, from ${shortDate(s.nextStart)}.`
+        : `Both of ${month}'s start dates are open.`;
+    } else if (s.open > 0) {
+      headline = nextLater
+        ? `${countWord(s.open, { capital: true })} of ${month}'s ${total} start dates is open, from ${shortDate(s.nextStart)}.`
+        : `${countWord(s.open, { capital: true })} of ${month}'s ${total} start dates is open.`;
+    } else {
+      headline = `${month} is full. The next build can start ${shortDate(s.nextStart)}.`;
+    }
+
+    for (const root of document.querySelectorAll<HTMLElement>('[data-build-slots]')) {
+      const h = root.querySelector<HTMLElement>('[data-slots-headline]');
+      if (h) { h.textContent = headline; h.hidden = false; }
+
+      const eyebrow = root.querySelector<HTMLElement>('[data-slots-eyebrow]');
+      if (eyebrow) eyebrow.textContent = `Start dates · ${month}`;
+
+      const ul = root.querySelector<HTMLElement>('[data-slots-boxes]');
+      if (ul) {
+        ul.setAttribute('aria-label', `${s.open} of ${MONTHLY_STARTS} start dates open in ${month}`);
+        for (const slot of s.slots) {
+          const li = document.createElement('li');
+          li.className = slot.taken ? TAKEN : OPEN;
+          li.textContent = `${String(slot.n).padStart(2, '0')} · ${slot.taken ? 'TAKEN' : 'OPEN'}`;
+          ul.append(li);
+        }
+        ul.hidden = false;
+      }
+    }
+  }
+</script>

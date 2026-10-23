@@ -1,0 +1,168 @@
+---
+/**
+ * /check/ — the free instant check. THIS IS THE LEAD OFFER.
+ *
+ * It replaces Review Autopilot in that slot, which stopped being defensible in
+ * March 2026 when a platform shipped that whole category free inside the tool
+ * the buyer already opens daily.
+ *
+ * WHY A CALCULATOR AND NOT A DEMO. The seven industrial demos prove capability
+ * and prove nothing about the VISITOR. This hands them a number about their own
+ * business in under a minute, ungated, and the commerce lives inside the answer
+ * rather than in front of it. That is the pattern the strongest sites aimed at
+ * local owners use, and it is the only thing on this site that works on somebody
+ * who has never heard of custom software.
+ *
+ * THE HONESTY CONTRACT is stated on the page and enforced in the island: every
+ * figure is the visitor's own input through arithmetic printed beside it. No
+ * model, no forecast, no benchmark. Same discipline as Confirmation Outlook's,
+ * for the same reason — a claim nobody can check is worth less than no claim.
+ */
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Section from '../components/Section.astro';
+import CostCheck from '../components/CostCheck.jsx';
+import IslandSkeleton from '../components/IslandSkeleton.astro';
+import { startingPrice } from '../data/services';
+---
+<MarketingLayout
+  title="What is the paperwork costing you?"
+  description="A free check: two numbers in, one number back, with the arithmetic printed. No signup, nothing sent anywhere. Then a straight conversation about whether software is worth building."
+  image="/og/default.png"
+>
+  {/* ── The claim ──────────────────────────────────────────────────────────
+      D113 CARRIED OFF THE HOME PAGE, 2026-09-13. This page ran three bands at
+      6xl, 3xl, 3xl on one ground and one rhythm — the lead offer reading as a
+      single unbroken column, with the tool that IS the offer sitting in it
+      unmarked.
+
+      Four bands now, and the tool gets a ground of its own: feature, popout,
+      popout, popout for the column, canvas, deep, canvas, surface for the
+      ground, and tight, tall, regular for the rhythm under the last three. The
+      column stops moving after the hero on purpose — from the tool down this is
+      one reading measure, which is the arrangement /faq/ landed on, and ground
+      and rhythm carry the separation instead. The palette does none of the
+      work.
+
+      THE DEEP GROUND GOES UNDER THE TOOL, matching CheckBand.astro, which
+      paints the same check on the home page on the same ground. It also remaps
+      --color-label and --color-ink-faint, which is what this island's hints and
+      its mono-label are written in. */}
+  <Section width="feature" class="border-b border-line">
+    <Fragment slot="backdrop">
+      <div class="bg-grid bg-grid-fade pointer-events-none absolute inset-0 -z-10 opacity-60"></div>
+    </Fragment>
+      <p class="mono-label">Free · no signup · nothing sent anywhere</p>
+      <h1 class="statement mt-3 max-w-3xl">
+        Find out what the paperwork is costing you.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Every business I have worked in had somebody doing the ordering by hand and nobody adding up
+        what that was worth. Two numbers below and you will know — with the
+        <span class="aiq-accent">arithmetic printed</span>, so you can check it yourself.
+      </p>
+      <p class="mt-4 max-w-2xl leading-relaxed text-ink-muted">
+        Free, and it stays in your browser. I am in New Bern, North Carolina, and the conversation
+        that follows is free too — including the answer that nothing here is worth building.
+      </p>
+  </Section>
+
+  {/* The check itself, as high on the page as it can go. Nielsen's eye-tracking
+      puts roughly 42% of all viewing time in the top fifth of a page, so
+      anything between the headline and the first input is time spent on
+      persuasion the tool would have done better. */}
+  <Section tone="deep" width="popout" density="tight">
+    <CostCheck client:only="react">
+      <IslandSkeleton slot="fallback" variant="chat" />
+    </CostCheck>
+  </Section>
+
+  {/* Everything below is for the visitor who has their number and wants to know
+      what happens next. It is deliberately AFTER the tool, never before it.
+
+      IT WAS ONE BAND UNTIL 2026-09-13, holding two blocks built identically —
+      a `border-t border-line pt-10` wrapper, a mono-label, a heading, prose —
+      which is D113's complaint one level down from where D113 found it. They
+      are two bands now, and both hairline rules came out with the split: each
+      band edge already paints one, and a second line forty pixels under it read
+      as a mistake rather than as structure. The refusal gets the air and the
+      offer gets the ground. */}
+  <Section width="popout" density="tall">
+      <p class="mono-label">What this is not</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
+        No model, no forecast, no industry average.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        Every figure above is one of your own numbers multiplied out, and the working is printed
+        next to each line. Nothing is compared against a benchmark I cannot show you, and nothing
+        you typed left your browser — there is no form here, and no email box.
+      </p>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        The number is not a promise about what software would save you. It is the size of the
+        problem, which is the only honest thing a calculator can tell you. What a build would
+        actually change depends on what gets built, and that is what the first conversation is for.
+      </p>
+  </Section>
+
+  <Section tone="surface" width="popout">
+      <p class="mono-label">And then</p>
+      <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
+        A straight answer, then a fixed number.
+      </h2>
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        The first conversation is free and it can happen at your counter. If there is nothing worth
+        building I will say so — that is a shorter conversation and it costs you nothing either way.
+        If there is, {startingPrice.line.toLowerCase()} {startingPrice.qualifier}
+      </p>
+      {/* THE ASSESSMENT DOOR, added 2026-09-03, and this is the sharpest step on
+          the site. A reader here has just watched their own numbers turn into an
+          hours figure and has no way to tell WHICH of those hours is worth
+          automating. That is the assessment's entire job.
+
+          NOT ITS PRICE, ONLY A LINK. scripts/verify-assessment.mjs asserts that
+          this page does not carry the assessment's price line, as a negative
+          control proving the price is not simply everywhere. A link keeps that
+          control meaningful. If a later change wants the figure here, that
+          control gets REDESIGNED rather than deleted. */}
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        And if the number above is real but you cannot tell which part of it to fix first — that is
+        what the <a href="/ai-fit/" class="link-sweep">AI Fit Assessment</a> is for. I watch the work,
+        on video with your screen shared, and write the list in order.
+      </p>
+      {/* A SECOND DOOR SAT HERE FROM 2026-09-11 TO 2026-09-20, to the monthly
+          visibility reading; D118 cut that product and the paragraph went with
+          it. The negative control still holds: this page carries no figure but
+          its own arithmetic. */}
+      {/* THE PAYMENTS GUIDE'S WAY IN, added 2026-09-20, and this page is where it
+          belongs rather than Main Street.
+
+          THE PROBLEM IT SOLVES. That guide sits at /websites/getting-paid/ and its
+          menu heading reads "Before you decide", but its own opening line says
+          nothing on it is for sale and that a business with no website still has
+          to be paid. A shop owner who has no website and is not shopping for one
+          had no route to it at all. Main Street was tried first and refused: every
+          band there is a specific offer, so a reference link either sits oddly
+          inside one or needs a band of its own, which is the noise D118 removed.
+
+          WHY HERE. A reader on this page has just watched their own two numbers
+          become an hours figure. Card processing is the same question one step
+          along — money leaving the business through a channel nobody chose
+          deliberately — and this is the page a local owner with no website
+          actually lands on.
+
+          IT NAMES NO RATE, DELIBERATELY. verify-check.mjs asserts this page
+          carries no figure but its own arithmetic, and that control is what keeps
+          the free check's honesty contract checkable. A percentage here would
+          break it. The link carries the reader to the figures instead. */}
+      <p class="mt-4 leading-relaxed text-ink-muted">
+        The other money leaving quietly is what it costs you to be paid at all. Every card you take
+        has a rate on it, and almost nobody chose theirs on purpose — it arrived with a terminal, or
+        with software you were already paying for. <a href="/websites/getting-paid/" class="link-sweep">What it costs to be paid</a>
+        {' '}puts nine ways of taking money side by side, with the date I read each one. It sells
+        nothing and you need no website to use it.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center gap-3">
+        <a href="/contact/?intent=consult" class="btn btn-primary">Start with a free conversation →</a>
+        <a href="/work/" class="btn btn-secondary">See what I build</a>
+      </div>
+  </Section>
+</MarketingLayout>
