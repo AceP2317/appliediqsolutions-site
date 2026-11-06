@@ -1,0 +1,45 @@
+---
+// Zero-JS boot state for client:only islands, rendered via the island's
+// slot="fallback" (Astro server-renders it inside <astro-island>; React clears
+// it on first commit). Reads as an instrument initializing, not a spinner —
+// shimmer is gated behind prefers-reduced-motion in global.css (.skel).
+interface Props {
+  /** 'tool' = a demo console booting; 'chat' = the Ask widget connecting. */
+  variant?: 'tool' | 'chat';
+  /** Mono status line — the tool name on demo routes. */
+  name?: string;
+  /** Render the header status bar (off where a wrapper already provides one). */
+  chrome?: boolean;
+}
+const { variant = 'tool', name = 'live tool', chrome = true } = Astro.props;
+---
+{variant === 'tool' ? (
+  <div class="island-skel" role="status" aria-label={`Loading ${name}`}>
+    {chrome && (
+      <div class="skel-head">
+        <span class="status-dot"></span>
+        <span class="mono-label">Initializing · {name} — real code, loading in your browser</span>
+      </div>
+    )}
+    <div class="skel-body">
+      <div class="skel-tiles">
+        {Array.from({ length: 4 }).map(() => <div class="skel skel-tile"></div>)}
+      </div>
+      <div class="skel skel-block"></div>
+      <div class="skel-rows">
+        {Array.from({ length: 4 }).map(() => <div class="skel skel-row"></div>)}
+      </div>
+    </div>
+  </div>
+) : (
+  <div class="panel island-skel island-skel--chat mt-10" role="status" aria-label="Loading the live assistant">
+    <div class="skel-head">
+      <span class="status-dot"></span>
+      <span class="mono-label">Ask the tooling · connecting</span>
+    </div>
+    <div class="skel-body">
+      <div class="skel skel-bubble"></div>
+      <div class="skel skel-input"></div>
+    </div>
+  </div>
+)}
