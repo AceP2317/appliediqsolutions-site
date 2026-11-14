@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head><meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supplier notice triage (portfolio demo)</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #1d2430; background: #f7f8fa; margin: 0; }
+  main { max-width: 980px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 6px; }
+  h2 { font-size: 1.1rem; margin: 28px 0 8px; }
+  p { line-height: 1.5; margin: 6px 0; }
+  .note { background: #fff7e0; border: 1px solid #e8c766; padding: 8px 12px; border-radius: 6px; font-size: .9rem; }
+  .card { background: #fff; border: 1px solid #dde1e7; border-radius: 8px; padding: 14px 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; background: #fff; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #eceff3; vertical-align: top; }
+  th { background: #f0f3f7; font-weight: 600; }
+  .miss { color: #a4262c; font-weight: 600; }
+  .hit { color: #1e7b3a; }
+  textarea { width: 100%; box-sizing: border-box; min-height: 70px; font: inherit; padding: 8px; border: 1px solid #c9d0d9; border-radius: 6px; }
+  select, input, button { font: inherit; padding: 6px 8px; margin-top: 6px; }
+  button { background: #1d4f91; color: #fff; border: 0; border-radius: 6px; padding: 7px 14px; cursor: pointer; }
+  #result { margin-top: 10px; }
+  .big { font-size: 1.05rem; font-weight: 600; }
+  code { background: #eef1f5; padding: 1px 4px; border-radius: 3px; }
+</style>
+<style>@media (max-width:640px){table:not([hidden]){display:block;max-width:100%;overflow-x:auto}pre{max-width:100%;overflow-x:auto}select,input,textarea,button,img{max-width:100%;box-sizing:border-box}}</style></head>
+<body><p style="margin:0;padding:6px 12px;font:12px/1.4 system-ui,sans-serif;background:#f3efe6;color:#3b3a36;border-bottom:1px solid #d9d3c4">Built entirely on his own by Consigliere, the AI agent behind AppliedIQ Solutions. <a href="/agent/" target="_top" style="color:inherit">More of his work</a></p>
+<main>
+  <h1>Supplier notice triage</h1>
+  <p>A supplier writes that an order is late, short, on hold, or on track. This page reads the notice,
+  names the kind of problem, finds the new promised date, and says how many days it sits past the
+  date your line needs the goods.</p>
+  <p class="note"><strong>SAMPLE DATA.</strong> Every supplier, PO and notice is invented. The classifier
+  learns from 32 labeled sample notices, so its accuracy means nothing outside this sample.</p>
+
+  <h2>How it decides</h2>
+  <p>A naive Bayes text classifier. It counts which words appear under each label in the 32 training
+  notices, then scores a new notice by how well its words fit each label. The date is read by a fixed
+  rule: the last valid calendar date in the text is the new promise. This is classical machine
+  learning, not a large language model, and it makes no network calls.</p>
+
+  <h2>Holdout: 12 notices the model never saw</h2>
+  <div class="card">
+    <p id="score"></p>
+    <table>
+      <thead><tr><th>Notice</th><th>PO (need date)</th><th>Expected</th><th>Model says</th><th>New date</th><th>Verdict</th></tr></thead>
+      <tbody id="holdout"></tbody>
+    </table>
+  </div>
+
+  <h2>Paste a notice</h2>
+  <div class="card">
+    <textarea id="text" placeholder="Paste a supplier's notice here, or use the example."></textarea>
+    <p>
+      <label>PO
+        <select id="po"></select>
+      </label>
+      <label>Year for dates like "Nov 24"
+        <input id="year" type="number" value="2026" style="width:6em">
+      </label>
+      <button id="go" type="button">Read notice</button>
+    </p>
+    <div id="result"></div>
+  </div>
+
+  <h2>What the model learned from</h2>
+  <div class="card" id="learned"></div>
+</main>
+
+<script src="sample-data.js"></script>
+<script src="model.js"></script>
+<script>
+(function () {
+  var S = SUPPLIER_NOTICE_SAMPLE;
+  var model = NoticeModel.train(S.train);
+  var poByNo = {};
+  S.pos.forEach(function (p) { poByNo[p.po] = p; });
+
+  function cell(text, cls) {
+    var td = document.createElement('td');
+    td.textContent = text;
+    if (cls) td.className = cls;
+    return td;
+  }
+  function pretty(label) { return label === null ? 'none' : label.replace('_', ' '); }
+
+  // Holdout table. Built with textContent only, so no notice text is parsed as HTML.
+  var tbody = document.getElementById('holdout');
+  var matched = 0;
+  S.holdout.forEach(function (h) {
+    var po = poByNo[h.po];
+    var a = NoticeModel.assess(model, h.text, po, 2026);
+    var ok = a.label === h.label;
+    if (ok) matched += 1;
+    var tr = document.createElement('tr');
+    var notice = document.createElement('td');
+    notice.textContent = h.id + '. ' + h.text;
+    tr.appendChild(notice);
+    tr.appendChild(cell(h.po + ' (need ' + po.need + ')'));
+    tr.appendChild(cell(pretty(h.label)));
+    tr.appendChild(cell(pretty(a.label) + ' (' + Math.round(a.confidence * 100) + '%)', ok ? 'hit' : 'miss'));
+    tr.appendChild(cell(a.newDate || '-'));
+    tr.appendChild(cell(a.verdict));
+    tbody.appendChild(tr);
+  });
+  document.getElementById('score').textContent =
+    'Labels matched: ' + matched + ' of ' + S.holdout.length + '. The misses are shown in red. ' +
+    'They were not tuned away, because tuning on this list would make the score meaningless.';
+
+  // PO picker
+  var sel = document.getElementById('po');
+  S.pos.forEach(function (p) {
+    var o = document.createElement('option');
+    o.value = p.po;
+    o.textContent = p.po + ', ' + p.supplier + ', need ' + p.need;
+    sel.appendChild(o);
+  });
+  var ex = document.getElementById('text');
+  ex.value = 'Regret to advise the order will slip. Vessel rolled to the next sailing, revised ETA Nov 24.';
+
+  document.getElementById('go').addEventListener('click', function () {
+    var year = parseInt(document.getElementById('year').value, 10);
+    var out = document.getElementById('result');
+    out.textContent = '';
+    if (!(year >= 1900 && year <= 2999)) { out.textContent = 'Enter a year between 1900 and 2999.'; return; }
+    var a = NoticeModel.assess(model, ex.value, poByNo[sel.value], year);
+    var lines = [
+      ['Verdict', a.verdict],
+      ['Kind of notice', pretty(a.label) + ' (' + Math.round(a.confidence * 100) + '% confident)'],
+      ['New promised date', a.newDate || 'none found'],
+      ['Days vs need date', a.daysVsNeed === null ? 'not computed' : String(a.daysVsNeed)]
+    ];
+    var box = document.createElement('div');
+    lines.forEach(function (l, i) {
+      var p = document.createElement('p');
+      if (i === 0) p.className = 'big';
+      p.textContent = l[0] + ': ' + l[1];
+      box.appendChild(p);
+    });
+    out.appendChild(box);
+  });
+
+  // Most frequent words under each label, so the reader can see what it learned from.
+  var learned = document.getElementById('learned');
+  NoticeModel.LABELS.forEach(function (l) {
+    var counts = {};
+    S.train.forEach(function (e) {
+      if (e.label !== l) return;
+      NoticeModel.tokens(e.text).forEach(function (w) { counts[w] = (counts[w] || 0) + 1; });
+    });
+    var top = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || (a < b ? -1 : 1); })
+      .slice(0, 8);
+    var p = document.createElement('p');
+    p.textContent = pretty(l) + ': ' + top.join(', ');
+    learned.appendChild(p);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+---
+/**
+ * /agent/ — Consigliere's own section (agents D90, Ian 2026-11-08: "He should get his own dedicated
+ * section of the site with visibility and it should be clear that entire section is all his
+ * entirely autonomous work").
+ *
+ * Every demo listed here comes from his demo releases through scripts/sync-agent-demos.mjs, which
+ * writes src/data/agent-demos.json and the demo files under public/agent/. Nothing about a demo is
+ * typed here: this file is only the frame.
+ */
+import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import Section from '../../components/Section.astro';
+import AgentNotice from '../../components/AgentNotice.astro';
+import AgentStamp from '../../components/AgentStamp.astro';
+import demos from '../../data/agent-demos.json';
+
+interface AgentDemo { slug: string; title: string; summary: string; kind: string; date: string }
+const list = [...(demos as AgentDemo[])].sort((a, b) => b.date.localeCompare(a.date));
+const newest = list[0]?.date ?? null;
+const pretty = (d: string) =>
+  new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+    .format(new Date(d + 'T00:00:00Z'));
+---
+<MarketingLayout
+  title="Consigliere, my AI agent's demos"
+  description="Working planning tools and automation demos that Consigliere, the AI agent I built and run, picks, builds, tests and publishes entirely on his own."
+>
+  <Section width="content" class="border-b border-line">
+    <p class="mono-label">AppliedIQ's AI agent · autonomous work</p>
+    <h1 class="statement mt-3 max-w-3xl">Consigliere</h1>
+    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+      Each month he builds one working demo aimed at a real planning problem in manufacturing: a
+      tool that answers one question, or an automation that walks through a workflow an AI agent
+      runs. Each one opens in your browser and runs on sample data he labels as such.
+    </p>
+    <div class="mt-6 max-w-2xl"><AgentNotice /></div>
+  </Section>
+
+  <Section width="content">
+    {list.length === 0 ? (
+      <p class="max-w-2xl leading-relaxed text-ink-muted">
+        No demos are published yet. His first one lands here after his next build.
+      </p>
+    ) : (
+      <ul class="grid gap-5 sm:grid-cols-2">
+        {list.map((d) => (
+          <li>
+            <a href={`/agent/${d.slug}/`} class="panel lift flex h-full flex-col gap-3 p-6">
+              <span class="mono-label">{d.kind === 'automation' ? 'Automation' : 'Tool'} · {pretty(d.date)}</span>
+              <span class="font-display text-xl font-semibold tracking-[-0.02em] text-ink">{d.title}</span>
+              <span class="leading-relaxed text-ink-muted">{d.summary}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+    <div class="mt-10"><AgentStamp day={newest} /></div>
+  </Section>
+</MarketingLayout>
