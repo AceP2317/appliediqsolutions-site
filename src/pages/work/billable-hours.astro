@@ -1,0 +1,25 @@
+---
+/* THIS ROUTE IMPORTS NO FONT, AND IT IS THE ONLY ONE ON THE SHELF THAT DOES NOT.
+   Every other tool declares at least one face that BaseLayout does not already
+   ship, so its route pays for a per-route import. This faceplate is Inter, Inter
+   and IBM Plex Mono — all three site-wide — because a timesheet is the one
+   document here that is internal to the practice and carries no house
+   typography at all. See src/components/kit/themes.js. An import line added
+   here would load a face nothing on this page asks for. */
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import BillableHours from '../../components/demos/billable-hours.jsx';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'billable-hours')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} instrument={demo.instrument} tagline={demo.tagline} problem={demo.problem} does={demo.blurb} plain={demo.plain} />
+  <BillableHours client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </BillableHours>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

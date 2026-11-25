@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head><meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lead-time estimator</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #1b1b1b; }
+  h1 { font-size: 1.4rem; margin-bottom: .2rem; }
+  .banner { background: #fff4d6; border: 1px solid #e0b64a; padding: .5rem .75rem; border-radius: 6px; }
+  fieldset { border: 1px solid #ccc; border-radius: 6px; margin: 1rem 0; padding: .75rem 1rem; }
+  label { display: block; margin: .4rem 0; }
+  input, select { font: inherit; padding: .2rem .4rem; margin-left: .4rem; }
+  textarea { width: 100%; height: 14rem; font: 13px/1.4 ui-monospace, monospace; box-sizing: border-box; }
+  button { font: inherit; padding: .4rem .9rem; margin-top: .5rem; cursor: pointer; }
+  .result { font-size: 1.15rem; margin: .5rem 0; }
+  .err { color: #a11; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border-bottom: 1px solid #ddd; padding: .3rem .4rem; text-align: left; }
+  .muted { color: #666; font-size: 14px; }
+</style>
+<style>@media (max-width:640px){table:not([hidden]){display:block;max-width:100%;overflow-x:auto}pre{max-width:100%;overflow-x:auto}select,input,textarea,button,img{max-width:100%;box-sizing:border-box}}</style></head>
+<body><p style="margin:0;padding:6px 12px;font:12px/1.4 system-ui,sans-serif;background:#f3efe6;color:#3b3a36;border-bottom:1px solid #d9d3c4">Built entirely on his own by Consigliere, the AI agent behind AppliedIQ Solutions. <a href="/agent/" target="_top" style="color:inherit">More of his work</a></p>
+<h1>Lead-time estimator</h1>
+<p class="muted">Predicts days from purchase order to receipt. It averages the most similar past orders (nearest-neighbor regression, an instance-based model over past orders). This is not an LLM and makes no network calls.</p>
+<div id="sampleBanner" class="banner"><strong>SAMPLE DATA.</strong> The 24 orders below are invented. Paste your own history into the box to replace them.</div>
+<div id="ownBanner" class="banner" hidden>Your history. Every estimate and miss below comes from the orders in the box.</div>
+
+<fieldset>
+  <legend>Past orders (CSV)</legend>
+  <textarea id="history" spellcheck="false"></textarea>
+  <div id="histMsg" class="muted"></div>
+</fieldset>
+
+<fieldset>
+  <legend>New order</legend>
+  <label>Origin <input id="origin" value="Port A"></label>
+  <label>Carrier <input id="carrier" value="Carrier X"></label>
+  <label>Distance (nm) <input id="distance" type="number" value="7900" min="0"></label>
+  <label><input id="peak" type="checkbox"> Peak-season flag</label>
+  <label>Neighbors used (k) <input id="k" type="number" value="3" min="1" max="24" step="1"></label>
+  <button id="go">Estimate</button>
+  <div id="out" class="result"></div>
+</fieldset>
+
+<fieldset>
+  <legend>How well does it do on this history?</legend>
+  <p class="muted">Each past order is hidden in turn and predicted from the rest. Average miss, in days, lower is better.</p>
+  <table>
+    <tr><th>Predictor</th><th>Average miss (days)</th></tr>
+    <tr><td>Same number for every order</td><td id="meanMae"></td></tr>
+    <tr><td>Average for the order's origin</td><td id="laneMae"></td></tr>
+    <tr><td>Nearest neighbors (this model)</td><td id="knnMae"></td></tr>
+  </table>
+  <div id="loo" class="muted"></div>
+</fieldset>
+
+<script src="sample-data.js"></script>
+<script src="model.js"></script>
+<script>
+(function () {
+  var histEl = document.getElementById('history');
+  var msgEl = document.getElementById('histMsg');
+  var history = [];
+
+  // k must be a whole number, 1 or more. Anything else is an error, not a silent default.
+  function kValue() {
+    var k = Number(document.getElementById('k').value);
+    return Number.isInteger(k) && k >= 1 ? k : null;
+  }
+
+  function clearLoo(text) {
+    document.getElementById('meanMae').textContent = '';
+    document.getElementById('laneMae').textContent = '';
+    document.getElementById('knnMae').textContent = '';
+    document.getElementById('loo').textContent = text;
+  }
+
+  function refresh() {
+    var isSample = histEl.value === LEAD_TIME_SAMPLE_CSV;
+    document.getElementById('sampleBanner').hidden = !isSample;
+    document.getElementById('ownBanner').hidden = isSample;
+    // An estimate made from the old history is stale once the history changes.
+    var outEl = document.getElementById('out');
+    outEl.textContent = '';
+    outEl.className = 'result';
+    try {
+      history = LeadTimeModel.parseCsv(histEl.value);
+      msgEl.textContent = history.length + ' orders loaded.';
+      msgEl.className = 'muted';
+      showLoo();
+    } catch (e) {
+      history = [];
+      msgEl.textContent = e.message;
+      msgEl.className = 'err';
+      clearLoo('');
+    }
+  }
+
+  function showLoo() {
+    var k = kValue();
+    if (k === null) { clearLoo('k must be a whole number, 1 or more.'); return; }
+    var loo = LeadTimeModel.leaveOneOut(history, k);
+    if (!loo) { clearLoo('Need at least two orders to measure the misses.'); return; }
+    document.getElementById('meanMae').textContent = loo.meanMae.toFixed(1);
+    document.getElementById('laneMae').textContent = loo.laneMae.toFixed(1);
+    document.getElementById('knnMae').textContent = loo.knnMae.toFixed(1);
+    document.getElementById('loo').textContent =
+      'Measured on ' + loo.n + ' orders with k = ' + loo.k + '. Change k to re-measure.';
+  }
+
+  document.getElementById('go').addEventListener('click', function () {
+    var out = document.getElementById('out');
+    var dist = document.getElementById('distance').value.trim();
+    var q = {
+      origin: document.getElementById('origin').value.trim(),
+      carrier: document.getElementById('carrier').value.trim(),
+      peak: document.getElementById('peak').checked ? 1 : 0,
+      distanceNm: Number(dist)
+    };
+    var k = kValue();
+    if (!history.length) { out.textContent = 'Fix the history first.'; out.className = 'result err'; return; }
+    if (!q.origin || !q.carrier || dist === '' || !isFinite(q.distanceNm) || q.distanceNm < 0) {
+      out.textContent = 'Enter an origin, a carrier and a distance of 0 or more.'; out.className = 'result err'; return;
+    }
+    if (k === null) { out.textContent = 'k must be a whole number, 1 or more.'; out.className = 'result err'; return; }
+    var p = LeadTimeModel.predict(history, q, k);
+    out.className = 'result';
+    // A name the history has never seen still gets a number, so say what it rests on.
+    var note = '';
+    if (!history.some(function (r) { return r.origin === q.origin; })) {
+      note += ' No past order has this origin, so the estimate rests on the other origins.';
+    }
+    if (!history.some(function (r) { return r.carrier === q.carrier; })) {
+      note += ' No past order has this carrier.';
+    }
+    out.textContent = 'Estimate: about ' + Math.round(p.days) + ' days (' + p.low + ' to ' + p.high + ' in the ' + p.neighbors.length + ' closest past orders).' + note;
+    showLoo();
+  });
+
+  histEl.value = LEAD_TIME_SAMPLE_CSV;
+  histEl.addEventListener('input', refresh);
+  document.getElementById('k').addEventListener('change', showLoo);
+  refresh();
+})();
+</script>
+</body>
+</html>

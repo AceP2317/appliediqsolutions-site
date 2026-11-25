@@ -1,0 +1,26 @@
+---
+/**
+ * Stat — a big instrument readout (tabular figures) + a mono caption, with
+ * an optional supporting line. Used in the proof bar.
+ */
+interface Props {
+  value: string;
+  label: string;
+  caption?: string;
+  /** Optional extra class on the value (e.g. a smaller size for text phrases). */
+  valueClass?: string;
+  /** Optional evidence link rendered under the caption (e.g. the ship log). */
+  link?: { href: string; label: string };
+}
+const { value, label, caption, valueClass, link } = Astro.props;
+---
+<div class="flex flex-col gap-2">
+  <span class:list={['stat-value', valueClass]}>{value}</span>
+  <span class="mono-label">{label}</span>
+  {caption && <span class="mt-1 text-sm leading-relaxed text-ink-muted">{caption}</span>}
+  {link && (
+    <a href={link.href} class="link-sweep mt-1 w-fit text-sm font-medium">
+      {link.label} <span aria-hidden="true">→</span>
+    </a>
+  )}
+</div>

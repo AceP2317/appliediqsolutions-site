@@ -1,0 +1,28 @@
+---
+/**
+ * AgentStamp — the day this page's content last changed, and the house build stamp, on every
+ * /agent/ page (house rule, 2026-10-08; agents D90). The stamp is read once in astro.config.mjs
+ * from scripts/lib/build-stamp.cjs, the kit file every house site shares. The day is the newest
+ * demo's own date, which the sync copies from the demo's release, so it moves only when he
+ * publishes.
+ */
+declare const __HOUSE_STAMP__: string;
+
+interface Props {
+  day?: string | null;
+}
+const { day } = Astro.props;
+const stamp = typeof __HOUSE_STAMP__ === 'undefined' ? 'unstamped build' : __HOUSE_STAMP__;
+const when = day ? new Date(day + 'T00:00:00Z') : null;
+const pretty = when
+  ? `${when.getUTCDate()} ${new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' }).format(when)} ${when.getUTCFullYear()}`
+  : '';
+---
+<p class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[0.6875rem] text-ink-faint">
+  {day && (
+    <span data-page-date={day} title="The day this page's own content last changed.">
+      Page updated <time datetime={day} class="text-ink-muted">{pretty}</time>
+    </span>
+  )}
+  <span data-build-stamp title="Which build of the site this is: the build number, the day it was built (ET) and the code of the change it was built from.">{stamp}</span>
+</p>

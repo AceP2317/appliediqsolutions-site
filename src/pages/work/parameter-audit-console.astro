@@ -1,0 +1,27 @@
+---
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import ParameterAuditConsole from '../../components/demos/parameter-audit-console.jsx';
+/* NORTHPOINT'S TYPE, per route: IBM Plex Sans for words (Plex Mono for figures
+   already loads site-wide). Added 2026-09-24, when the typeface came to travel
+   with the palette (house rule, D120); this tool set its words in the
+   typewriter face until then. */
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '@fontsource/ibm-plex-sans/700.css';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'parameter-audit-console')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} tagline={demo.tagline} problem={demo.problem} does={demo.blurb}
+  plain={demo.plain} />
+  <ParameterAuditConsole client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </ParameterAuditConsole>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head><meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morning clear-to-build run (portfolio demo)</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #1d2430; background: #f7f8fa; margin: 0; }
+  main { max-width: 1020px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 6px; }
+  h2 { font-size: 1.1rem; margin: 26px 0 8px; }
+  h3 { font-size: 1rem; margin: 0 0 6px; }
+  p { line-height: 1.5; margin: 6px 0; }
+  .note { background: #fff7e0; border: 1px solid #e8c766; padding: 8px 12px; border-radius: 6px; font-size: .9rem; }
+  .card { background: #fff; border: 1px solid #dde1e7; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  label.t { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 4px; }
+  textarea { width: 100%; box-sizing: border-box; min-height: 170px; font: .82rem ui-monospace, Menlo, Consolas, monospace; padding: 8px; border: 1px solid #c9d0d9; border-radius: 6px; }
+  input, button { font: inherit; padding: 6px 8px; }
+  button { background: #1d4f91; color: #fff; border: 0; border-radius: 6px; padding: 7px 14px; cursor: pointer; margin-right: 6px; }
+  button.ghost { background: #e6ebf2; color: #1d2430; }
+  button:disabled { opacity: .45; cursor: default; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; background: #fff; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #eceff3; vertical-align: top; }
+  th { background: #f0f3f7; font-weight: 600; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .s-clear-now { color: #1e7b3a; font-weight: 600; }
+  .s-on-time { color: #1d4f91; font-weight: 600; }
+  .s-late { color: #a35a00; font-weight: 600; }
+  .s-short { color: #a4262c; font-weight: 600; }
+  .neg { color: #a4262c; }
+  .step { display: none; }
+  .step.on { display: block; }
+  .tag { display: inline-block; font-size: .75rem; background: #eef1f5; border-radius: 4px; padding: 1px 6px; margin-left: 6px; color: #4a5568; }
+  pre { white-space: pre-wrap; background: #f4f6f9; border: 1px solid #e1e5eb; border-radius: 6px; padding: 10px 12px; font: .85rem/1.45 ui-monospace, Menlo, Consolas, monospace; }
+  ul.msgs { margin: 6px 0; padding-left: 20px; font-size: .9rem; }
+  .err { color: #a4262c; }
+  .warn { color: #8a5a00; }
+  code { background: #eef1f5; padding: 1px 4px; border-radius: 3px; }
+</style>
+<style>@media (max-width:640px){table:not([hidden]){display:block;max-width:100%;overflow-x:auto}pre{max-width:100%;overflow-x:auto}select,input,textarea,button,img{max-width:100%;box-sizing:border-box}}</style></head>
+<body><p style="margin:0;padding:6px 12px;font:12px/1.4 system-ui,sans-serif;background:#f3efe6;color:#3b3a36;border-bottom:1px solid #d9d3c4">Built entirely on his own by Consigliere, the AI agent behind AppliedIQ Solutions. <a href="/agent/" target="_top" style="color:inherit">More of his work</a></p>
+<main>
+  <h1>Morning clear-to-build run</h1>
+  <p>Before the morning shortage meeting, someone has to work out which orders can actually be built.
+  This page does that run step by step. It takes the open orders, their bills of material, stock on
+  hand and inbound purchase orders. It hands scarce parts to orders in due-date order, then says
+  which orders can be built today, which will be late and by how many days, and which parts to
+  expedite first. Last, it drafts the note for the meeting.</p>
+  <p class="note"><strong>SAMPLE DATA.</strong> The plant, orders, part numbers, quantities and dates are
+  invented. There are no prices in the sample. This is an automation built by an AI agent working on
+  its own. The run itself is fixed arithmetic: no AI model is called, nothing leaves this page, and the
+  same inputs always give the same answer.</p>
+
+  <h2>Inputs <span class="tag">edit any table and run again</span></h2>
+  <div class="card">
+    <p><label>Today (YYYY-MM-DD) <input id="today" size="11"></label>
+    <button id="reset" class="ghost" type="button">Reset to sample</button></p>
+    <div class="grid">
+      <div><label class="t" for="orders">Open orders</label><textarea id="orders" spellcheck="false"></textarea></div>
+      <div><label class="t" for="bom">Bill of material (one level)</label><textarea id="bom" spellcheck="false"></textarea></div>
+      <div><label class="t" for="stock">Stock on hand</label><textarea id="stock" spellcheck="false"></textarea></div>
+      <div><label class="t" for="inbound">Inbound purchase orders</label><textarea id="inbound" spellcheck="false"></textarea></div>
+    </div>
+    <p style="font-size:.85rem">Plain comma-separated text, header row first. Orders may add a <code>value</code>
+    column; if they do, blocking parts are ranked by the value they hold up.</p>
+    <p><button id="step" type="button">Step 1: read the inputs</button>
+    <button id="all" class="ghost" type="button">Run all steps</button></p>
+  </div>
+
+  <section class="step" id="s1"><h2>Step 1. Read and check the inputs</h2><div class="card" id="o1"></div></section>
+  <section class="step" id="s2"><h2>Step 2. Explode the bills: what the orders need against what is coming</h2><div class="card" id="o2"></div></section>
+  <section class="step" id="s3"><h2>Step 3. Hand out parts, earliest due date first</h2><div class="card" id="o3"></div></section>
+  <section class="step" id="s4"><h2>Step 4. Rank the parts holding orders up</h2><div class="card" id="o4"></div></section>
+  <section class="step" id="s5"><h2>Step 5. Draft the shortage-meeting note</h2><div class="card" id="o5"></div></section>
+
+  <h2>How it decides</h2>
+  <div class="card">
+    <p>Orders are served in due-date order (ties by order number). Each order claims its full kit
+    from stock and inbound receipts, starting on the earliest day the kit is complete. A claimed part
+    is never lent to a later order.</p>
+    <p>A kit is all or nothing. If the supply on file can never cover an order, it claims nothing, so
+    the parts it would have tied up go to the orders behind it. That is why a later order can show as
+    buildable while an earlier one is short.</p>
+    <p>An inbound line dated before today is counted as arriving today, with a warning. The bill is
+    single-level: a component that has its own bill is refused.</p>
+    <p>For each part holding up an order, the run works out how many more units would have to arrive by
+    the due date (or by today, if the order is already past due) for that part to stop blocking it.
+    It assumes every earlier order keeps what it claimed.</p>
+  </div>
+  <p style="font-size:.85rem;color:#4a5568">Portfolio demo. It runs entirely in your browser. To see it work on
+  your own data, edit the tables above.</p>
+</main>
+<script src="model.js"></script>
+<script src="sample-data.js"></script>
+<script>
+(function () {
+  var C = ClearToBuild, S = CLEAR_TO_BUILD_SAMPLE;
+  var ids = ['orders', 'bom', 'stock', 'inbound'];
+  var labels = ['Step 1: read the inputs', 'Step 2: explode the bills', 'Step 3: hand out parts',
+    'Step 4: rank blocking parts', 'Step 5: draft the note', 'Done: run again'];
+  var $ = function (id) { return document.getElementById(id); };
+  var shown = 0, res = null, usingSample = true;
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function fmt(n) { return n === null || n === undefined ? '' : String(n); }
+  function d(n) { return n === null ? '' : C.isoOf(n); }
+  function days(n) { return n + (n === 1 ? ' day' : ' days'); }
+
+  function loadSample() {
+    $('today').value = S.today;
+    ids.forEach(function (k) { $(k).value = S[k]; });
+    usingSample = true;
+    clear();
+  }
+  function clear() {
+    shown = 0; res = null;
+    for (var i = 1; i <= 5; i++) { $('s' + i).className = 'step'; $('o' + i).innerHTML = ''; }
+    $('step').textContent = labels[0];
+    $('step').disabled = false;
+  }
+  function inputs() {
+    var x = { today: $('today').value.trim() };
+    ids.forEach(function (k) { x[k] = $(k).value; });
+    return x;
+  }
+  function msgs(list, cls) {
+    if (!list.length) return '';
+    return '<ul class="msgs">' + list.map(function (m) { return '<li class="' + cls + '">' + esc(m) + '</li>'; }).join('') + '</ul>';
+  }
+
+  function render1() {
+    if (!res.ok) {
+      return '<p class="err"><strong>The run stopped here.</strong> Fix these and press the button again:</p>' +
+        msgs(res.errors, 'err') + msgs(res.warnings || [], 'warn');
+    }
+    var dt = res.data;
+    var parts = Object.keys(dt.onHand).length;
+    return '<p>Read ' + dt.orders.length + ' open orders, ' + Object.keys(dt.bom).length + ' bills of material, ' +
+      parts + ' parts with stock rows and ' + dt.inbound.length + ' inbound lines, for a run dated ' + esc(C.isoOf(dt.today)) + '.' +
+      (dt.hasValue ? ' Orders carry a value column, so step 4 ranks by value.' : ' No value column, so step 4 ranks by orders held up.') + '</p>' +
+      (res.warnings.length ? '<p class="warn"><strong>Warnings</strong> (the run continues):</p>' + msgs(res.warnings, 'warn') : '<p>No warnings.</p>');
+  }
+
+  function render2() {
+    var rows = res.explode.map(function (e) {
+      return '<tr><td>' + esc(e.part) + '</td><td class="n">' + fmt(e.gross) + '</td><td class="n">' + fmt(e.onHand) +
+        '</td><td class="n">' + fmt(e.inbound) + '</td><td class="n' + (e.net < 0 ? ' neg' : '') + '">' + fmt(e.net) + '</td></tr>';
+    }).join('');
+    return '<p>Total need across all open orders, before any timing. A negative balance means the supply on file can never ' +
+      'cover every order. A positive balance can still hide a timing gap, which step 3 finds.</p>' +
+      '<table><thead><tr><th>Part</th><th class="n">Needed by all orders</th><th class="n">On hand</th><th class="n">Inbound</th><th class="n">Balance</th></tr></thead><tbody>' +
+      rows + '</tbody></table>';
+  }
+
+  var statusText = { 'clear-now': 'Build today', 'on-time': 'On time', late: 'Late', short: 'Short' };
+  function render3() {
+    var c = res.counts;
+    var rows = res.results.map(function (r) {
+      var detail = '';
+      if (r.status === 'clear-now') detail = r.pastDue ? 'already ' + days(r.pastDue) + ' past due; every part is here' : 'every part is here';
+      else if (r.status === 'on-time') detail = 'waiting on ' + r.waitingOn.join(', ');
+      else if (r.status === 'late') detail = days(r.daysLate) + ' late, held by ' + r.binding.join(', ');
+      else detail = r.lines.filter(function (l) { return l.shortfall > 0; }).map(function (l) { return l.part + ' short ' + l.shortfall; }).join(', ');
+      return '<tr><td class="n">' + r.priority + '</td><td>' + esc(r.order) + '</td><td>' + esc(r.item) + ' x ' + fmt(r.qty) +
+        '</td><td>' + d(r.due) + '</td><td class="s-' + r.status + '">' + statusText[r.status] + '</td><td>' + d(r.clear) +
+        '</td><td>' + esc(detail) + '</td></tr>';
+    }).join('');
+    return '<p><strong>' + c['clear-now'] + '</strong> build today, <strong>' + c['on-time'] + '</strong> on time, <strong>' +
+      c.late + '</strong> late, <strong>' + c.short + '</strong> short, out of ' + c.total + '.</p>' +
+      '<table><thead><tr><th class="n">#</th><th>Order</th><th>Item x qty</th><th>Due</th><th>Status</th><th>Kit complete</th><th>Why</th></tr></thead><tbody>' +
+      rows + '</tbody></table>';
+  }
+
+  function render4() {
+    if (!res.ranked.length) return '<p>No part is holding up an order past its due date.</p>';
+    var hv = res.data.hasValue;
+    var rows = res.ranked.map(function (e, i) {
+      var pulls = e.pullIns.map(function (p) { return esc(p.qty + ' by ' + C.isoOf(p.by) + ' for ' + p.order); }).join('<br>');
+      return '<tr><td class="n">' + (i + 1) + '</td><td>' + esc(e.part) + '</td><td>' + esc(e.orders.join(', ')) +
+        (e.shared.length ? '<br><span style="font-size:.8rem;color:#4a5568">also held by another part: ' + esc(e.shared.join(', ')) + '</span>' : '') +
+        '</td><td class="n">' + e.late + ' / ' + e.short + '</td><td class="n">' + fmt(e.units) + '</td>' +
+        (hv ? '<td class="n">' + fmt(e.value) + '</td>' : '') + '<td>' + pulls + '</td></tr>';
+    }).join('');
+    return '<p>Ranked by ' + (hv ? 'value held up, then ' : '') + 'orders held up, then finished units held up. ' +
+      'The last column says how many more units must land, and by when, for the part to stop holding up each order.</p>' +
+      '<table><thead><tr><th class="n">#</th><th>Part</th><th>Orders held up</th><th class="n">Late / short</th><th class="n">Units held up</th>' +
+      (hv ? '<th class="n">Value held up</th>' : '') + '<th>More needed, by date</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+
+  function render5() {
+    return '<p>Plain text, ready to paste into the meeting invite or a chat. Every number in it comes from steps 3 and 4.</p>' +
+      '<pre id="notetext">' + esc(res.note) + '</pre><button id="copy" class="ghost" type="button">Copy note</button> <span id="copied"></span>';
+  }
+
+  var renders = [render1, render2, render3, render4, render5];
+  function showStep(i) {
+    $('o' + i).innerHTML = renders[i - 1]();
+    $('s' + i).className = 'step on';
+    if (i === 5) {
+      $('copy').onclick = function () {
+        var t = $('notetext').textContent;
+        if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { $('copied').textContent = 'Copied.'; },
+          function () { $('copied').textContent = 'Select the text and copy it by hand.'; });
+        else $('copied').textContent = 'Select the text and copy it by hand.';
+      };
+    }
+  }
+  function next() {
+    if (shown >= 5) clear();
+    try {
+      if (shown === 0) res = C.run(inputs(), usingSample ? S.label : '');
+      shown++;
+      showStep(shown);
+    } catch (e) {
+      res = { ok: false, errors: ['The run hit an unexpected error: ' + (e && e.message ? e.message : e)], warnings: [] };
+      shown = 1;
+      $('o1').innerHTML = render1();
+      $('s1').className = 'step on';
+    }
+    if (!res.ok) { $('step').textContent = 'Run again'; shown = 5; return; }
+    $('step').textContent = labels[shown];
+  }
+  function all() {
+    clear();
+    do { next(); } while (shown < 5);
+  }
+
+  $('step').onclick = next;
+  $('all').onclick = all;
+  $('reset').onclick = loadSample;
+  ids.concat(['today']).forEach(function (k) {
+    $(k).addEventListener('input', function () { usingSample = false; if (shown) clear(); });
+  });
+  loadSample();
+})();
+</script>
+</body>
+</html>

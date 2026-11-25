@@ -1,0 +1,24 @@
+---
+/* THIS TOOL'S OWN DISPLAY FACE, loaded on its own route.
+   Cormorant Garamond is already a dependency, reached by recall-sheet.
+   Loading it here rather than site-wide means a visitor who never opens this
+   tool never downloads it. Pattern proven by work/review-autopilot.astro. */
+import '@fontsource/cormorant-garamond/600.css';
+import '@fontsource/cormorant-garamond/700.css';
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import ChairSplit from '../../components/demos/chair-split.jsx';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+
+const demo = demos.find((d) => d.slug === 'chair-split')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+<DemoLayout title={demo.name} description={demo.seoDescription} image={`/og/${demo.slug}.png`} toolName={demo.name} schema={schema}>
+  <DemoFraming name={demo.name} instrument={demo.instrument} tagline={demo.tagline} problem={demo.problem} does={demo.blurb} plain={demo.plain} />
+  <ChairSplit client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </ChairSplit>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

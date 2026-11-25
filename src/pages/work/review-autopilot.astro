@@ -1,0 +1,47 @@
+---
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoFraming from '../../components/DemoFraming.astro';
+import { demos, demoSchema } from '../../data/demos';
+import ReviewAutopilot from '../../components/demos/review-autopilot/Dashboard';
+import DemoAbout from '../../components/DemoAbout.astro';
+import IslandSkeleton from '../../components/IslandSkeleton.astro';
+// The five vertical heading faces — imported here (not in BaseLayout) so the
+// ~150–200 KB of extra woff2 loads on this route only. The bridge vars in
+// src/styles/review-autopilot.css map them onto the demo's skin tokens.
+import '@fontsource-variable/oswald';
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/rubik';
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource/cormorant-garamond/600.css';
+import '@fontsource/cormorant-garamond/700.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+
+const demo = demos.find((d) => d.slug === 'review-autopilot')!;
+const schema = demoSchema(demo, new URL(Astro.site!).origin);
+---
+
+<DemoLayout
+  title={demo.name}
+  description={demo.seoDescription}
+  {/* ?v=4 — this card's pixels have now changed twice. D29 moved the eyebrow
+      from LIVE TOOL to THE LEAD OFFER; D34 then moved the lead offer to /check/
+      and left this card claiming a title it no longer holds, so it is LIVE TOOL
+      again as of 2026-08-25. A regenerated PNG at an unchanged URL is invisible
+      to every cache that already fetched it, which is why the number moves by
+      hand every time (D24). NOTE the other demo routes carry no ?v= at all:
+      D24's cache-bust was never applied to them. Add one the first time any of
+      their cards is regenerated — tip-out-sheet's card is brand new, so it has
+      never been cached and needs none yet. */}
+  image={`/og/${demo.slug}.png`}
+  toolName={demo.name}
+  schema={schema}
+>
+  <DemoFraming name={demo.name} tagline={demo.tagline} problem={demo.problem} does={demo.blurb}
+  plain={demo.plain} />
+  <ReviewAutopilot client:only="react">
+    <IslandSkeleton slot="fallback" name={demo.name} />
+  </ReviewAutopilot>
+  <DemoAbout name={demo.name} about={demo.about} ask={demo.ask} />
+</DemoLayout>

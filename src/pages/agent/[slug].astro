@@ -1,0 +1,50 @@
+---
+/**
+ * /agent/<slug>/ — one of Consigliere's demos (agents D90), framed by the site.
+ *
+ * The demo itself is his own page, served from /agent/<slug>/demo/ and shown here in an iframe
+ * sandboxed to scripts only: no same-origin access, no forms, no top-level navigation. The path
+ * also carries an enforced sandbox policy with every network request blocked (public/_headers),
+ * so the demo cannot reach the network or this site even when opened on its own. His README is
+ * shown as plain text, never as HTML.
+ */
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import AgentNotice from '../../components/AgentNotice.astro';
+import AgentStamp from '../../components/AgentStamp.astro';
+import demos from '../../data/agent-demos.json';
+
+interface AgentDemo { slug: string; title: string; summary: string; kind: string; date: string; readme: string }
+
+export function getStaticPaths() {
+  return (demos as AgentDemo[]).map((d) => ({ params: { slug: d.slug }, props: { demo: d } }));
+}
+
+const { demo } = Astro.props as { demo: AgentDemo };
+const src = `/agent/${demo.slug}/demo/`;
+const pretty = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+  .format(new Date(demo.date + 'T00:00:00Z'));
+---
+<DemoLayout title={demo.title} description={demo.summary} toolName="Consigliere" backHref="/agent/" backLabel="Consigliere">
+  <div class="mx-auto flex max-w-5xl flex-col gap-6 px-5 py-8">
+    <div>
+      <p class="mono-label">{demo.kind === 'automation' ? 'Automation' : 'Tool'} · built by Consigliere · {pretty}</p>
+      <h1 class="mt-2 font-display text-3xl font-semibold tracking-[-0.03em] text-ink">{demo.title}</h1>
+      <p class="mt-3 max-w-2xl leading-relaxed text-ink-muted">{demo.summary}</p>
+    </div>
+    <AgentNotice />
+    <iframe
+      src={src}
+      title={`${demo.title}, a demo by Consigliere`}
+      sandbox="allow-scripts"
+      referrerpolicy="no-referrer"
+      loading="lazy"
+      class="h-[75vh] min-h-[32rem] w-full rounded-lg border border-line bg-canvas"
+    ></iframe>
+    <p class="text-sm text-ink-muted"><a class="underline" href={src}>Open the demo on its own page</a></p>
+    <section class="panel p-6">
+      <p class="mono-label">His notes on this demo</p>
+      <pre class="mt-3 whitespace-pre-wrap break-words font-sans text-sm leading-relaxed text-ink-muted">{demo.readme}</pre>
+    </section>
+    <AgentStamp day={demo.date} />
+  </div>
+</DemoLayout>

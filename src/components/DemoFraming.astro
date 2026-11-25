@@ -1,0 +1,53 @@
+---
+/**
+ * DemoFraming — a slim context bar shown above a full-bleed demo embed, so a
+ * cold visitor lands with the tool name + "the problem → what it does" before
+ * the dense console. It also carries the page's single <h1>: the demo routes are
+ * otherwise heading-less (their UI is a client-only island invisible to crawlers).
+ */
+interface Props {
+  name: string;
+  /** The tool's own short name, shown beside the plain one. See demos.ts. */
+  instrument?: string;
+  tagline?: string;
+  problem: string;
+  does: string;
+  /** The shop owner's version of what this tool is for. Rendered BESIDE the
+   *  precise phrasing, never instead of it — see demos.ts `plain` for why.
+   *  Absent on the tool built for a local business, which needs no translating. */
+  plain?: string;
+}
+const { name, instrument, tagline, problem, does, plain } = Astro.props;
+---
+<div class="border-b border-line bg-surface/60">
+  <div class="mx-auto max-w-6xl px-5 py-4">
+    <div class="mb-3">
+      <div class="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+        <h1 class="font-display text-lg font-semibold tracking-tight text-ink sm:text-xl">{name}</h1>
+        {instrument && <span class="mono-label text-accent-2">{instrument}</span>}
+      </div>
+      {tagline && <p class="mt-0.5 text-sm text-ink-muted">{tagline}</p>}
+      {/* A visitor who arrives on this page directly — from a shared link, a
+          card, a search result — gets the exact terminology below and no way to
+          tell whether it describes something hard. This is their translation.
+          It was on the gallery card already; the page it links to needs it more,
+          because this is where people actually land. */}
+      {plain && (
+        <p class="mt-2 max-w-2xl text-sm leading-relaxed text-ink">
+          <span class="text-accent">→</span> {plain}
+        </p>
+      )}
+    </div>
+    <div class="flex flex-col gap-3 sm:flex-row sm:gap-6">
+      <div class="shrink-0 sm:max-w-xs">
+        <span class="mono-label">The problem</span>
+        <p class="mt-1 text-sm leading-relaxed text-ink">{problem}</p>
+      </div>
+      <div class="hidden w-px self-stretch bg-line sm:block" aria-hidden="true"></div>
+      <div>
+        <span class="mono-label">What it does</span>
+        <p class="mt-1 max-w-2xl text-sm leading-relaxed text-ink-muted">{does}</p>
+      </div>
+    </div>
+  </div>
+</div>
